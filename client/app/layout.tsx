@@ -2,15 +2,8 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
-import Auth from './auth'
-
 const inter = Inter({ subsets: ['latin'] })
-import {
-  SignedIn,
-  SignedOut,
-  RedirectToSignIn,
-} from "@clerk/nextjs";
-import Nav from './Nav'
+
 
 
 export const metadata = {
