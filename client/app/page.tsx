@@ -1,3 +1,4 @@
+'use client'
 import React, { use } from "react";
 import Nav from "./component/Nav";
 import { UserButton } from "@clerk/nextjs";

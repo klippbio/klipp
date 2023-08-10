@@ -8,10 +8,10 @@ export default function Nav() {
                 <h1 className="text-2xl font-bold">Name</h1>
                 <div className="space-x-4">
                     <Link legacyBehavior href="/sign-in">
-                        <a className="px-4 py-2 rounded bg-white text-pink-500 hover:bg-pink-100 hover:text-pink-600 transition duration-300">Sign In</a>
+                        <a className="px-4 py-2 rounded bg-white text-blue-500 hover:bg-blue-100 hover:text-blue-600 transition duration-300">Sign In</a>
                     </Link>
                     <Link legacyBehavior href="/sign-up">
-                        <a className="px-4 py-2 rounded bg-pink-700 text-white hover:bg-pink-800 transition duration-300">Sign Up</a>
+                        <a className="px-4 py-2 rounded bg-blue-700 text-white hover:bg-blue-800 transition duration-300">Sign Up</a>
                     </Link>
                 </div>
             </nav>
