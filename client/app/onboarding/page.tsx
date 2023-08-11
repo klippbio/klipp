@@ -2,33 +2,43 @@
 import { useMutation } from "react-query";
 import { useState } from "react";
 import axios from "axios"
+import { useAuth } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 function Page() {
+
+  //clerk userid
+  const { isLoaded, userId, sessionId, getToken } = useAuth();
+  const { user } = useUser();
+
   const [name, setName] = useState('');
   const [userName, setUserName] = useState('');
   //const queryClient = useQueryClient();
 
-
-  // const { mutate } = useMutation(
-  //   async ({ name, userName }) => // Include city, country, and phone in the mutation
-  //     await axios.post("/api/posts/addData", {
-  //       name,
-  //       userName,
-  //     }),
-  //   {
-  //     onError: (error) => {
-  //       console.log("error")
-  //     },
-  //     onSuccess: (data) => {
-  //       console.log("success")
-  //     },
-  //   }
-  // );
+  const a = user?.emailAddresses[0].emailAddress;
+  console.log(a)
+  const { mutate } = useMutation(
+    async ({ name, userName }) => // Include city, country, and phone in the mutation
+      await axios.post("/api/posts/addData", {
+        name,
+        userName,
+        userId,
+        
+      }),
+    {
+      onError: (error) => {
+        console.log(name, userName, userId)
+      },
+      onSuccess: (data) => {
+        console.log("success")
+      },
+    }
+  );
 
   const submitDetails = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(name, userName)
-    //mutate({ name, userName }); 
+    //console.log(name, userName)
+    mutate({ name, userName }); 
   };
 
 
@@ -78,7 +88,7 @@ function Page() {
             type="submit"
             className="w-full bg-pink-600 text-white py-2 px-4 rounded-full hover:bg-pink-700"
           >
-            Create post
+            Next
           </button>
         </form>
       </div>
