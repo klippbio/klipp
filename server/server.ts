@@ -1,9 +1,9 @@
 import express, { Application, Request, Response } from "express";
 import { sessions } from "@clerk/clerk-sdk-node";
-import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
-import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
 import "dotenv/config";
+
+import { routes } from "./routes";
 
 const app: Application = express();
 const port = process.env.PORT;
@@ -12,13 +12,7 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/api", async (req: Request, res: Response) => {
-  res.json({ users: ["user1", "user2", "sesd"] });
-});
-
-app.post("/api/validate", ClerkExpressRequireAuth(), async (req, res) => {
-  res.send("validate1");
-});
+app.use("/", routes);
 
 //logging server status
 try {
