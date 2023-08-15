@@ -1,4 +1,4 @@
-import Nav from "../component/Nav";
+import Nav from "../components/Nav";
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
@@ -7,8 +7,6 @@ export default function DashboardLayout({
 }) {
   return (
     <section>
-      {/* Include shared UI here e.g. a header or sidebar */}
-
       {children}
     </section>
   );
