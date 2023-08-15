@@ -1,9 +1,10 @@
 "use client"
-import { useMutation } from "react-query";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios"
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 function Page() {
 
@@ -12,42 +13,45 @@ function Page() {
   const { user } = useUser();
 
   const [name, setName] = useState('');
-  const [userName, setUserName] = useState('');
-  //const queryClient = useQueryClient();
+  const [userName, setUserName] = useState('Growthdeck.me/');
 
-  const a = user?.emailAddresses[0].emailAddress;
-  console.log(a)
-  const { mutate } = useMutation(
-    async ({ name, userName }) => // Include city, country, and phone in the mutation
-      await axios.post("/api/posts/addData", {
-        name,
-        userName,
-        userId,
-        
-      }),
+  function submitDetails(e: React.FormEvent) {
+    e.preventDefault()
+    const data = {name, userName, userId, getToken}
+    axios.post("/api/onboarding", {data}),
     {
       onError: (error) => {
-        console.log(name, userName, userId)
+        console.log("error", Error)
       },
       onSuccess: (data) => {
-        console.log("success")
-      },
+        console.log("success", data)
+      }
     }
-  );
+  }
 
-  const submitDetails = async (e: React.FormEvent) => {
-    e.preventDefault();
-    //console.log(name, userName)
-    mutate({ name, userName }); 
-  };
-
-
+  function HandleInputChange(e: React.ChangeEvent<HTMLInputElement>) { 
+    const inputValue = e.target.value;
+    
+    if (inputValue.startsWith('Growthdeck.me/')) {
+      setUserName(inputValue);
+    }
+  }
+  
   return (
+
     <div className="flex h-screen">
+
+      
       {/* Left Section */}
-      <div className="flex-1 bg-gray-100 p-10 flex flex-col justify-center items-center rounded-l-lg">
-        <h1 className="text-2xl font-semibold mb-6">Let's Get You Started</h1>
-        <form className="space-y-4 w-64" onSubmit={submitDetails}>
+
+
+
+
+      <div className="flex-1 bg-white p-10 flex flex-col justify-center items-center rounded-l-lg">
+        
+        <h1 className="text-3xl font-bold mb-6">GrowthDeck</h1>
+        <h1 className="text-2xl font-semibold mb-6">Select A User Name</h1>
+        {/* <form className="space-y-4 w-64" onSubmit={submitDetails}>
           <div className="relative">
             <input
               onChange={(e) => setName(e.target.value)}
@@ -90,16 +94,26 @@ function Page() {
           >
             Next
           </button>
-        </form>
+        </form> */}
+        <div className="flex w-full max-w-sm items-center space-x-2">
+          <Input 
+          name="userName"
+          onChange={HandleInputChange}
+          value={userName}
+          type="text" 
+          placeholder="Growth.me/" />
+          <Button type="submit">Next</Button>
+        </div>
       </div>
 
+
       {/* Right Section */}
-      <div className="flex bg-red-600">
-        <img
-          src="/onboarding.jpg" // Replace with your image URL
+      <div className="flex w-1/3 bg-black">
+        {/* <img
+          src="" // Replace with your image URL
           alt="Sample Image"
           className="h-full object-cover"
-        />
+        /> */}
       </div>
     </div>
   );

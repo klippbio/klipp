@@ -1,7 +1,16 @@
-import React from "react";
+import { User } from 'lucide-react'
+import React from 'react'
+import { UserButton } from "@clerk/nextjs";
+import { SignOutButton } from "@clerk/nextjs";
+import { Button } from '@/components/ui/button';
+import Verticle_Nav from './components/Verticle_Nav';
 
-function Page() {
-  return <div>Page</div>;
+function page() {
+  return (
+    <div>
+      <Verticle_Nav />
+    </div>
+  )
 }
 
-export default Page;
+export default page
