@@ -3,7 +3,8 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
-import QueryWrapper from "./components/QueryWrapper"
+import QueryWrapper from "./components/QueryWrapper";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata = {
   title: "Create Next App",
@@ -18,9 +19,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-
-        <body className={inter.className}>{children}</body>
-
+        <body className={inter.className}>
+          <QueryWrapper>
+            <Toaster />
+            {children}
+          </QueryWrapper>
+        </body>
       </html>
     </ClerkProvider>
   );

@@ -9,7 +9,7 @@ export default function Nav() {
     return (
         <div>
             <nav className="flex justify-between items-center py-8 px-8">
-                <h1 className="text-2xl font-bold">GrowthDeck</h1>
+                <h1 className="text-2xl font-bold">klipp</h1>
                 <div className="space-x-4">
                 {userId ? (
                         <>
