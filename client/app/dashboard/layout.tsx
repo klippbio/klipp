@@ -1,4 +1,4 @@
-import Nav from "../components/Nav";
+import Verticle_Nav from "./components/Verticle_Nav";
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
@@ -7,7 +7,7 @@ export default function DashboardLayout({
 }) {
   return (
     <section>
-
+      <Verticle_Nav />
       {children}
     </section>
   );

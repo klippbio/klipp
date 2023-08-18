@@ -1,13 +1,9 @@
 import Nav from "../components/Nav";
 
-export default function DashboardLayout({
+export default function OnboardingLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <section>
-      {children}
-    </section>
-  );
+  return <section>{children}</section>;
 }
