@@ -1,14 +1,11 @@
-import Nav from "../components/Nav";
+import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
+import { SidebarNav } from "../components/sidebarNav";
 
-export default function DashboardLayout({
-  children, // will be a page or nested layout
-}: {
+interface DashboardLayoutProps {
   children: React.ReactNode;
-}) {
-  return (
-    <section>
+}
 
-      {children}
-    </section>
-  );
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  return <section>{children}</section>;
 }

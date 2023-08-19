@@ -3,7 +3,23 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
-import QueryWrapper from "./components/QueryWrapper"
+import QueryWrapper from "./components/QueryWrapper";
+import { SidebarNav } from "./components/sidebarNav";
+
+const sidebarNavItems = [
+  {
+    title: "Dashboard",
+    href: "/dashboard",
+  },
+  {
+    title: "My Products",
+    href: "/products",
+  },
+  {
+    title: "Onboarding",
+    href: "/onboarding",
+  },
+];
 
 export const metadata = {
   title: "Create Next App",
@@ -18,9 +34,14 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-
-        <body className={inter.className}>{children}</body>
-
+        <body>
+          <div className="h-screen w-screen flex ">
+            <div className="lg:w-1/5">
+              <SidebarNav items={sidebarNavItems} />
+            </div>
+            <div className="lg:w-4/5">{children}</div>
+          </div>
+        </body>
       </html>
     </ClerkProvider>
   );

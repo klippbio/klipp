@@ -3,11 +3,7 @@ import Nav from "./components/Nav";
 import { UserButton } from "@clerk/nextjs";
 
 function page() {
-  return (
-    <div>
-      <Nav />
-    </div>
-  );
+  return <div></div>;
 }
 
 export default page;
