@@ -4,12 +4,13 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
+import { useState, useEffect, use } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -21,23 +22,31 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { get } from "http";
-import { on } from "events";
-import { redirect } from "next/dist/server/api-utils";
 
+//types
 type OnboardingFormValues = {
   username: string;
   displayName: string;
   description: string;
 };
 
+type User = {
+  id: string;
+  name: string;
+  userName: string;
+  email: string;
+  userDescription: string;
+  createdAt: Date;
+};
+
+//consts
 const onboardingFormSchema = z.object({
   username: z
     .string()
-    .min(4, {
+    .min(14, {
       message: "Username must be at least 4 characters.",
     })
-    .max(30, {
+    .max(34, {
       message: "Username must not be longer than 30 characters.",
     }),
   displayName: z
@@ -54,15 +63,22 @@ const onboardingFormSchema = z.object({
 });
 
 export function ProfileForm() {
+  //consts
   const { userId, getToken } = useAuth();
   const { user } = useUser();
   const email = user?.emailAddresses[0].emailAddress;
   const router = useRouter();
-
   const { toast } = useToast();
-
   const fixedPrefix = "klipp.bio/";
 
+  //validateing if user is onboarded
+  useEffect(() => {
+    if (user?.unsafeMetadata.onboarded) {
+      router.push("/dashboard");
+    }
+  }, [user]);
+
+  //form prefix logic
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
     defaultValues: {
       username: fixedPrefix,
@@ -97,6 +113,7 @@ export function ProfileForm() {
     );
   };
 
+  //save user data
   const mutation = useMutation({
     mutationFn: async (data: OnboardingFormValues) => {
       const combinedData = { ...data, userId, email };
@@ -109,8 +126,12 @@ export function ProfileForm() {
       });
     },
     onSuccess: () => {
+      user?.update({
+        unsafeMetadata: { onboarded: true },
+      });
       toast({
         title: "Success!",
+        duration: 1000,
         description: "Your profile was created.",
       });
       router.push("/dashboard");
@@ -118,10 +139,16 @@ export function ProfileForm() {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message,
+        variant: "destructive",
+        duration: 2000,
+        description: error.response.data.error,
       });
     },
   });
+
+  if (user?.unsafeMetadata.onboarded) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen">

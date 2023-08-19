@@ -22,9 +22,39 @@ userController.post(
   ClerkExpressRequireAuth(),
   async (req: Request, res: Response) => {
     try {
-      res.status(201).json(await userService.onboarding(req.body));
+      const usernameExists = await userService.checkUserNameExists(
+        req.body.username
+      );
+
+      if (usernameExists) {
+        return res.status(409).json({ error: "Username already exists" });
+      }
+
+      const newUser = await userService.onboarding(req.body);
+      return res.status(201).json(newUser);
     } catch (error) {
-      res.status(500).json("Something went wrong");
+      console.error("An error occurred:", error);
+      return res.status(500).json({ error: "Something went wrong" });
+    }
+  }
+);
+
+userController.get(
+  "/",
+  ClerkExpressRequireAuth(),
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.query.id;
+      if (userId) {
+        const user = await userService.getUserById(userId as string);
+        if (user) {
+          console.log(user);
+          return res.status(200).json(user);
+        }
+      }
+      return res.status(404).json("User Id not found");
+    } catch (error: any) {
+      return res.status(500).json(error.message);
     }
   }
 );
