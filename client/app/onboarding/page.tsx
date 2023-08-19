@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
+import { useRouter } from "next/navigation"; // Import useRouter
 import {
   Form,
   FormControl,
@@ -20,6 +21,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { get } from "http";
+import { on } from "events";
+import { redirect } from "next/dist/server/api-utils";
 
 type OnboardingFormValues = {
   username: string;
@@ -50,9 +54,10 @@ const onboardingFormSchema = z.object({
 });
 
 export function ProfileForm() {
-  const { userId } = useAuth();
+  const { userId, getToken } = useAuth();
   const { user } = useUser();
   const email = user?.emailAddresses[0].emailAddress;
+  const router = useRouter();
 
   const { toast } = useToast();
 
@@ -93,9 +98,28 @@ export function ProfileForm() {
   };
 
   const mutation = useMutation({
-    mutationFn: (data: OnboardingFormValues) => {
+    mutationFn: async (data: OnboardingFormValues) => {
       const combinedData = { ...data, userId, email };
-      return axios.post("/api/onboarding", combinedData);
+      return axios.post("/api/user/onboarding", combinedData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${await getToken()}`,
+          mode: "cors",
+        },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success!",
+        description: "Your profile was created.",
+      });
+      router.push("/dashboard");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
     },
   });
 
