@@ -7,7 +7,3 @@ import { userController } from "./controllers/userController";
 export const routes = express.Router();
 
 routes.use("/user", userController);
-
-// routes.post("/api/validate", ClerkExpressRequireAuth(), async (req, res) => {
-//   res.send("validate1");
-// });

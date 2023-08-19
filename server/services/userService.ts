@@ -5,18 +5,13 @@ type User = {
   name: string;
   email: string;
   createdAt: Date;
+  userName: string;
+  userDescription: string;
   //make type for links
 };
 
 export const allUsers = async (): Promise<User[]> => {
-  return db.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      createdAt: true,
-    },
-  });
+  return db.user.findMany({});
 };
 
 export const onboarding = async (body: any): Promise<User> => {
@@ -28,6 +23,24 @@ export const onboarding = async (body: any): Promise<User> => {
       email: email,
       userDescription: description,
       id: userId,
+    },
+  });
+};
+
+export const getUserById = async (id: string): Promise<User | null> => {
+  return db.user.findUnique({
+    where: {
+      id: id,
+    },
+  });
+};
+
+export const checkUserNameExists = async (
+  userName: string
+): Promise<User | null> => {
+  return db.user.findUnique({
+    where: {
+      userName: userName,
     },
   });
 };
