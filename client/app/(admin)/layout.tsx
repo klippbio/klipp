@@ -43,7 +43,7 @@ export default function RootLayout({
         <SideNav items={navItems} />
       </div>
       <Separator orientation="vertical" className="hidden md:block" />
-      <div className="flex flex-col h-screen pb-20 w-full overflow-hidden ">
+      <div className="flex flex-col h-screen pb-20 md:pb-0 w-full overflow-hidden ">
         {children}
       </div>
       {/* <div className="relative flex-grow">
