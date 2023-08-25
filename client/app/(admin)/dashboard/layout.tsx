@@ -6,5 +6,5 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  return <section className="bg-red-500">{children}</section>;
+  return <section>{children}</section>;
 }

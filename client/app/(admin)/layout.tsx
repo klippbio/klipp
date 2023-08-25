@@ -13,6 +13,7 @@ import { RiMenuFill } from "react-icons/ri";
 import { LayoutDashboardIcon } from "lucide-react";
 import { ShoppingBasketIcon } from "lucide-react";
 import { WrapText } from "lucide-react";
+import TopBar from "../components/topBar";
 
 const navItems = [
   {
@@ -44,13 +45,10 @@ export default function RootLayout({
       </div>
       <Separator orientation="vertical" className="hidden md:block" />
       <div className="flex flex-col h-screen pb-20 md:pb-0 w-full overflow-hidden ">
+        <TopBar />
+        <Separator orientation="horizontal" />
         {children}
       </div>
-      {/* <div className="relative flex-grow">
-        <div className="p-4 h-screen md:flex md:flex-col overflow-y-auto">
-          {children}
-        </div>
-      </div> */}
       <div className="md:hidden w-full">
         <BottomBar items={navItems} />
       </div>

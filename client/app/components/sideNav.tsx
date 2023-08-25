@@ -26,7 +26,6 @@ export function SideNav({ className, items, ...props }: NavProps) {
           <PaperclipIcon size={24} />
           <span className="pl-2 text">klipp</span>
         </div>
-        <Separator orientation="horizontal" className="my-4" />
         <nav
           className={cn("flex flex-col space-y-5 align-center", className)}
           {...props}
@@ -44,7 +43,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
             >
               <div className="flex flex-wrap items-center p-1">
                 {item.icon}
-                <span className="pl-4">{item.title}</span>
+                <span className="pl-2">{item.title}</span>
               </div>
             </Link>
           ))}
