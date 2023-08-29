@@ -9,6 +9,7 @@ import { SideNav } from "./components/sideNav";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { Toaster } from "@/components/ui/toaster";
 
 const sidebarNavItems = [
   {
@@ -34,7 +35,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <QueryWrapper>{children}</QueryWrapper>
+          <QueryWrapper>
+            <Toaster />
+            {children}
+          </QueryWrapper>
         </body>
       </html>
     </ClerkProvider>

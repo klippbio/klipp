@@ -1,123 +1,219 @@
-"use client"
-import React, { useState } from "react";
-import axios from "axios"
+"use client";
+
+import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import * as z from "zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
+import { useState, useEffect, use } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
-function Page() {
+//types
+type OnboardingFormValues = {
+  username: string;
+  displayName: string;
+  description: string;
+};
 
-  
-  //clerk userid
-  const { isLoaded, userId, sessionId, getToken } = useAuth();
+type User = {
+  id: string;
+  name: string;
+  userName: string;
+  email: string;
+  userDescription: string;
+  createdAt: Date;
+};
+
+//consts
+const onboardingFormSchema = z.object({
+  username: z
+    .string()
+    .min(14, {
+      message: "Username must be at least 4 characters.",
+    })
+    .max(34, {
+      message: "Username must not be longer than 30 characters.",
+    }),
+  displayName: z
+    .string()
+    .min(2, {
+      message: "Display name must be at least 2 characters.",
+    })
+    .max(50, {
+      message: "Display name must not be longer than 30 characters.",
+    }),
+  description: z.string().max(150, {
+    message: "Description must not be longer than 30 characters.",
+  }),
+});
+
+export function ProfileForm() {
+  //consts
+  const { userId, getToken } = useAuth();
   const { user } = useUser();
+  const email = user?.emailAddresses[0].emailAddress;
+  const router = useRouter();
+  const { toast } = useToast();
+  const fixedPrefix = "klipp.bio/";
 
-  const [name, setName] = useState('');
-  const [userName, setUserName] = useState('Growthdeck.me/');
-
-  function submitDetails(e: React.FormEvent) {
-    e.preventDefault()
-    const data = {name, userName, userId, getToken}
-    axios.post("/api/onboarding", {data}),
-    {
-      onError: (error) => {
-        console.log("error", Error)
-      },
-      onSuccess: (data) => {
-        console.log("success", data)
-      }
+  //validateing if user is onboarded
+  useEffect(() => {
+    if (user?.unsafeMetadata.onboarded) {
+      router.push("/dashboard");
     }
+  }, [user]);
+
+  //form prefix logic
+  const form = useForm<z.infer<typeof onboardingFormSchema>>({
+    defaultValues: {
+      username: fixedPrefix,
+      displayName: "",
+      description: "",
+    },
+    resolver: zodResolver(onboardingFormSchema),
+  });
+
+  function onSubmit(data: z.infer<typeof onboardingFormSchema>) {
+    data.username = data.username.replace(fixedPrefix, "");
+    mutation.mutate(data);
   }
 
-  function HandleInputChange(e: React.ChangeEvent<HTMLInputElement>) { 
-    const inputValue = e.target.value;
-    
-    if (inputValue.startsWith('Growthdeck.me/')) {
-      setUserName(inputValue);
+  const dynamicValue = form.watch("username");
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let newValue = event.target.value;
+
+    // If the input doesn't start with the fixed prefix, add it
+    if (!newValue.startsWith(fixedPrefix)) {
+      newValue = fixedPrefix;
+    } else {
+      newValue = fixedPrefix + newValue;
     }
+
+    // Set the value and make sure it's not prefixed twice
+    form.setValue(
+      "username",
+      newValue.replace(fixedPrefix + fixedPrefix, fixedPrefix),
+      { shouldDirty: true }
+    );
+  };
+
+  //save user data
+  const mutation = useMutation({
+    mutationFn: async (data: OnboardingFormValues) => {
+      const combinedData = { ...data, userId, email };
+      return axios.post("/api/user/onboarding", combinedData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${await getToken()}`,
+          mode: "cors",
+        },
+      });
+    },
+    onSuccess: () => {
+      user?.update({
+        unsafeMetadata: { onboarded: true },
+      });
+      toast({
+        title: "Success!",
+        duration: 1000,
+        description: "Your profile was created.",
+      });
+      router.push("/dashboard");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        duration: 2000,
+        description: error.response.data.error,
+      });
+    },
+  });
+
+  if (user?.unsafeMetadata.onboarded) {
+    return null;
   }
-  
+
   return (
-
     <div className="flex h-screen">
-
-      
       {/* Left Section */}
 
-
-
-
-      <div className="flex-1 bg-white p-10 flex flex-col justify-center items-center rounded-l-lg">
-        
-        <h1 className="text-3xl font-bold mb-6">GrowthDeck</h1>
-        <h1 className="text-2xl font-semibold mb-6">Select A User Name</h1>
-        {/* <form className="space-y-4 w-64" onSubmit={submitDetails}>
-          <div className="relative">
-            <input
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              type="text"
-              id="name"
-              name="name"
-              className="w-full outline-none border rounded-full px-3 py-4 focus:ring-0 focus:border-pink-300"
-              placeholder="John Doe"
+      <div className="flex-1 bg-background p-10 flex flex-col justify-center items-center rounded-l-lg">
+        <h1 className="text-3xl font-bold mb-6">klipp</h1>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="username">Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="username"
+                      value={dynamicValue}
+                      onChange={handleChange}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    This is your unique username. You can change it later.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <label
-              htmlFor="name"
-              className="absolute top-0 rounded-full left-3 -mt-2 bg-white px-1 text-gray-600"
-            >
-              Name
-            </label>
-          </div>
-
-          <div className="relative">
-            <input
-              onChange={(e) => setUserName(e.target.value)}
-              value={userName}
-              type="text"
-              id="userName"
-              name="userName"
-              className="w-full outline-none border rounded-full px-3 py-4 focus:ring-0 focus:border-pink-300"
-              placeholder="John12"
+            <FormField
+              control={form.control}
+              name="displayName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="displayName">Full Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} id="displayName" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <label
-              htmlFor="userName"
-              className="absolute top-0 rounded-full left-3 -mt-2 bg-white px-1 text-gray-600"
-            >
-              User Name
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-pink-600 text-white py-2 px-4 rounded-full hover:bg-pink-700"
-          >
-            Next
-          </button>
-        </form> */}
-        <div className="flex w-full max-w-sm items-center space-x-2">
-          <Input 
-          name="userName"
-          onChange={HandleInputChange}
-          value={userName}
-          type="text" 
-          placeholder="Growth.me/" />
-          <Button type="submit">Next</Button>
-        </div>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="description">Description</FormLabel>
+                  <FormControl>
+                    <Input {...field} id="description" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Next</Button>
+          </form>
+        </Form>
       </div>
-
 
       {/* Right Section */}
-      <div className="flex w-1/3 bg-black">
-        {/* <img
-          src="" // Replace with your image URL
-          alt="Sample Image"
-          className="h-full object-cover"
-        /> */}
-      </div>
+      <div className="flex bg-foreground lg:w-1/3 md:w-1/4"></div>
     </div>
   );
 }
 
-export default Page;
+export default ProfileForm;
