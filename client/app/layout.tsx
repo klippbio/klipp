@@ -3,12 +3,12 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
+import { Poppins } from "next/font/google";
 import QueryWrapper from "./components/QueryWrapper";
 import { SideNav } from "./components/sideNav";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { Toaster } from "react-hot-toast";
 
 const sidebarNavItems = [
   {
@@ -30,30 +30,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const pathname = usePathname();
-  // const [showNav, setShowMenu] = useState(true);
-  // console.log(showNav);
-  {
-    /* // <div className="h-screen w-screen flex flex-col md:flex-row">
-    //   <div className="md:w-1/6">
-    //     <SidebarNav items={sidebarNavItems} />
-    //   </div>
-    //   <Separator orientation="vertical" className="hidden md:block" />
-    //   <div className="md:w-5/6">
-    //     <div className="bg-red-500 p-4 md:flex md:flex-col h-full">
-    //       {children}
-    //     </div>
-    //   </div>
-    // </div> */
-  }
   return (
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <QueryWrapper>
-            <Toaster />
-            {children}
-          </QueryWrapper>
+          <QueryWrapper>{children}</QueryWrapper>
         </body>
       </html>
     </ClerkProvider>

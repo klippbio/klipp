@@ -5,19 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, auth, useAuth } from "@clerk/nextjs";
 import { PaperclipIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { NavProps } from "admin";
 
-interface NavProps extends React.HTMLAttributes<HTMLElement> {
-  items: {
-    href: string;
-    title: string;
-    icon: React.ReactNode;
-  }[];
-}
 export function SideNav({ className, items, ...props }: NavProps) {
   const pathname = usePathname();
+  const { userId } = useAuth();
 
   return (
     <>
@@ -37,7 +31,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
               href={item.href}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
-                pathname === item.href ? "bg-secondary" : "hover:bg-background",
+                pathname === item.href ? "bg-secondary" : "hover:bg-secondary",
                 "justify-start flex items-center"
               )}
             >
@@ -48,6 +42,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
             </Link>
           ))}
         </nav>
+        {/* Example for bottom settings */}
         <div className="mt-auto flex flex-col space-y-4 align-center">
           <Link
             href={"/settings"}
@@ -58,6 +53,16 @@ export function SideNav({ className, items, ...props }: NavProps) {
           >
             Settings
           </Link>
+          {!userId && (
+            <>
+              <Button variant="outline">
+                <Link href="/sign-in">Sign In</Link>
+              </Button>
+              <Button>
+                <Link href="/sign-up">Sign Up</Link>
+              </Button>
+            </>
+          )}
           <UserButton />
         </div>
       </div>
