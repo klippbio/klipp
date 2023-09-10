@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
 import * as userService from "../services/userService";
+import * as storeService from "../services/storeService";
 
 export const userController = express.Router();
 
@@ -22,15 +23,14 @@ userController.post(
   ClerkExpressRequireAuth(),
   async (req: Request, res: Response) => {
     try {
-      const usernameExists = await userService.checkUserNameExists(
-        req.body.username
+      const usernameExists = await storeService.checkStoreUrlExists(
+        req.body.storeUrl
       );
-
       if (usernameExists) {
         return res.status(409).json({ error: "Username already exists" });
       }
-
       const newUser = await userService.onboarding(req.body);
+      console.log(newUser);
       return res.status(201).json(newUser);
     } catch (error) {
       console.error("An error occurred:", error);

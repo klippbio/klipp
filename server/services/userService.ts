@@ -1,28 +1,33 @@
 import { db } from "../utils/db.server";
+import type { Prisma, User } from "@prisma/client";
 
-type User = {
-  id: string;
-  name: string;
+type OnboardingInput = {
+  storeUrl: string;
+  storeTitle: string;
+  storeDescription: string;
+  userId: string;
   email: string;
-  createdAt: Date;
-  userName: string;
-  userDescription: string;
-  //make type for links
 };
 
 export const allUsers = async (): Promise<User[]> => {
   return db.user.findMany({});
 };
 
-export const onboarding = async (body: any): Promise<User> => {
-  const { displayName, username, email, description, userId } = body;
+export const onboarding = async (body: OnboardingInput): Promise<User> => {
   return db.user.create({
     data: {
-      userName: username,
-      name: displayName,
-      email: email,
-      userDescription: description,
-      id: userId,
+      id: body.userId,
+      email: body.email,
+      stores: {
+        create: {
+          storeUrl: body.storeUrl,
+          storeTitle: body.storeTitle,
+          storeDescription: body.storeDescription,
+        },
+      },
+    },
+    include: {
+      stores: true,
     },
   });
 };
@@ -31,16 +36,6 @@ export const getUserById = async (id: string): Promise<User | null> => {
   return db.user.findUnique({
     where: {
       id: id,
-    },
-  });
-};
-
-export const checkUserNameExists = async (
-  userName: string
-): Promise<User | null> => {
-  return db.user.findUnique({
-    where: {
-      userName: userName,
     },
   });
 };

@@ -10,22 +10,75 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  stores    Store[]
+}
+
+model Store{
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  storeUrl String @unique
+  storeTitle String?
+  storeDescription String?
+  userId String 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeItems StoreItem[]
+  socialSet SocialSet?
+  @@index([userId], name: "userId")
+  @@index([storeUrl], name: "storeUrl")
+}
+
+model StoreItem{
+  id        String   @id @default(uuid())
+  itemOrder Int @unique @default(autoincrement())
+  itemType StoreItemType
+  Link Link?
+  DigitalProduct DigitalProduct?
+  storeId String 
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+}
+
 model Link{
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name String
   url String
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
+  storeItemId String @unique
 }
 
-model User {
+model DigitalProduct{
   id        String   @id @default(uuid())
-  name     String
-  userName String   @unique
-  email     String   @unique
-  userDescription String 
   createdAt DateTime @default(now())
-  links     Link[]
+  updatedAt DateTime @updatedAt
+  name String
+  description String
+  storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
+  storeItemId String @unique
+}
+
+model SocialSet{
+  id        String   @id @default(uuid())
+  updatedAt DateTime @updatedAt
+  instagram String
+  facebook String
+  twitter String
+  youtube String
+  twitch String
+  tiktok String
+  storeId String @unique
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+}
+
+enum StoreItemType{
+  LINK 
+  DIGITALPRODUCT
+  SOCIALSET 
+  CALENDER
+  WEBINAR
+  COURSE
 }
