@@ -1,14 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { useState, useEffect, use } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
