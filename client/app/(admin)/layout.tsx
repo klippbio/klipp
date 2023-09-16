@@ -1,18 +1,13 @@
 // app/layout.tsx
 import "../globals.css";
 import { Inter } from "next/font/google";
-import { ClerkProvider, auth } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
-import QueryWrapper from "../components/QueryWrapper";
 import { SideNav } from "../components/sideNav";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
 import { BottomBar } from "../components/bottomBar";
-import { RiMenuFill } from "react-icons/ri";
-import { LayoutDashboardIcon } from "lucide-react";
+import { LayoutDashboardIcon } from "lucide-react/";
 import { ShoppingBasketIcon } from "lucide-react";
-import { WrapText } from "lucide-react";
+import { WrapText } from "lucide-react/";
 import TopBar from "../components/topBar";
 
 const navItems = [

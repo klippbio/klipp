@@ -1,14 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { useState, useEffect, use } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
@@ -25,23 +24,14 @@ import { useToast } from "@/components/ui/use-toast";
 
 //types
 type OnboardingFormValues = {
-  username: string;
-  displayName: string;
-  description: string;
-};
-
-type User = {
-  id: string;
-  name: string;
-  userName: string;
-  email: string;
-  userDescription: string;
-  createdAt: Date;
+  storeUrl: string;
+  storeTitle: string;
+  storeDescription: string;
 };
 
 //consts
 const onboardingFormSchema = z.object({
-  username: z
+  storeUrl: z
     .string()
     .min(14, {
       message: "Username must be at least 4 characters.",
@@ -49,7 +39,7 @@ const onboardingFormSchema = z.object({
     .max(34, {
       message: "Username must not be longer than 30 characters.",
     }),
-  displayName: z
+  storeTitle: z
     .string()
     .min(2, {
       message: "Display name must be at least 2 characters.",
@@ -57,7 +47,7 @@ const onboardingFormSchema = z.object({
     .max(50, {
       message: "Display name must not be longer than 30 characters.",
     }),
-  description: z.string().max(150, {
+  storeDescription: z.string().max(150, {
     message: "Description must not be longer than 30 characters.",
   }),
 });
@@ -81,19 +71,19 @@ export function ProfileForm() {
   //form prefix logic
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
     defaultValues: {
-      username: fixedPrefix,
-      displayName: "",
-      description: "",
+      storeUrl: fixedPrefix,
+      storeTitle: "",
+      storeDescription: "",
     },
     resolver: zodResolver(onboardingFormSchema),
   });
 
   function onSubmit(data: z.infer<typeof onboardingFormSchema>) {
-    data.username = data.username.replace(fixedPrefix, "");
+    data.storeUrl = data.storeUrl.replace(fixedPrefix, "");
     mutation.mutate(data);
   }
 
-  const dynamicValue = form.watch("username");
+  const dynamicValue = form.watch("storeUrl");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = event.target.value;
@@ -107,7 +97,7 @@ export function ProfileForm() {
 
     // Set the value and make sure it's not prefixed twice
     form.setValue(
-      "username",
+      "storeUrl",
       newValue.replace(fixedPrefix + fixedPrefix, fixedPrefix),
       { shouldDirty: true }
     );
@@ -125,10 +115,11 @@ export function ProfileForm() {
         },
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       user?.update({
         unsafeMetadata: { onboarded: true },
       });
+      console.log(data);
       toast({
         title: "Success!",
         duration: 1000,
@@ -160,20 +151,20 @@ export function ProfileForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="username"
+              name="storeUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="username">Username</FormLabel>
+                  <FormLabel htmlFor="storeUrl">Unique Url</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      id="username"
+                      id="storeUrl"
                       value={dynamicValue}
                       onChange={handleChange}
                     />
                   </FormControl>
                   <FormDescription>
-                    This is your unique username. You can change it later.
+                    This is your unique url. You can change it later.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -181,12 +172,12 @@ export function ProfileForm() {
             />
             <FormField
               control={form.control}
-              name="displayName"
+              name="storeTitle"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="displayName">Full Name</FormLabel>
+                  <FormLabel htmlFor="storeTitle">Title</FormLabel>
                   <FormControl>
-                    <Input {...field} id="displayName" />
+                    <Input {...field} id="storeTitle" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -194,12 +185,12 @@ export function ProfileForm() {
             />
             <FormField
               control={form.control}
-              name="description"
+              name="storeDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="description">Description</FormLabel>
+                  <FormLabel htmlFor="storeDescription">Description</FormLabel>
                   <FormControl>
-                    <Input {...field} id="description" />
+                    <Input {...field} id="storeDescription" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
