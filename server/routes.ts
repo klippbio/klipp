@@ -3,7 +3,9 @@ import { Request, Response } from "express";
 import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import { userController } from "./controllers/userController";
+import { ddController } from "./controllers/ddController";
 
 export const routes = express.Router();
 
 routes.use("/user", userController);
+routes.use("/digital-downloads", ddController);
