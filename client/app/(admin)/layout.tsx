@@ -39,7 +39,7 @@ export default function RootLayout({
         <SideNav items={navItems} />
       </div>
       <Separator orientation="vertical" className="hidden md:block" />
-      <div className="flex flex-col h-screen pb-20 md:pb-0 w-full overflow-hidden ">
+      <div className="flex flex-col h-screen pb-20 md:pb-0 w-full ">
         <TopBar />
         <Separator orientation="horizontal" />
         {children}

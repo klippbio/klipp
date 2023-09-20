@@ -56,6 +56,9 @@ model DigitalProduct{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name String
+  shortDescription String
+  thumbnailUrl String
+  createdBy String
   description String
   storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
   storeItemId String @unique

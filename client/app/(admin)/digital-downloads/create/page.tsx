@@ -26,7 +26,9 @@ import { useToast } from "@/components/ui/use-toast";
 import Stepper from "../../../../components/ui/custom/stepper";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import router from "next/router";
+
+//types
+
 //consts
 const digitalDownloadsSchema = z.object({
   name: z.string().nonempty({ message: "Name is required" }),
@@ -38,6 +40,7 @@ export function ProfileForm() {
   //consts
   const { userId, getToken } = useAuth();
   const { user } = useUser();
+  const router = useRouter();
   const email = user?.emailAddresses[0].emailAddress;
   const [showUploadFile, setShowUploadFile] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -75,7 +78,8 @@ export function ProfileForm() {
   //save user data
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
-      return axios.post("/api/digital-downloads/create", data, {
+      const combinedData = { ...data, userId };
+      return axios.post("/api/digital-downloads/create", combinedData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${await getToken()}`,
@@ -83,13 +87,15 @@ export function ProfileForm() {
         },
       });
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      const productId = data.data.id;
+      console.log(data);
+      router.push(`/digital-downloads/create/2/?productId=${productId}`);
       toast({
         title: "Success!",
         duration: 1000,
         description: "Product created successfully",
       });
-      router.push("/digital-downloads/create/2");
     },
     onError: (error: any) => {
       toast({
@@ -122,9 +128,9 @@ export function ProfileForm() {
                     <FormLabel htmlFor="displayName">Thumbnail</FormLabel>
                     <FormControl>
                       <div
-                        className={`w-full h-32 md:h-32 md:w-32 outline-dashed flex flex-col items-center justify-center rounded-md relative ${
+                        className={`w-full h-32 md:h-32 md:w-32 border-2 flex flex-col items-center justify-center rounded-md relative ${
                           selectedFile
-                            ? "outline-transparent"
+                            ? "border-transparent"
                             : buttonVariants({ variant: "ghost" })
                         }`}
                       >

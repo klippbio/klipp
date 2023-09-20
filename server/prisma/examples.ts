@@ -18,6 +18,7 @@ async function main() {
   //     stores: true,
   //   },
   // });
+
   // const store2 = await db.store.create({
   //   data: {
   //     storeName: "alice2",
