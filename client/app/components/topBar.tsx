@@ -15,7 +15,7 @@ export default function TopBar() {
     .join(" ");
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex bg-secondary flex-col w-full">
       <div className="z-1 w-full">
         <nav className="flex sticky h-20 top-0 pl-5 min-h-[50px] items-center justify-between">
           <div className="md:hidden flex p-0 grow-0 shrink-0 basis-auto width-screen">

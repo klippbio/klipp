@@ -27,7 +27,7 @@ export default function Editor() {
     const Quote = require("@editorjs/quote");
     const ImageTool = require("@editorjs/image");
     const Delimiter = require("@editorjs/delimiter");
-    const Header = require("editorjs-header-with-alignment");
+    const Header = require("@editorjs/header");
     const Alert = require("editorjs-alert");
     const NestedList = require("@editorjs/nested-list");
     const Embed = require("@editorjs/embed");
