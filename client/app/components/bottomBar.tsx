@@ -89,8 +89,8 @@ export function BottomBar({ className, items, ...props }: NavProps) {
                             variant: "outline",
                             size: "lg",
                           }),
-                          "justify-start flex items-center rounded-3xl h-12 text-primary hover:bg-secondary",
-                          pathname === item.href && "bg-secondary"
+                          "justify-start flex items-center rounded-3xl h-12 text-primary hover:bg-overlay",
+                          pathname === item.href && "bg-overlay"
                         )}
                       >
                         <div className="flex flex-wrap items-center">
@@ -107,8 +107,8 @@ export function BottomBar({ className, items, ...props }: NavProps) {
                             variant: "outline",
                             size: "lg",
                           }),
-                          "justify-start flex items-center rounded-3xl h-12 text-primary hover:bg-secondary",
-                          pathname === item.href && "bg-secondary"
+                          "justify-start flex items-center rounded-3xl h-12 text-primary hover:bg-overlay",
+                          pathname === item.href && "bg-overlay"
                         )}
                       >
                         <div className="flex flex-wrap items-center">
@@ -126,8 +126,8 @@ export function BottomBar({ className, items, ...props }: NavProps) {
                         variant: "outline",
                         size: "lg",
                       }),
-                      "justify-start flex items-center rounded-3xl h-12 text-primary hover:bg-secondary",
-                      pathname === "/onboarding" && "bg-secondary"
+                      "justify-start flex items-center rounded-3xl h-12 text-primary hover:bg-overlay",
+                      pathname === "/onboarding" && "bg-overlay"
                     )}
                   >
                     <div className="flex flex-wrap items-center">

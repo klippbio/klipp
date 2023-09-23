@@ -15,13 +15,16 @@ export function SideNav({ className, items, ...props }: NavProps) {
 
   return (
     <>
-      <div className="flex flex-col h-screen w-full justify-start p-2.5 md:bg-background ">
+      <div className="flex flex-col h-screen w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
         <div className="flex justify-start text-3xl items-center p-5 pl-9">
           <PaperclipIcon size={24} />
           <span className="pl-2 text">klipp</span>
         </div>
         <nav
-          className={cn("flex flex-col space-y-5 align-center", className)}
+          className={cn(
+            "flex flex-col space-y-3 align-center text-bold",
+            className
+          )}
           {...props}
         >
           <div className="pt-2"></div>
@@ -31,8 +34,8 @@ export function SideNav({ className, items, ...props }: NavProps) {
               href={item.href}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
-                pathname === item.href ? "bg-secondary" : "hover:bg-secondary",
-                "justify-start flex items-center"
+                pathname === item.href && "bg-overlay text-primary",
+                "justify-start flex items-center font-semibold hover:bg-overlay hover:text-primary"
               )}
             >
               <div className="flex flex-wrap items-center p-1">
