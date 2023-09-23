@@ -1,0 +1,9 @@
+import Image from "next/image";
+
+interface CalendarLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function CalendarLayout({ children }: CalendarLayoutProps) {
+  return <section>{children}</section>;
+}
