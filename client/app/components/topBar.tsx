@@ -15,7 +15,7 @@ export default function TopBar() {
     .join(" ");
 
   return (
-    <div className="flex bg-secondary flex-col w-full">
+    <div className="flex flex-col w-full bg-white">
       <div className="z-1 w-full">
         <nav className="flex sticky h-20 top-0 pl-5 min-h-[50px] items-center justify-between">
           <div className="md:hidden flex p-0 grow-0 shrink-0 basis-auto width-screen">
@@ -31,9 +31,9 @@ export default function TopBar() {
               <a href="klipp.bio" target="_blank">
                 klipp.bio/meetshukla
               </a>
-              <Button variant={"ghost"} className="ml-2">
-                <CopyIcon size={24} />
-                <span className="hidden md:inline-block font-bold align-middle">
+              <Button className="m-2 text-overlay">
+                <CopyIcon size={16} />
+                <span className="hidden md:inline-block font-bold align-middle ">
                   Copy
                 </span>
               </Button>
