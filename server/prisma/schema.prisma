@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,68 +14,202 @@ model User {
   stores    Store[]
 }
 
-model Store{
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  storeUrl String @unique
-  storeTitle String
+model Store {
+  id               String      @id @default(uuid())
+  createdAt        DateTime    @default(now())
+  userId           String
   storeDescription String?
-  userId String 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  storeItems StoreItem[]
-  socialSet SocialSet?
-  @@index([userId], name: "userId")
-  @@index([storeUrl], name: "storeUrl")
+  storeTitle       String
+  storeUrl         String      @unique
+  socialSet        SocialSet?
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeItems       StoreItem[]
+
+
+  schedules Schedule[]
+  googleCalendar GoogleCalendar?
+  bookings Booking[]
+  timeZone     String?
+
+  @@index([userId], map: "userId")
+  @@index([storeUrl], map: "storeUrl")
 }
 
-model StoreItem{
-  id        String   @id @default(uuid())
-  itemOrder Int @unique @default(autoincrement())
-  itemType StoreItemType
-  Link Link?
+model StoreItem {
+  id             String          @id @default(uuid())
+  itemOrder      Int             @unique @default(autoincrement())
+  storeId        String
+  itemType       StoreItemType
   DigitalProduct DigitalProduct?
-  storeId String 
-  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  calendarProduct calendarProduct?
+  Link           Link?
+  store          Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }
 
-model Link{
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name String
-  url String
-  storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
-  storeItemId String @unique
+model Link {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String
+  url         String
+  storeItemId String    @unique
+  storeItem   StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
 }
 
-model DigitalProduct{
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name String
-  description String
-  storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
-  storeItemId String @unique
+model DigitalProduct {
+  id               String    @id @default(uuid())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  name             String
+  description      String
+  storeItemId      String    @unique
+  shortDescription String
+  thumbnailUrl     String
+  createdBy        String
+  storeItem        StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
 }
 
-model SocialSet{
+model SocialSet {
   id        String   @id @default(uuid())
   updatedAt DateTime @updatedAt
   instagram String
-  facebook String
-  twitter String
-  youtube String
-  twitch String
-  tiktok String
-  storeId String @unique
-  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  facebook  String
+  twitter   String
+  youtube   String
+  twitch    String
+  tiktok    String
+  storeId   String   @unique
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }
 
-enum StoreItemType{
-  LINK 
-  DIGITALPRODUCT
-  SOCIALSET 
-  CALENDER
-  WEBINAR
-  COURSE
+enum StoreItemType {
+  LINK @map("link")
+  DIGITALPRODUCT @map("digitalproduct")
+  SOCIALSET @map("socialset")
+  CALENDER @map("calender")
+  WEBINAR @map("webinar")
+  COURSE @map("course")
+}
+
+enum PeriodType {
+  UNLIMITED @map("unlimited")
+  ROLLING   @map("rolling")
+  RANGE     @map("range")
+}
+
+model Schedule {
+  id           Int   @id @default(autoincrement()) @unique
+  storeId String 
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  calendarProduct    calendarProduct[]
+  name         String
+  timeZone     String?
+  availability Availability[]
+
+  @@index([storeId])
+}
+
+model Availability {
+  id          Int        @id @default(autoincrement()) @unique
+  calendarProduct   calendarProduct? @relation(fields: [calendarProductId], references: [id]) 
+  calendarProductId Int?
+  days        Int[]
+  startTime   DateTime   @db.Time
+  endTime     DateTime   @db.Time
+  date        DateTime?  @db.Date
+  Schedule    Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId  Int
+
+  @@index([calendarProductId])
+  @@index([scheduleId])
+}
+
+model calendarProduct {
+  id                              Int                     @id @default(autoincrement())
+  title                           String
+  slug                            String
+  description                     String?
+  length                          Int                 
+  hidden                          Boolean                 @default(false)
+  bookings                        Booking[]
+  availability                    Availability[]
+  googleCalendar                  GoogleCalendar?         @relation(fields: [id], references: [id])
+  timeZone                        String?
+
+  periodType                      PeriodType              @default(UNLIMITED)
+  periodStartDate                 DateTime?
+  periodEndDate                   DateTime?
+
+  minimumBookingNotice            Int                     @default(120)
+  beforeEventBuffer               Int                     @default(0)
+  afterEventBuffer                Int                     @default(0)
+  
+  schedule                        Schedule?               @relation(fields: [scheduleId], references: [id])
+  scheduleId                      Int? @unique
+
+  storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
+  storeItemId String @unique
+
+  price                          Int?
+
+  @@unique([storeItemId,slug])
+  @@index([storeItemId])
+}
+
+model GoogleCalendar{
+
+  id        Int   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  calendarId String @unique
+  calendarProducts calendarProduct[]
+  refreshToken String
+  accessToken String
+  bookings Booking[]
+  storeId String @unique
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@index([calendarId])
+}
+
+model Booking{
+  id       Int   @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  storeId String @unique
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  calendarProductId Int
+  calendarProduct calendarProduct? @relation(fields: [calendarProductId], references: [id])
+
+  title String
+  description String?
+  attendees Attendee[]
+  startTime DateTime
+  endTime DateTime
+  googleCalendarId Int?
+  googleCalendar GoogleCalendar? @relation(fields: [googleCalendarId], references: [id])
+
+  meetingUrl String?
+  meetingPassword String?
+  meetingId String?
+  rescheduled           Boolean?                @default(false)
+
+  @@index([calendarProductId])
+  @@index([googleCalendarId])
+  @@index([storeId])
+}
+
+model Attendee {
+  id          Int          @id @default(autoincrement())
+  email       String
+  name        String
+  timeZone    String
+  booking     Booking?     @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  bookingId   Int?
+
+  @@index([email])
+  @@index([bookingId])
 }
