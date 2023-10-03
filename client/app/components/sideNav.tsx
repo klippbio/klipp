@@ -15,7 +15,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
 
   return (
     <>
-      <div className="flex flex-col h-screen w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
+      <div className="flex flex-col h-screen w-full justify-start p-2.5 md:bg-secondary ">
         <div className="flex justify-start text-3xl items-center p-5 pl-9">
           <PaperclipIcon size={24} />
           <span className="pl-2 text">klipp</span>

@@ -35,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <div className="h-screen w-screen flex flex-col md:flex-row">
-      <div className="hidden md:flex md:w-72">
+      <div className="hidden md:h-full md:flex md:w-72">
         <SideNav items={navItems} />
       </div>
       <Separator orientation="vertical" className="hidden md:block" />

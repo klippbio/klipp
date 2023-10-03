@@ -1,18 +1,18 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import * as z from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
-import Editor from "@/components/ui/custom/editor/Editor";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -23,112 +23,173 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import { useToast } from "@/components/ui/use-toast";
+import Editor from "@/components/ui/custom/editor/Editor";
 import { Card } from "@/components/ui/card";
-
 //types
 
 //consts
 const digitalDownloadsSchema = z.object({
-  name: z.string().nonempty({ message: "Name is required" }),
-  shortDescription: z.string().optional(),
-  thumbnail: z.string().optional(),
-  externalFile: z.boolean().optional().default(false),
-  fileName: z.string().optional(),
-  fileLink: z.string().optional(),
-  description: z.string().optional(),
-  file: z.string().optional(),
-  currency: z.string().array().default(["USD"]),
-  price: z
-    .number({
-      required_error: "Price is required",
-    })
-    .min(0)
-    .max(5000),
-  recPrice: z.number().min(0).max(5000),
-  minPrice: z.number().min(0).max(5000).default(0).optional(),
-  flexPrice: z.boolean().optional(),
-  visibility: z.boolean().optional().default(false),
+  thumbnail: z.string(),
+  productName: z.string().min(2, {
+    message: "Product name is required",
+  }),
+  shortDescription: z.string(),
+  file: z.string(),
+  fileName: z.string(),
+  fileLink: z.string(),
+  externalFile: z.boolean(),
+  description: z.string(),
+  price: z.string().min(1, {
+    message: "Price is required",
+  }),
+  recPrice: z.string(),
+  minPrice: z.string(),
+  flexPrice: z.boolean(),
+  visibility: z.boolean(),
 });
-//   .refine(
-//     (digitalDownloadsSchema: any) =>
-//       digitalDownloadsSchema.recPrice >= digitalDownloadsSchema.price,
-//     {
-//       message: "Recommended Price must be greater than Price",
-//       path: ["recPrice"],
-//     }
-//   );
 
-export function ProfileForm() {
+export default function ProfileForm() {
   //consts
   const { userId, getToken } = useAuth();
   const { user } = useUser();
   const router = useRouter();
-  const email = user?.emailAddresses[0].emailAddress;
-  const [showUploadFile, setShowUploadFile] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
-  const [editorData, setEditorData] = useState("");
+  const [showUploadFile, setShowUploadFile] = useState(true);
+  const [editorData, setEditorData] = useState(null);
   const [flexPrice, setFlexPrice] = useState(true);
   const [priceState, setPriceState] = useState("");
+  const fixedPrefix = "$ ";
 
-  const { toast } = useToast();
   const updateEditorData = useCallback((state: any) => {
     setEditorData(state);
   }, []);
+
+  const { toast } = useToast();
+
   //form prefix logic
   const form = useForm<z.infer<typeof digitalDownloadsSchema>>({
     defaultValues: {
-      thumbnail: "https://thumbnail.com",
+      file: "",
       fileName: "",
+      productName: "",
+      shortDescription: "",
       fileLink: "",
       description: "",
-      file: "",
+      externalFile: false,
+      visibility: false,
+      flexPrice: false,
+      price: fixedPrefix,
+      minPrice: fixedPrefix,
+      recPrice: fixedPrefix,
     },
     resolver: zodResolver(digitalDownloadsSchema),
   });
 
+  const dynamicValue = form.watch("price");
+  const dynamicValue2 = form.watch("recPrice");
+
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPriceState(event.target.value);
+    let newValue = event.target.value;
+
+    setPriceState(newValue);
+
+    if (!newValue.startsWith(fixedPrefix)) {
+      newValue = fixedPrefix;
+    } else {
+      newValue = fixedPrefix + newValue;
+    }
+    form.setValue(
+      "price",
+      newValue.replace(fixedPrefix + fixedPrefix, fixedPrefix),
+      { shouldDirty: true }
+    );
+  };
+
+  const handleRecPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let newValue = event.target.value;
+
+    if (!newValue.startsWith(fixedPrefix)) {
+      newValue = fixedPrefix;
+    } else {
+      newValue = fixedPrefix + newValue;
+    }
+
+    form.setValue(
+      "recPrice",
+      newValue.replace(fixedPrefix + fixedPrefix, fixedPrefix),
+      { shouldDirty: true }
+    );
   };
 
   function onSubmit(data: z.infer<typeof digitalDownloadsSchema>) {
-    data.thumbnail = imageUrl;
-    data.description = editorData;
-    console.log(data);
+    // data.thumbnail = imageUrl;
+    // mutation.mutate(data);
+    console.log("data");
+    //console.log(editorData);
   }
 
-  async function getUploadURL() {
-    return await generateUploadURL();
-  }
+  // async function getUploadURL() {
+  //   return await generateUploadURL();
+  // }
 
-  async function onThumbnailChange(event: any) {
-    const file = event.target.files[0];
-    setSelectedFile(file);
-    const uploadUrl = await getUploadURL();
-    const imageUrl = await uploadFile(uploadUrl, file);
-    setImageUrl(imageUrl);
-  }
+  // async function onThumbnailChange(event: any) {
+  //   const file = event.target.files[0];
+  //   setSelectedFile(file);
+  //   const uploadUrl = await getUploadURL();
+  //   const imageUrl = await uploadFile(uploadUrl, file);
+  //   setImageUrl(imageUrl);
+  // }
+
+  //save user data
+  // const mutation = useMutation({
+  //   mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
+  //     const combinedData = { ...data, userId };
+  //     return axios.post("/api/digital-downloads/create", combinedData, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${await getToken()}`,
+  //         mode: "cors",
+  //       },
+  //     });
+  //   },
+  //   onSuccess: (data: any) => {
+  //     const productId = data.data.id;
+  //     console.log(data);
+  //     router.push(`/digital-downloads/create/2/?productId=${productId}`);
+  //     toast({
+  //       title: "Success!",
+  //       duration: 1000,
+  //       description: "Product created successfully",
+  //     });
+  //   },
+  //   onError: (error: any) => {
+  //     toast({
+  //       title: "Error",
+  //       variant: "destructive",
+  //       duration: 2000,
+  //       description: error.response.data.error,
+  //     });
+  //   },
+  // });
+  const handleEditorSave = (data: any) => {
+    setEditorData(data);
+  };
 
   return (
-    <Card className="m-5 p-5 md:w-2/3 w-full">
+    <Card className="m-5 p-5  md:w-2/3 w-full">
       <div className="">
         <div className="p-10 rounded-l-lg">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+              <div>
+                <h1 className="text-xl font-bold mt-6 mb-6 text-primary">
+                  Product Details
+                </h1>
+              </div>
               <div className="flex md:flex-row flex-col ">
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="thumbnail"
                   render={({ field }) => (
@@ -136,7 +197,7 @@ export function ProfileForm() {
                       <FormLabel htmlFor="displayName">Thumbnail</FormLabel>
                       <FormControl>
                         <div
-                          className={`w-full h-32 md:h-32 md:w-32 border-2 flex flex-col items-center justify-center rounded-md relative ${
+                          className={`w-full h-full md:h-32 md:w-32 border-2 flex flex-col items-center justify-center rounded-md relative ${
                             selectedFile
                               ? "border-transparent"
                               : buttonVariants({ variant: "ghost" })
@@ -159,18 +220,18 @@ export function ProfileForm() {
                           <Input
                             type="file"
                             className="absolute opacity-0 w-full h-full cursor-pointer"
-                            onChange={onThumbnailChange}
+                            // onChange={onThumbnailChange}
                           />
                         </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
                 <div className="w-full mt-5 md:mt-0  md:ml-5 space-y-5">
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="productName"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="name">Product Name</FormLabel>
@@ -249,6 +310,7 @@ export function ProfileForm() {
                   )}
                 />
               )}
+
               <div>
                 {!showUploadFile && (
                   <div className="flex md:flex-row flex-col mt-6 md:space-x-6">
@@ -296,67 +358,30 @@ export function ProfileForm() {
                   />
                 </div>
               </div>
+
               <Separator className="mt-4" />
               <div>
                 <h1 className="text-xl font-bold mt-6 text-primary">Pricing</h1>
               </div>
-              <div className="flex flex-row gap-4">
-                <FormField
-                  control={form.control}
-                  name="currency"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="storeUrl">Currency</FormLabel>
-                      <FormControl></FormControl>
-                      <Select defaultValue="USD">
-                        <SelectTrigger className="w-auto">
-                          <SelectValue placeholder="Currency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="CAD">CAD</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel htmlFor="storeUrl">Price</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          id="price"
-                          type="number"
-                          placeholder="0"
-                          min={0}
-                          onChange={handlePriceChange}
-                        />
-                      </FormControl>
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="storeUrl">Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        id="price"
+                        value={dynamicValue}
+                        onChange={handlePriceChange}
+                      />
+                    </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
-                <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="name">Short Description</FormLabel>
-                      <FormControl>
-                        <Input {...field} id="price" type="number" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="flexPrice"
@@ -393,7 +418,6 @@ export function ProfileForm() {
                             {...field}
                             id="minPrice"
                             disabled
-                            placeholder="0"
                             value={priceState}
                           />
                         </FormControl>
@@ -401,24 +425,20 @@ export function ProfileForm() {
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
                     name="recPrice"
                     render={({ field }) => (
                       <FormItem className="md:w-1/2">
-                        <FormLabel htmlFor="recPrice">
-                          Recommended Price
-                        </FormLabel>
+                        <FormLabel htmlFor="name">Recommended Price</FormLabel>
                         <FormControl>
                           <Input
-                            id="recPrice"
-                            type="number"
-                            placeholder="0"
-                            min={0}
+                            {...field}
+                            id="name"
+                            value={dynamicValue2}
+                            onChange={handleRecPriceChange}
                           />
                         </FormControl>
-
                         <FormMessage />
                       </FormItem>
                     )}
@@ -444,19 +464,13 @@ export function ProfileForm() {
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(newValue) => {
-                          field.onChange(newValue);
-                        }}
-                      />
+                      <Switch checked={field.value} />
                     </FormControl>
                   </FormItem>
                 )}
               />
-              <Button className="mt-10 w-32 items-center" type="submit">
-                Next
-              </Button>
+
+              <Button type="submit">Submit</Button>
             </form>
           </Form>
         </div>
@@ -464,5 +478,3 @@ export function ProfileForm() {
     </Card>
   );
 }
-
-export default ProfileForm;

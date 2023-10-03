@@ -11,7 +11,7 @@
     --primary-foreground: 66.67 17.65% 90%;
 
     --secondary: 0 0% 100%;
-    --secondary-foreground: 0 0% 56%;
+    --secondary-foreground: 220, 8.9%, 46.1%;
 
     --muted: 60 33.33% 97.06%;
     --muted-foreground: 216 6.17% 15.88%;
@@ -23,7 +23,7 @@
     --accent: 60 33.33% 97.06%;
     --accent-foreground: 216 6.17% 15.88%;
     --card: 0 0% 100%;
-    --card-foreground: 216 6.17% 15.88%;
+    --card-foreground: 220, 8.9%, 46.1%;
     --border: 0 0% 87%;
     --destructive: 0 100% 50%;
     --destructive-foreground: 210 40% 98%;

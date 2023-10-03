@@ -4,12 +4,14 @@ import EditorJS from "@editorjs/editorjs";
 import "./editor.css";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
-export default function Editor() {
+export default function Editor({ updateEditorData }) {
   const [isMounted, setIsMounted] = useState(false);
   const editorRef = useRef();
+  const [saved, setSaved] = useState(false);
 
   const ref = useRef<EditorJS>();
 
@@ -34,10 +36,10 @@ export default function Editor() {
     const CodeTool = require("@editorjs/code");
     const Marker = require("@editorjs/marker");
     const Underline = require("@editorjs/underline");
+    const Paragraph = require("@editorjs/paragraph");
 
     if (!ref.current) {
       const editor = new EditorJS({
-        placeholder: "Type here to write your post...",
         holder: "editorjs",
         data: { blocks: [] },
         onReady() {
@@ -47,6 +49,15 @@ export default function Editor() {
           table: Table,
           quote: Quote,
           header: Header,
+          paragraph: {
+            class: Paragraph,
+            inlineToolbar: true,
+            config: {
+              placeholder:
+                "Type your product description here. Press TAB to get started...",
+              preserveBlank: true,
+            },
+          },
           alert: Alert,
           delimiter: Delimiter,
           underline: Underline,
@@ -119,11 +130,12 @@ export default function Editor() {
     }
   }, [isMounted]);
 
-  const save = (e: any) => {
-    e.preventDefault();
+  const save = () => {
     if (ref.current) {
       ref.current.save().then((outputData) => {
-        console.log("Article data: ", outputData);
+        //console.log("Article data: ", outputData);
+        updateEditorData(outputData);
+        setSaved(true);
       });
     }
   };
@@ -141,21 +153,46 @@ export default function Editor() {
     //     </div>
     //   </div>
     // </div>
-    <div className="border-2 rounded-md">
-      <div className="grid p-3 w-full gap-10">
-        <div className="flex w-full justify-between">
-          <div className="prose px-8 flex flex-col prose-stone w-full">
-            <div id="editorjs" className="min-h-[500px]" />
-            <button
-              type="submit"
-              className={cn(buttonVariants())}
-              onClick={save}
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
+    // <div className="border-2 rounded-md p-7">
+    //   <div id="editorjs" className="min-h-[500px] w-full" />
+    //   <div className="flex flex-row">
+    //     <Button
+    //       type="submit"
+    //       className={cn(buttonVariants(), "justify-self-start")}
+    //       onClick={save}
+    //     >
+    //       Save
+    //     </Button>
+    //     <Badge className="justify-end" variant="outline">
+    //       Badge
+    //     </Badge>
+    //   </div>
+    // </div>
+    <div className="border-2 rounded-md p-7 flex flex-colv w-full">
+      <div
+        id="editorjs"
+        className="min-h-[100px] w-full"
+        onBlur={save}
+        // onFocus={() => setSaved(false)}
+      />
+      {/* <div className="flex flex-row justify-between items-center mt-4">
+        <Button
+          type="submit"
+          className={cn(buttonVariants(), "justify-self-start")}
+          onClick={save}
+        >
+          Save
+        </Button>
+        {!saved ? (
+          <Badge variant="outline" className="text-red-500 h-6">
+            Not Saved
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="text-green-500 h-6">
+            Saved
+          </Badge>
+        )}
+      </div> */}
     </div>
   );
 }

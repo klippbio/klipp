@@ -7,12 +7,12 @@ import { useMutation } from "@tanstack/react-query";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
 import { Switch } from "@/components/ui/switch";
-
+import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import Stepper from "../../../../../components/ui/custom/stepper";
 import Editor from "@/components/ui/custom/editor/Editor";
+import { Card } from "@/components/ui/card";
 //types
 
 //consts
@@ -37,7 +38,7 @@ const digitalDownloadsSchema = z.object({
   description: z.string(),
 });
 
-export function ProfileForm() {
+export default function ProfileForm() {
   //consts
   const { userId, getToken } = useAuth();
   const { user } = useUser();
@@ -46,6 +47,12 @@ export function ProfileForm() {
   const [imageUrl, setImageUrl] = useState("");
   const [showUploadFile, setShowUploadFile] = useState(true);
   const [editorData, setEditorData] = useState(null);
+  const [flexPrice, setFlexPrice] = useState(true);
+  const [priceState, setPriceState] = useState(0);
+
+  const updateEditorData = useCallback((state: any) => {
+    setEditorData(state);
+  }, []);
 
   const { toast } = useToast();
 
@@ -64,7 +71,7 @@ export function ProfileForm() {
   function onSubmit(data: z.infer<typeof digitalDownloadsSchema>) {
     // data.thumbnail = imageUrl;
     // mutation.mutate(data);
-    console.log(data);
+    console.log(editorData);
   }
 
   // async function getUploadURL() {
@@ -115,83 +122,67 @@ export function ProfileForm() {
   };
 
   return (
-    <div className="">
-      <div className="bg-background p-10 rounded-l-lg">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="md:w-1/2 w-full"
-          >
-            <div className="flex flex-row justify-center mb-10">
-              <Stepper passedactiveStep={2} />
-            </div>
+    <Card className="m-5 p-5  md:w-2/3 w-full">
+      <div className="">
+        <div className="p-10 rounded-l-lg">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+              {/* <div className="flex flex-row justify-center mb-10 ">
+                <Stepper totalSteps={2} currentStep={2} />
+              </div> */}
 
-            <div>
-              <h1 className="text-xl font-bold mt-6 mb-6">Product</h1>
-            </div>
-            <FormField
-              control={form.control}
-              name="marketing_emails"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mb-6">
-                  <div className="space-y-0.5">
-                    <FormLabel>Add external product link</FormLabel>
-                    <FormDescription>
-                      Add a link to your product instead of uploading a file.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={(newValue) => {
-                        field.onChange(newValue);
-                        setShowUploadFile(!newValue);
-                      }}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {showUploadFile && (
-              <FormField
-                control={form.control}
-                name="file"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="displayName">Upload File</FormLabel>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className=" border-2 w-full h-32 flex flex-col items-center justify-center rounded-md relative"
-                      >
+              <div>
+                <h1 className="text-xl font-bold mt-6 mb-6 text-primary">
+                  Product Details
+                </h1>
+              </div>
+              <div className="flex md:flex-row flex-col ">
+                <FormField
+                  control={form.control}
+                  name="thumbnail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="displayName">Thumbnail</FormLabel>
+                      <FormControl>
                         <div
-                          className="text-3xl font-bold mb-8 mt-8 text-foreground"
-                          style={{ pointerEvents: "none" }}
+                          className={`w-full h-full md:h-32 md:w-32 border-2 flex flex-col items-center justify-center rounded-md relative ${
+                            selectedFile
+                              ? "border-transparent"
+                              : buttonVariants({ variant: "ghost" })
+                          }`}
                         >
-                          +
+                          {selectedFile ? (
+                            <img
+                              src={URL.createObjectURL(selectedFile)}
+                              alt="Selected Thumbnail"
+                              className="w-full h-full md:h-32 object-cover rounded-md"
+                            />
+                          ) : (
+                            <div
+                              className="text-3xl font-bold mb-8 mt-8 text-foreground"
+                              style={{ pointerEvents: "none" }}
+                            >
+                              +
+                            </div>
+                          )}
+                          <Input
+                            type="file"
+                            className="absolute opacity-0 w-full h-full cursor-pointer"
+                            // onChange={onThumbnailChange}
+                          />
                         </div>
-                        <Input
-                          type="file"
-                          className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                        />
-                      </Button>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            <div>
-              {!showUploadFile && (
-                <div className="flex md:flex-row flex-col mt-6 md:space-x-6">
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="w-full mt-5 md:mt-0  md:ml-5 space-y-5">
                   <FormField
                     control={form.control}
-                    name="fileName"
+                    name="name"
                     render={({ field }) => (
-                      <FormItem className="md:w-1/2">
-                        <FormLabel htmlFor="name">File Name</FormLabel>
+                      <FormItem>
+                        <FormLabel htmlFor="name">Product Name</FormLabel>
                         <FormControl>
                           <Input {...field} id="name" />
                         </FormControl>
@@ -199,12 +190,197 @@ export function ProfileForm() {
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
-                    name="link"
+                    name="shortDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="name">Short Description</FormLabel>
+                        <FormControl>
+                          <Input {...field} id="name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <FormField
+                control={form.control}
+                name="marketing_emails"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center mt-10 justify-between rounded-lg border p-3 shadow-sm mb-6">
+                    <div className="space-y-0.5">
+                      <FormLabel>Add external product link</FormLabel>
+                      <FormDescription>
+                        Add a link to your product instead of uploading a file.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(newValue) => {
+                          field.onChange(newValue);
+                          setShowUploadFile(!newValue);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              {showUploadFile && (
+                <FormField
+                  control={form.control}
+                  name="file"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="displayName">Upload File</FormLabel>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className=" border-2 w-full h-32 flex flex-col items-center justify-center rounded-md relative"
+                        >
+                          <div
+                            className="text-3xl font-bold mb-8 mt-8 text-foreground"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            +
+                          </div>
+                          <Input
+                            type="file"
+                            className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                          />
+                        </Button>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <div>
+                {!showUploadFile && (
+                  <div className="flex md:flex-row flex-col mt-6 md:space-x-6">
+                    <FormField
+                      control={form.control}
+                      name="fileName"
+                      render={({ field }) => (
+                        <FormItem className="md:w-1/2">
+                          <FormLabel htmlFor="name">File Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} id="name" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="link"
+                      render={({ field }) => (
+                        <FormItem className="md:w-1/2">
+                          <FormLabel htmlFor="name">External Link</FormLabel>
+                          <FormControl>
+                            <Input {...field} id="name" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+                <div className="py-5">
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormLabel htmlFor="name">Description</FormLabel>
+                        <FormControl>
+                          <Editor updateEditorData={updateEditorData} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <Separator className="mt-4" />
+              <div>
+                <h1 className="text-xl font-bold mt-6 text-primary">Pricing</h1>
+              </div>
+
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="name">Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        id="price"
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setPriceState(e.target.value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="flexPrice"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mt-6 mb-6">
+                    <div className="space-y-0.5">
+                      <FormLabel>Flexible Pricing</FormLabel>
+                      <FormDescription>
+                        Allow users to pay what they want.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(newValue) => {
+                          field.onChange(newValue);
+                          setFlexPrice(!newValue);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              {!flexPrice && (
+                <div className="flex md:flex-row flex-col mt-6 md:space-x-6">
+                  <FormField
+                    control={form.control}
+                    name="minPrice"
                     render={({ field }) => (
                       <FormItem className="md:w-1/2">
-                        <FormLabel htmlFor="name">External Link</FormLabel>
+                        <FormLabel htmlFor="name">Minimum Price</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            id="name"
+                            disabled
+                            value={priceState}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="recPrice"
+                    render={({ field }) => (
+                      <FormItem className="md:w-1/2">
+                        <FormLabel htmlFor="name">Recommended Price</FormLabel>
                         <FormControl>
                           <Input {...field} id="name" />
                         </FormControl>
@@ -214,31 +390,37 @@ export function ProfileForm() {
                   />
                 </div>
               )}
-              <div className="py-5">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel htmlFor="name">Description</FormLabel>
-                      <FormControl>
-                        <Editor />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <Separator className="mt-8" />
+              <div>
+                <h1 className="text-xl font-bold mt-6 text-primary">
+                  Visibility
+                </h1>
               </div>
-            </div>
-
-            <Button className="mt-10 w-32 items-center" type="submit">
-              Next
-            </Button>
-          </form>
-        </Form>
+              <FormField
+                control={form.control}
+                name="visibility"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mt-6 mb-6">
+                    <div className="space-y-0.5">
+                      <FormLabel>Product Visibility</FormLabel>
+                      <FormDescription>
+                        Make this product visible on you profile. By default,
+                        its private.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <Button className="mt-10 w-32 items-center" type="submit">
+                Create
+              </Button>
+            </form>
+          </Form>
+        </div>
       </div>
-    </div>
+    </Card>
   );
 }
-
-export default ProfileForm;
