@@ -4,6 +4,15 @@ import { google } from "googleapis";
 
 import * as userService from "../services/userService";
 import * as storeService from "../services/storeService";
+import { db } from "../utils/db.server";
+import dayjs from "../utils/dayjs.index";
+import {
+  ZCreateScheduleSchema,
+  ZUpdateInputSchema,
+  createSchedule,
+  updateSchedule,
+} from "../services/calendar/calendarService";
+import { Schema } from "zod";
 
 export const calendarController = express.Router();
 
@@ -84,4 +93,68 @@ calendarController.post("/createEvent", async (req: Request, res: Response) => {
   });
   console.log(response.data);
   res.json(response.data);
+});
+
+// calendarController.post("/createSchedule", async (req, res) => {
+//   try {
+//     console.log(req.params);
+//     console.log(req.body);
+//     console.log(req.query);
+//     const { storeId, name, timeZone } = req.body;
+//     console.log(storeId, name, timeZone);
+
+//     const schedule = await createSchedule(storeId, name, timeZone);
+//     console.log(schedule);
+
+//     res.json(schedule);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Failed to create a schedule" });
+//   }
+// });
+
+calendarController.post("/create", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body);
+    ZCreateScheduleSchema.parseAsync(req.body);
+    const schedule = await createSchedule(req.body);
+    res.status(201).json(schedule);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create a schedule" });
+  }
+});
+
+// calendarController.post("/update", async (req: Request, res: Response) => {
+//   try {
+//     console.log(req.body);
+//     ZUpdateInputSchema.parseAsync(req.body);
+//     const result = await updateSchedule(req.body);
+//     res.status(201).json(result);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Failed to create a schedule" });
+//   }
+// });
+calendarController.post("/update", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body);
+    // Convert the "start" and "end" fields to Date objects before parsing
+    const parsedBody = {
+      ...req.body,
+      availability: req.body.availability.map((slot: any) =>
+        slot.map((item: any) => ({
+          start: new Date(item.start),
+          end: new Date(item.end),
+        }))
+      ),
+    };
+
+    await ZUpdateInputSchema.parseAsync(parsedBody);
+    const result = await updateSchedule(parsedBody);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create a schedule" });
+  }
 });

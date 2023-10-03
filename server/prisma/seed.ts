@@ -7,7 +7,7 @@ async function main() {
       email: "meet22599@gmail.com",
       stores: {
         some: {
-          id: "store_2VxiCPE4jviBRValAK6KkX4CkVP",
+          id: "7a61221a-1578-4cd4-a890-d594c92cc33c",
         },
       },
     },
@@ -18,10 +18,10 @@ async function main() {
       stores: {
         connectOrCreate: {
           where: {
-            id: "store_2VxiCPE4jviBRValAK6KkX4CkVP",
+            id: "7a61221a-1578-4cd4-a890-d594c92cc33c",
           },
           create: {
-            id: "store_2VxiCPE4jviBRValAK6KkX4CkVP",
+            id: "7a61221a-1578-4cd4-a890-d594c92cc33c",
             storeTitle: "Meet Shukla",
             storeDescription: "I will help you buildd",
             storeUrl: "meetshukla",

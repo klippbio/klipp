@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_MEET")
 }
 
 model User {
@@ -27,6 +27,7 @@ model Store {
 
 
   schedules Schedule[]
+  defaultScheduleId   Int?
   googleCalendar GoogleCalendar?
   bookings Booking[]
   timeZone     String?
