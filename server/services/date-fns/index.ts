@@ -197,7 +197,7 @@ export const weekdayToWeekIndex = (
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getTimeZone = (date: Dayjs): string =>
-  (date as any)["$x"]["$timezone"];
+  (date as any)["$x"]["$timezone"]; //eslint-disable-line
 
 /**
  * Verify if timeZone has Daylight Saving Time (DST).

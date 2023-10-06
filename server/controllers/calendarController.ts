@@ -1,11 +1,7 @@
-import express, { NextFunction } from "express";
+import express from "express";
 import { Request, Response } from "express";
 import { google } from "googleapis";
 
-import * as userService from "../services/userService";
-import * as storeService from "../services/storeService";
-import { db } from "../utils/db.server";
-import dayjs from "../utils/dayjs.index";
 import {
   ZCreateScheduleSchema,
   ZGetOrDeleteScheduleSchema,
@@ -15,7 +11,6 @@ import {
   getSchedule,
   updateSchedule,
 } from "../services/calendar/calendarService";
-import { Schema } from "zod";
 import CustomError from "../utils/CustomError";
 
 export const calendarController = express.Router();
@@ -39,8 +34,8 @@ calendarController.get("/", (req: Request, res: Response) => {
 
 const refreshToken =
   "1//01-DvlyjLnYCKCgYIARAAGAESNwF-L9IrMIr4IjxZV1Gs0VVV7zfuJa7psuW9T7Pmf5YAKTn1y3HJL-eGDlRflW0_UDNHK4aJQO8";
-const accessToken =
-  "a29.a0AfB_byAfEs472i86F9OJ_jS8_J8QHHBF51cEOae1YTCf5wTuvhxRtypJalmdQcqbFcR2--aqoItRYX84TlaZ-9ADbRYftSB_TIECCMVRP0ytKmOZ7NNI7OuDOMd-9QRL5znpbxUZPEyOOIRpFYLC1U0g6NGkiD-1v0lsaCgYKAV0SARISFQGOcNnC75nEgK2nemVA5fRbZY2QJg0171";
+// const accessToken =
+//   "a29.a0AfB_byAfEs472i86F9OJ_jS8_J8QHHBF51cEOae1YTCf5wTuvhxRtypJalmdQcqbFcR2--aqoItRYX84TlaZ-9ADbRYftSB_TIECCMVRP0ytKmOZ7NNI7OuDOMd-9QRL5znpbxUZPEyOOIRpFYLC1U0g6NGkiD-1v0lsaCgYKAV0SARISFQGOcNnC75nEgK2nemVA5fRbZY2QJg0171";
 
 calendarController.post("/2", async (req: Request, res: Response) => {
   console.log("Authenticate");
@@ -97,10 +92,10 @@ calendarController.post("/createEvent", async (req: Request, res: Response) => {
     });
     console.log(response.data);
     res.json(response.data);
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -110,26 +105,27 @@ calendarController.post("/create", async (req: Request, res: Response) => {
     ZCreateScheduleSchema.parseAsync(req.body);
     const schedule = await createSchedule(req.body);
     res.status(201).json(schedule);
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
 calendarController.post("/update", async (req: Request, res: Response) => {
   try {
     console.log(req.body);
-    // Convert the "start" and "end" fields to Date objects before parsing
+
+    // prettier-ignore
     const parsedBody = {
       ...req.body,
-      availability: req.body.availability.map((slot: any) =>
-        slot.map((item: any) => ({
+      availability: req.body.availability.map((slot: any) =>    //eslint-disable-line
+        slot.map((item: any) => ({//eslint-disable-line
           start: new Date(item.start),
           end: new Date(item.end),
         }))
       ),
-      dateOverrides: req.body.dateOverrides.map((item: any) => ({
+      dateOverrides: req.body.dateOverrides.map((item: any) => ({//eslint-disable-line
         start: new Date(item.start),
         end: new Date(item.end),
       })),
@@ -138,10 +134,10 @@ calendarController.post("/update", async (req: Request, res: Response) => {
     await ZUpdateInputSchema.parseAsync(parsedBody);
     const result = await updateSchedule(parsedBody);
     res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -151,10 +147,10 @@ calendarController.get("/get", async (req: Request, res: Response) => {
     await ZGetOrDeleteScheduleSchema.parseAsync(req.body);
     const result = await getSchedule(req.body);
     res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -164,9 +160,9 @@ calendarController.delete("/delete", async (req: Request, res: Response) => {
     await ZGetOrDeleteScheduleSchema.parseAsync(req.body);
     const result = await deleteSchedule(req.body);
     res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });

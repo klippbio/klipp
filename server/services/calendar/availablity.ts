@@ -6,7 +6,6 @@ import type { Schedule, TimeRange, WorkingHours } from "../../types/schedule";
 import type {
   Availability as AvailabilityModel,
   Schedule as ScheduleModel,
-  User,
 } from "@prisma/client";
 
 // sets the desired time in current date, needs to be current date for proper DST translation

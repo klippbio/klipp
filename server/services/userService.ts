@@ -1,5 +1,5 @@
 import { db } from "../utils/db.server";
-import type { Prisma, User } from "@prisma/client";
+import type { User } from "@prisma/client";
 
 type OnboardingInput = {
   storeUrl: string;
