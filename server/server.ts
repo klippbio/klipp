@@ -1,5 +1,4 @@
-import express, { Application, Request, Response } from "express";
-import { sessions } from "@clerk/clerk-sdk-node";
+import express, { Application } from "express";
 
 import "dotenv/config";
 

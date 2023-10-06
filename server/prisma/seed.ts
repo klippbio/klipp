@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 async function main() {
-  const user = await db.user.upsert({
+  await db.user.upsert({
     where: {
       id: "user_2VxiCPE4jviBRValAK6KkX4CkVP",
       email: "meet22599@gmail.com",

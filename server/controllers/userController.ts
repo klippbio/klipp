@@ -1,4 +1,4 @@
-import express, { NextFunction } from "express";
+import express from "express";
 import { Request, Response } from "express";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
@@ -13,8 +13,8 @@ userController.get("/all", async (req: Request, res: Response) => {
     if (users) {
       return res.status(200).json(users);
     }
-  } catch (error: any) {
-    return res.status(500).json(error.message);
+  } catch (error) {
+    return res.status(500).json(error);
   }
 });
 
@@ -53,8 +53,8 @@ userController.get(
         }
       }
       return res.status(404).json("User Id not found");
-    } catch (error: any) {
-      return res.status(500).json(error.message);
+    } catch (error) {
+      return res.status(500).json(error);
     }
   }
 );
