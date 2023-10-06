@@ -27,6 +27,7 @@ model Store {
 
 
   schedules Schedule[]
+  defaultScheduleId   Int?
   googleCalendar GoogleCalendar?
   bookings Booking[]
   timeZone     String?
