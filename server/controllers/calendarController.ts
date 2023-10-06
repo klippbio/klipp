@@ -8,11 +8,15 @@ import { db } from "../utils/db.server";
 import dayjs from "../utils/dayjs.index";
 import {
   ZCreateScheduleSchema,
+  ZGetOrDeleteScheduleSchema,
   ZUpdateInputSchema,
   createSchedule,
+  deleteSchedule,
+  getSchedule,
   updateSchedule,
 } from "../services/calendar/calendarService";
 import { Schema } from "zod";
+import CustomError from "../utils/CustomError";
 
 export const calendarController = express.Router();
 
@@ -58,60 +62,47 @@ calendarController.post("/2", async (req: Request, res: Response) => {
 });
 
 calendarController.post("/createEvent", async (req: Request, res: Response) => {
-  console.log("Create Event");
-  const { name } = req.body;
+  try {
+    const { name } = req.body;
 
-  oauth2Client.setCredentials({ refresh_token: refreshToken });
-  const calendar = google.calendar({
-    version: "v3",
-    auth: oauth2Client,
-  });
-  const response = await calendar.events.insert({
-    auth: oauth2Client,
-    calendarId: "primary",
-    requestBody: {
-      start: {
-        dateTime: "2023-09-22T09:00:00-07:00",
-        timeZone: "America/Los_Angeles",
-      },
-      end: {
-        dateTime: "2023-09-22T17:00:00-07:00",
-        timeZone: "America/Los_Angeles",
-      },
-      conferenceData: {
-        createRequest: {
-          requestId: "sample123",
-          conferenceSolutionKey: {
-            type: "hangoutsMeet",
+    oauth2Client.setCredentials({ refresh_token: refreshToken });
+    const calendar = google.calendar({
+      version: "v3",
+      auth: oauth2Client,
+    });
+    const response = await calendar.events.insert({
+      auth: oauth2Client,
+      calendarId: "primary",
+      requestBody: {
+        start: {
+          dateTime: "2023-09-22T09:00:00-07:00",
+          timeZone: "America/Los_Angeles",
+        },
+        end: {
+          dateTime: "2023-09-22T17:00:00-07:00",
+          timeZone: "America/Los_Angeles",
+        },
+        conferenceData: {
+          createRequest: {
+            requestId: "sample123",
+            conferenceSolutionKey: {
+              type: "hangoutsMeet",
+            },
           },
         },
+        summary: name,
+        description: "A chance to hear more about Google's developer products.",
       },
-      summary: name,
-      description: "A chance to hear more about Google's developer products.",
-    },
-    conferenceDataVersion: 1,
-  });
-  console.log(response.data);
-  res.json(response.data);
+      conferenceDataVersion: 1,
+    });
+    console.log(response.data);
+    res.json(response.data);
+  } catch (error: any) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error.message });
+  }
 });
-
-// calendarController.post("/createSchedule", async (req, res) => {
-//   try {
-//     console.log(req.params);
-//     console.log(req.body);
-//     console.log(req.query);
-//     const { storeId, name, timeZone } = req.body;
-//     console.log(storeId, name, timeZone);
-
-//     const schedule = await createSchedule(storeId, name, timeZone);
-//     console.log(schedule);
-
-//     res.json(schedule);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Failed to create a schedule" });
-//   }
-// });
 
 calendarController.post("/create", async (req: Request, res: Response) => {
   try {
@@ -119,23 +110,13 @@ calendarController.post("/create", async (req: Request, res: Response) => {
     ZCreateScheduleSchema.parseAsync(req.body);
     const schedule = await createSchedule(req.body);
     res.status(201).json(schedule);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create a schedule" });
+  } catch (error: any) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error.message });
   }
 });
 
-// calendarController.post("/update", async (req: Request, res: Response) => {
-//   try {
-//     console.log(req.body);
-//     ZUpdateInputSchema.parseAsync(req.body);
-//     const result = await updateSchedule(req.body);
-//     res.status(201).json(result);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Failed to create a schedule" });
-//   }
-// });
 calendarController.post("/update", async (req: Request, res: Response) => {
   try {
     console.log(req.body);
@@ -148,13 +129,44 @@ calendarController.post("/update", async (req: Request, res: Response) => {
           end: new Date(item.end),
         }))
       ),
+      dateOverrides: req.body.dateOverrides.map((item: any) => ({
+        start: new Date(item.start),
+        end: new Date(item.end),
+      })),
     };
 
     await ZUpdateInputSchema.parseAsync(parsedBody);
     const result = await updateSchedule(parsedBody);
     res.status(200).json(result);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create a schedule" });
+  } catch (error: any) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error.message });
+  }
+});
+
+calendarController.get("/get", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body);
+    await ZGetOrDeleteScheduleSchema.parseAsync(req.body);
+    const result = await getSchedule(req.body);
+    res.status(200).json(result);
+  } catch (error: any) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error.message });
+  }
+});
+
+calendarController.delete("/delete", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body);
+    await ZGetOrDeleteScheduleSchema.parseAsync(req.body);
+    const result = await deleteSchedule(req.body);
+    res.status(200).json(result);
+  } catch (error: any) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error.message });
   }
 });
