@@ -64,6 +64,28 @@ export const createSchedule = async (
     input.availability || DEFAULT_SCHEDULE
   );
 
+  const store = await db.store.findUnique({
+    where: {
+      id: input.storeId,
+    },
+    select: {
+      id: true,
+      calendarSetting: {
+        select: {
+          id: true,
+          defaultScheduleId: true,
+        },
+      },
+    },
+  });
+
+  if (!store?.calendarSetting) {
+    throw new CustomError(
+      "Configure and connect with Google Calendar First",
+      404
+    );
+  }
+
   const schedule = await db.schedule.create({
     data: {
       name: input.name,
@@ -71,6 +93,11 @@ export const createSchedule = async (
       store: {
         connect: {
           id: input.storeId,
+        },
+      },
+      calendarSetting: {
+        connect: {
+          id: store.calendarSetting.id,
         },
       },
       availability: {
@@ -84,24 +111,30 @@ export const createSchedule = async (
       },
     },
     select: {
-      store: true,
       availability: true,
       id: true,
       name: true,
       timeZone: true,
     },
   });
-  if (!schedule.store.defaultScheduleId) {
-    schedule.store = await db.store.update({
+
+  if (!store?.calendarSetting?.defaultScheduleId) {
+    const calendarSetting = await db.calendarSetting.update({
       where: {
-        id: input.storeId,
+        id: store?.calendarSetting?.id,
       },
       data: {
         defaultScheduleId: schedule.id,
       },
     });
+    if (store) {
+      store.calendarSetting = calendarSetting;
+    }
   }
-  return schedule;
+  return {
+    schedule,
+    store: store,
+  };
 };
 
 export const updateSchedule = async (
@@ -115,17 +148,6 @@ export const updateSchedule = async (
         date: dateOverride.start,
         days: [],
       }));
-
-  if (input.isDefault) {
-    db.store.update({
-      where: {
-        id: input.storeId,
-      },
-      data: {
-        defaultScheduleId: input.scheduleId,
-      },
-    });
-  }
 
   const schedule = await db.schedule.update({
     where: {
@@ -157,6 +179,7 @@ export const updateSchedule = async (
       storeId: true,
       name: true,
       availability: true,
+      calendarSetting: true,
       timeZone: true,
       calendarProduct: {
         select: {
@@ -167,6 +190,18 @@ export const updateSchedule = async (
       },
     },
   });
+
+  if (input.isDefault) {
+    db.calendarSetting.update({
+      where: {
+        id: schedule.calendarSetting.id,
+      },
+      data: {
+        defaultScheduleId: schedule.id,
+      },
+    });
+  }
+
   const userAvailability = convertScheduleToAvailability(schedule);
 
   return {
@@ -187,6 +222,13 @@ export const getSchedule = async (
       id: true,
       storeId: true,
       name: true,
+      calendarSetting: {
+        select: {
+          id: true,
+          timeZone: true,
+          defaultScheduleId: true,
+        },
+      },
       availability: true,
       timeZone: true,
     },
@@ -196,19 +238,7 @@ export const getSchedule = async (
     throw new CustomError("Schedule not found", 404);
   }
 
-  const store = await db.store.findUnique({
-    where: {
-      id: schedule.storeId,
-    },
-    select: {
-      id: true,
-      storeTitle: true,
-      defaultScheduleId: true,
-      timeZone: true,
-    },
-  });
-
-  const timeZone = schedule?.timeZone || store?.timeZone;
+  const timeZone = schedule.timeZone || schedule.calendarSetting.timeZone;
 
   return {
     id: schedule.id,
@@ -263,7 +293,9 @@ export const getSchedule = async (
       acc[dayRangeIndex].ranges.push(newValue);
       return acc;
     }, [] as { ranges: TimeRange[] }[]),
-    isDefault: !input.scheduleId || store?.defaultScheduleId === schedule.id,
+    isDefault:
+      !input.scheduleId ||
+      schedule.calendarSetting.defaultScheduleId === schedule.id,
   };
 };
 
@@ -277,6 +309,7 @@ export const deleteSchedule = async (
     select: {
       id: true,
       storeId: true,
+      calendarSetting: true,
     },
   });
 
@@ -284,18 +317,9 @@ export const deleteSchedule = async (
     throw new CustomError("Schedule not found", 404);
   }
 
-  const store = await db.store.findUnique({
-    where: {
-      id: schedule.storeId,
-    },
-    select: {
-      id: true,
-      defaultScheduleId: true,
-    },
-  });
   // cannot remove this schedule if this is the last schedule remaining
   // if this is the last remaining schedule of the user then this would be the default schedule and so cannot remove it
-  if (store?.defaultScheduleId === schedule.id) {
+  if (schedule.calendarSetting.defaultScheduleId === schedule.id) {
     const scheduleToSetAsDefault = await db.schedule.findFirst({
       where: {
         storeId: schedule.storeId,
@@ -312,9 +336,9 @@ export const deleteSchedule = async (
       throw new CustomError("Cannot remove the last schedule of a store", 400);
     }
 
-    await db.store.update({
+    await db.calendarSetting.update({
       where: {
-        id: schedule.storeId,
+        id: schedule.calendarSetting.id,
       },
       data: {
         defaultScheduleId: scheduleToSetAsDefault.id,

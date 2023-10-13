@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { UserButton, auth, useAuth } from "@clerk/nextjs";
-import { PaperclipIcon } from "lucide-react";
 import { NavProps } from "admin";
+import Image from "next/image";
+import logoText from "./../../utils/logoText.png";
 
 export function SideNav({ className, items, ...props }: NavProps) {
   const pathname = usePathname();
@@ -16,18 +17,16 @@ export function SideNav({ className, items, ...props }: NavProps) {
   return (
     <>
       <div className="flex flex-col h-screen w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
-        <div className="flex justify-start text-3xl items-center p-5 pl-9">
-          <PaperclipIcon size={24} />
-          <span className="pl-2 text">klipp</span>
+        <div className="flex justify-start py-5 px-4">
+          <Image src={logoText} alt="logoWithText" width={120} />
         </div>
         <nav
           className={cn(
-            "flex flex-col space-y-3 align-center text-bold",
+            "flex flex-col space-y-3 align-center text-bold pt-2",
             className
           )}
           {...props}
         >
-          <div className="pt-2"></div>
           {items.map((item) => (
             <Link
               key={item.href}
@@ -38,7 +37,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
                 "justify-start flex items-center font-semibold hover:bg-overlay hover:text-primary"
               )}
             >
-              <div className="flex flex-wrap items-center p-1">
+              <div className="flex flex-wrap items-center">
                 {item.icon}
                 <span className="pl-2">{item.title}</span>
               </div>

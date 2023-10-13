@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_MEET")
 }
 
 model User {
@@ -27,10 +27,8 @@ model Store {
 
 
   schedules Schedule[]
-  defaultScheduleId   Int?
-  googleCalendar GoogleCalendar?
   bookings Booking[]
-  timeZone     String?
+  calendarSetting CalendarSetting?
 
   @@index([userId], map: "userId")
   @@index([storeUrl], map: "storeUrl")
@@ -42,7 +40,7 @@ model StoreItem {
   storeId        String
   itemType       StoreItemType
   DigitalProduct DigitalProduct?
-  calendarProduct calendarProduct?
+  calendarProduct CalendarProduct?
   Link           Link?
   store          Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }
@@ -102,17 +100,19 @@ model Schedule {
   id           Int   @id @default(autoincrement()) @unique
   storeId String 
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  calendarProduct    calendarProduct[]
+  calendarProduct    CalendarProduct[]
   name         String
   timeZone     String?
   availability Availability[]
+  calendarSettingId Int
+  calendarSetting CalendarSetting @relation(fields: [calendarSettingId], references: [id])
 
   @@index([storeId])
 }
 
 model Availability {
   id          Int        @id @default(autoincrement()) @unique
-  calendarProduct   calendarProduct? @relation(fields: [calendarProductId], references: [id]) 
+  calendarProduct   CalendarProduct? @relation(fields: [calendarProductId], references: [id]) 
   calendarProductId Int?
   days        Int[]
   startTime   DateTime   @db.Time
@@ -125,7 +125,7 @@ model Availability {
   @@index([scheduleId])
 }
 
-model calendarProduct {
+model CalendarProduct {
   id                              Int                     @id @default(autoincrement())
   title                           String
   slug                            String
@@ -134,7 +134,6 @@ model calendarProduct {
   hidden                          Boolean                 @default(false)
   bookings                        Booking[]
   availability                    Availability[]
-  googleCalendar                  GoogleCalendar?         @relation(fields: [id], references: [id])
   timeZone                        String?
 
   periodType                      PeriodType              @default(UNLIMITED)
@@ -148,6 +147,9 @@ model calendarProduct {
   schedule                        Schedule?               @relation(fields: [scheduleId], references: [id])
   scheduleId                      Int? @unique
 
+  calendarSettingId               Int @unique
+  calendarSetting                 CalendarSetting        @relation(fields: [calendarSettingId], references: [id])
+
   storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
   storeItemId String @unique
 
@@ -157,21 +159,35 @@ model calendarProduct {
   @@index([storeItemId])
 }
 
+model CalendarSetting{
+  id                              Int                     @id @default(autoincrement())
+  minimumBookingNotice            Int                     @default(120)
+  beforeEventBuffer               Int                     @default(0)
+  afterEventBuffer                Int                     @default(0)
+  googleCalendar                  GoogleCalendar?
+  calendarProduct                 CalendarProduct[] 
+  Schedule                        Schedule[]      
+  timeZone                        String?
+  defaultScheduleId               Int?    
+  storeId                         String                  @unique
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+}
+
 model GoogleCalendar{
 
   id        Int   @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  calendarId String @unique
-  calendarProducts calendarProduct[]
   refreshToken String
   accessToken String
   bookings Booking[]
-  storeId String @unique
-  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
-  @@index([storeId])
-  @@index([calendarId])
+  calendarSettingId Int @unique
+  calendarSetting CalendarSetting @relation(fields: [calendarSettingId], references: [id], onDelete: Cascade)
+
+  @@index([id])
 }
 
 model Booking{
@@ -183,7 +199,7 @@ model Booking{
   storeId String @unique
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
   calendarProductId Int
-  calendarProduct calendarProduct? @relation(fields: [calendarProductId], references: [id])
+  calendarProduct CalendarProduct? @relation(fields: [calendarProductId], references: [id])
 
   title String
   description String?
