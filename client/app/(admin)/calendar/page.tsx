@@ -1,60 +1,115 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Toast } from "@/components/ui/toast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/components/ui/utils";
 import { Card } from "@/components/ui/card";
+import { set } from "react-hook-form";
 
 function page() {
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const router = useRouter();
-  const handleLinkCalendar = async () => {
-    try {
-      // Send a request to your backend to initiate the OAuth flow
-      setIsLoading(true);
-      const response = await axios.get("/api/calendar");
-      // Redirect the user to the Google OAuth consent page
-      window.location.href = response.data.redirectUrl;
-    } catch (error) {
-      console.error("Error linking Google Calendar:", error);
-    }
-  };
-
-  const handleOAuthCallback = async () => {
-    if (searchParams.has("code") && searchParams.get("code") != null) {
-      console.log("has code");
-      const code = searchParams.get("code");
-      console.log(code);
-      if (code) {
-        try {
-          // Send the code to your backend for token exchange
-          await axios.post("/api/calendar/2", { code });
-          router.push("/dashboard");
-        } catch (error) {
-          console.error("Error exchanging code for tokens:", error);
-          toast({
-            title: "Error",
-            description: "please try",
-            variant: "destructive",
-            duration: 3000,
-            className: cn(
-              "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-            ),
-          });
-        }
+  const message = searchParams.get("message");
+  useEffect(() => {
+    if (message) {
+      if (message == "auth_success") {
+        toast({
+          title: "Successfully linked Google Calendar",
+          variant: "default",
+        });
+        router.replace("/calendar");
+      } else if (message == "auth_failed") {
+        toast({
+          title: "Failed to link Google Calendar",
+          variant: "destructive",
+        });
+        router.replace("/calendar");
       }
     }
+  }, [message]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const unlinkCalendar = async () => {
+    try {
+      setIsLoading(true);
+      const storeId = "7a61221a-1578-4cd4-a890-d594c92cc33c";
+      const response = await axios.post("/api/calendar/unlinkCalendar", {
+        storeId,
+      });
+      console.log("okay");
+      console.log(response);
+
+      if (response.status === 200) {
+        toast({
+          title: "Successfully unlinked Google Calendar",
+          description: "Its is done really!",
+          variant: "default",
+        });
+      } else {
+        const errorResponse = response;
+        toast({
+          title: errorResponse.error,
+          description: "nope",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Error unlinking Google Calendar:", error);
+      toast({
+        title: error.response.data
+          ? error.response.data.error
+          : "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  useEffect(() => {
-    console.log("useEffect");
-    handleOAuthCallback();
-  }, []);
+  const generateGoogleOAuthUrl = (params: any) => {
+    const baseUrl = "https://accounts.google.com/o/oauth2/auth";
+    const clientId =
+      "59264655502-4278olgkk28undr7ochka2npqodq27el.apps.googleusercontent.com";
+    const redirectUri = "http://localhost:4000/calendar/linkCalendar"; // Change to your Express backend URL
+
+    const scope = params.scope.join(" ");
+
+    const url =
+      `${baseUrl}?` +
+      `client_id=${clientId}` +
+      `&redirect_uri=${redirectUri}` +
+      `&scope=${scope}` +
+      `&access_type=${params.access_type || "offline"}` +
+      `&state=${params.state || ""}` +
+      `&response_type=code`;
+
+    return url;
+  };
+
+  const handleLinkCalendar = async () => {
+    try {
+      setIsLoading(true);
+      const authUrl = generateGoogleOAuthUrl({
+        access_type: "offline",
+        scope: ["https://www.googleapis.com/auth/calendar"],
+        state: JSON.stringify({
+          storeId: "7a61221a-1578-4cd4-a890-d594c92cc33c",
+        }),
+      });
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error("Error linking Google Calendar:", error);
+      setIsLoading(false);
+      toast({
+        title: "Error linking Google Calendar",
+        description: "nope",
+      });
+    }
+  };
 
   return (
     <div>
@@ -64,6 +119,9 @@ function page() {
         <Card className="m-5 w-72 h-72">
           <Button className="m-5" onClick={handleLinkCalendar}>
             Link Google Calendar
+          </Button>
+          <Button className="m-5" onClick={unlinkCalendar}>
+            Unlink Google Calendar
           </Button>
         </Card>
       )}

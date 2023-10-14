@@ -5,6 +5,8 @@ import { PaperclipIcon } from "lucide-react";
 import { CopyIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { usePathname } from "next/navigation";
+import logo from "./../../utils/logo.png";
+import Image from "next/image";
 
 export default function TopBar() {
   const currentPage = usePathname();
@@ -20,7 +22,7 @@ export default function TopBar() {
         <nav className="flex sticky h-20 top-0 pl-5 min-h-[50px] items-center justify-between">
           <div className="md:hidden flex p-0 grow-0 shrink-0 basis-auto width-screen">
             <a href="/dashboard/">
-              <PaperclipIcon size={40} />
+              <Image src={logo} alt="logo" width={40} />
             </a>
           </div>
           <div className="hidden text-xl font-bold md:inline-flex">

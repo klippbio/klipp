@@ -9,22 +9,25 @@ import { LayoutDashboardIcon } from "lucide-react/";
 import { ShoppingBasketIcon } from "lucide-react";
 import { WrapText } from "lucide-react/";
 import TopBar from "../components/topBar";
+import { HomeIcon } from "lucide-react/";
+import { Calendar } from "lucide-react/";
+import { Server } from "lucide-react/";
 
 const navItems = [
   {
-    title: "Dashboard",
+    title: "Home",
     href: "/dashboard",
-    icon: <LayoutDashboardIcon />,
+    icon: <HomeIcon size={24} />,
   },
   {
-    title: "My Products",
-    href: "/products",
-    icon: <ShoppingBasketIcon />,
+    title: "Calendar",
+    href: "/calendar",
+    icon: <Calendar size={24} />,
   },
   {
-    title: "My Page",
-    href: "/mypage",
-    icon: <WrapText />,
+    title: "Store",
+    href: "/store",
+    icon: <Server />,
   },
 ];
 
