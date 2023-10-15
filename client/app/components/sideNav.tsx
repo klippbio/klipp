@@ -9,7 +9,6 @@ import { UserButton, auth, useAuth } from "@clerk/nextjs";
 import { NavProps } from "admin";
 import Image from "next/image";
 import logoText from "./../../utils/logoText.png";
-import { Card } from "@/components/ui/card";
 import { SettingsIcon } from "lucide-react";
 
 export function SideNav({ className, items, ...props }: NavProps) {
