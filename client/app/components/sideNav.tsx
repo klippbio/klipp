@@ -9,22 +9,27 @@ import { UserButton, auth, useAuth } from "@clerk/nextjs";
 import { NavProps } from "admin";
 import Image from "next/image";
 import logoText from "./../../utils/logoText.png";
+import { Card } from "@/components/ui/card";
+import { SettingsIcon } from "lucide-react";
 
 export function SideNav({ className, items, ...props }: NavProps) {
-  const pathname = usePathname();
+  const currentPage = usePathname();
+  const pageTitle =
+    currentPage.split("/")[1].charAt(0).toUpperCase() +
+    currentPage.split("/")[1].slice(1);
+
+  console.log(pageTitle);
+
   const { userId } = useAuth();
 
   return (
     <>
       <div className="flex flex-col h-screen w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
-        <div className="flex justify-start py-5 px-4">
-          <Image src={logoText} alt="logoWithText" width={120} />
+        <div className="flex justify-start py-5 px-4 ">
+          <Image src={logoText} alt="logoWithText" width={100} />
         </div>
         <nav
-          className={cn(
-            "flex flex-col space-y-3 align-center text-bold pt-2",
-            className
-          )}
+          className={cn("flex flex-col space-y-1 align-center pt-2", className)}
           {...props}
         >
           {items.map((item) => (
@@ -33,13 +38,13 @@ export function SideNav({ className, items, ...props }: NavProps) {
               href={item.href}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
-                pathname === item.href && "bg-overlay text-primary",
-                "justify-start flex items-center font-semibold hover:bg-overlay hover:text-primary"
+                pageTitle == item.title && "bg-overlay text-overlay-foreground",
+                "justify-start flex items-center hover:bg-overlay hover:text-primary"
               )}
             >
               <div className="flex flex-wrap items-center">
                 {item.icon}
-                <span className="pl-2">{item.title}</span>
+                <span className="pl-4">{item.title}</span>
               </div>
             </Link>
           ))}
@@ -53,7 +58,10 @@ export function SideNav({ className, items, ...props }: NavProps) {
               "justify-start"
             )}
           >
-            Settings
+            <div className="flex flex-wrap items-center">
+              <SettingsIcon />
+              <span className="pl-2">Settings</span>
+            </div>
           </Link>
           {!userId && (
             <>
