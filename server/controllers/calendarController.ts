@@ -65,9 +65,10 @@ calendarController.post("/update", async (req: Request, res: Response) => {
 
 calendarController.get("/get", async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
-    await ZGetOrDeleteScheduleSchema.parseAsync(req.body);
-    const result = await getSchedule(req.body);
+    const params = await ZGetOrDeleteScheduleSchema.parseAsync({
+      scheduleId: parseInt(req.query.scheduleId as string),
+    });
+    const result = await getSchedule(params);
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof CustomError)
