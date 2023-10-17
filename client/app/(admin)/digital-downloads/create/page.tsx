@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
@@ -14,8 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
 import Editor from "@/components/ui/custom/editor/Editor";
 import { useToast } from "@/components/ui/use-toast";
-import { Plus, Trash } from "lucide-react";
-import uploadIcon from "/var/folders/xb/pj426db522lc67gt04dflm4w0000gn/T//sdfcjkmolsdahbjnmdfvolasdfjkm/Paper Upload.svg";
+import { Trash, Upload } from "lucide-react";
 
 import {
   Form,
@@ -109,7 +107,7 @@ export function ProfileForm() {
       thumbnail: "https://thumbnail.com",
       description: "",
       file: "",
-      urls: [{ value1: "Https://google.com", value2: "" }],
+      urls: [{ value1: "", value2: "" }],
     },
     resolver: zodResolver(digitalDownloadsSchema),
     mode: "onChange",
@@ -195,7 +193,7 @@ export function ProfileForm() {
   // });
 
   return (
-    <Card className="m-5 p-5 md:w-2/3 w-full">
+    <Card className="md:w-2/3 w-full rounded-tl-none rounded-bl-none">
       <div className="">
         <div className="p-10 rounded-l-lg">
           <Form {...form}>
@@ -226,15 +224,7 @@ export function ProfileForm() {
                               className="text-3xl font-bold mb-8 mt-8 text-foreground"
                               style={{ pointerEvents: "none" }}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                className="w-5 h-5"
-                              >
-                                <path d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" />
-                                <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
-                              </svg>
+                              <Upload></Upload>
                             </div>
                           )}
                           <Input
@@ -454,7 +444,7 @@ export function ProfileForm() {
                                 External Link
                               </FormLabel>
                               <FormControl>
-                                <Input {...field} value="google.com" />
+                                <Input {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -478,11 +468,12 @@ export function ProfileForm() {
                   <Button
                     type="button"
                     size="sm"
-                    className="mt-6"
+                    className="mt-6 border-primary text-primary"
                     disabled={fields.length >= 5}
+                    variant={"outline"}
                     onClick={() => append({ value1: "", value2: "" })}
                   >
-                    Add Files
+                    Add File
                   </Button>
                 )}
 

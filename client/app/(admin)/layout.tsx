@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ["latin"] });
 import { SideNav } from "../components/sideNav";
 import { Separator } from "@/components/ui/separator";
 import { BottomBar } from "../components/bottomBar";
-import { LayoutDashboardIcon } from "lucide-react/";
+import { FileCheck2, LayoutDashboardIcon } from "lucide-react/";
 import { ShoppingBasketIcon } from "lucide-react";
 import { WrapText } from "lucide-react/";
 import TopBar from "../components/topBar";
@@ -29,6 +29,11 @@ const navItems = [
     title: "Store",
     href: "/store",
     icon: <Server size={20} />,
+  },
+  {
+    title: "Digital Products",
+    href: "/digital-downloads",
+    icon: <FileCheck2 size={20} />,
   },
 ];
 
