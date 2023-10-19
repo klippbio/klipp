@@ -120,7 +120,7 @@ export function ProfileForm() {
   function onSubmit(data: z.infer<typeof digitalDownloadsSchema>) {
     data.thumbnail = imageUrl;
     data.description = editorData;
-    console.log(data);
+    console.log("data on submit", data);
   }
 
   async function getUploadURL() {
@@ -291,131 +291,48 @@ export function ProfileForm() {
                   </FormItem>
                 )}
               />
-              <div className="flex flex-row gap-4">
-                <div className="w-1/2">
-                  {showUploadFile && (
-                    <FormField
-                      control={form.control}
-                      name="file"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel htmlFor="displayName">
-                            Upload File
-                          </FormLabel>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className=" border-2 w-full h-32 flex flex-col items-center justify-center rounded-md relative"
-                            >
-                              <div
-                                className=" font-bold mb-8 mt-8"
-                                style={{ pointerEvents: "none" }}
-                              >
-                                <div className="flex flex-row">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    className="w-5 h-5 mr-2"
-                                  >
-                                    <path d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" />
-                                    <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
-                                  </svg>
-                                  Upload your files here
-                                </div>
-                              </div>
-                              <Input
-                                type="file"
-                                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                                onChange={onFileChange}
-                              />
-                            </Button>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-                </div>
 
-                <div className="w-1/2">
-                  {showUploadFile && (
-                    <div className="flex flex-row w-full mt-6 ">
-                      <div className="w-full mt-1">
-                        <FormField
-                          control={form.control}
-                          name={"a"}
-                          render={({ field }) => (
-                            <FormItem className="md:w-1">
-                              <FormLabel htmlFor="name"></FormLabel>
-                              <FormControl>
-                                <div>{arr[0]}</div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="">
+              {showUploadFile && (
+                <FormField
+                  control={form.control}
+                  name="file"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="displayName">Upload File</FormLabel>
+                      <FormControl>
                         <Button
-                          variant="secondary"
-                          size="icon"
-                          type="button"
-                          className=""
-                          // onClick={() => remove(index)}
+                          variant={"outline"}
+                          className=" border-2 w-full h-16 flex flex-col items-center justify-center rounded-md relative"
                         >
-                          <Trash className="h-4 w-4" />
+                          <div
+                            className=" font-bold mb-8 mt-8"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            <div className="flex flex-row">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                className="w-5 h-5 mr-2"
+                              >
+                                <path d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" />
+                                <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
+                              </svg>
+                              Upload your files here
+                            </div>
+                          </div>
+                          <Input
+                            type="file"
+                            className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                            onChange={onFileChange}
+                          />
                         </Button>
-                      </div>
-                    </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
-              </div>
-
-              {showUploadFile &&
-                fields.map((field, index) => (
-                  <div key={field.id}>
-                    <div className="flex md:flex-row flex-col mt-6 md:space-x-6">
-                      {/* <FormField
-                        control={form.control}
-                        name={`urls.${index}.value1`}
-                        render={({ field }) => (
-                          <FormItem className="md:w-1/2">
-                            <FormLabel htmlFor="name">File Name</FormLabel>
-                            <FormControl>Hello</FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      /> */}
-                      <p
-                        id={`urls.${index}.value1`}
-                      >{`urls.${index}.value1`}</p>
-                      <FormField
-                        control={form.control}
-                        name={`urls.${index}.value2`}
-                        render={({ field }) => (
-                          <FormItem className="md:w-1/2">
-                            <FormLabel htmlFor="name">External Link</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button
-                        variant="secondary"
-                        disabled={fields.length <= 1}
-                        size="icon"
-                        type="button"
-                        className="mt-8"
-                        onClick={() => remove(index)}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                />
+              )}
 
               <div>
                 {!showUploadFile &&
@@ -495,7 +412,9 @@ export function ProfileForm() {
               </div>
               <Separator className="mt-4" />
               <div>
-                <h1 className="text-xl font-bold mt-6 text-primary">Pricing</h1>
+                <h1 className="text-xl font-bold mt-6 text-secondary-foreground">
+                  Pricing
+                </h1>
               </div>
               <div className="flex flex-row gap-4">
                 <FormField
@@ -604,7 +523,7 @@ export function ProfileForm() {
               )}
               <Separator className="mt-8" />
               <div>
-                <h1 className="text-xl font-bold mt-6 text-primary">
+                <h1 className="text-xl font-bold mt-6 text-secondary-foreground">
                   Visibility
                 </h1>
               </div>
@@ -612,7 +531,7 @@ export function ProfileForm() {
                 control={form.control}
                 name="visibility"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mt-6 mb-6">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mt-6 mb-6 ">
                     <div className="space-y-0.5">
                       <FormLabel>Product Visibility</FormLabel>
                       <FormDescription>
@@ -633,7 +552,7 @@ export function ProfileForm() {
               />
 
               <Button className="mt-10 w-32 items-center" type="submit">
-                Next
+                Submit
               </Button>
             </form>
           </Form>

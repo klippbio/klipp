@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_KEVAL")
 }
 
 model User {
@@ -35,7 +35,8 @@ model Store {
 }
 
 model StoreItem {
-  id             String          @id @default(uuid())
+    id           Int   @id @default(autoincrement()) @unique
+
   itemOrder      Int             @unique @default(autoincrement())
   storeId        String
   itemType       StoreItemType
@@ -51,21 +52,24 @@ model Link {
   updatedAt   DateTime  @updatedAt
   name        String
   url         String
-  storeItemId String    @unique
+  storeItemId Int    @unique
   storeItem   StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
 }
 
 model DigitalProduct {
-  id               String    @id @default(uuid())
+  id           Int   @id @default(autoincrement()) @unique
   createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  updatedAt        DateTime?  @updatedAt
   name             String
-  description      String
-  storeItemId      String    @unique
-  shortDescription String
-  thumbnailUrl     String
-  createdBy        String
+  price           String
+  description      String?
+  storeItemId      Int   @unique
+  shortDescription String?
+  thumbnailUrl     String?
+  createdBy        String?
   storeItem        StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
+
+  @@index([storeItemId])
 }
 
 model SocialSet {
@@ -149,9 +153,9 @@ model CalendarProduct {
 
   calendarSettingId               Int @unique
   calendarSetting                 CalendarSetting        @relation(fields: [calendarSettingId], references: [id])
+  storeItemId Int @unique
 
   storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
-  storeItemId String @unique
 
   price                          Int?
 
