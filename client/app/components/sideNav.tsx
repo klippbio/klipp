@@ -17,8 +17,6 @@ export function SideNav({ className, items, ...props }: NavProps) {
     currentPage.split("/")[1].charAt(0).toUpperCase() +
     currentPage.split("/")[1].slice(1);
 
-  console.log(pageTitle);
-
   const { userId } = useAuth();
 
   return (

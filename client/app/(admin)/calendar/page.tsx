@@ -10,6 +10,8 @@ import { Card } from "@/components/ui/card";
 import { set } from "react-hook-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CalendarSettings from "./calendarSettings";
+import { ComboboxForm } from "./calendarForm";
+import { CalendarSettingsForm } from "./calendarSettingsForm";
 
 function Page() {
   const { toast } = useToast();
@@ -21,17 +23,12 @@ function Page() {
           <TabsTrigger value="schedule">Schedule</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
-        <TabsContent value="products">
-          <div>Products</div>
-        </TabsContent>
+        <TabsContent value="products"></TabsContent>
         <TabsContent value="schedule">
-          <Card className="w-1/3 h-72 p-5">
-            <div className="text-foreground">Heading</div>
-            This is the body text
-          </Card>
+          <ComboboxForm />
         </TabsContent>
         <TabsContent value="settings">
-          <CalendarSettings />
+          <CalendarSettingsForm />
         </TabsContent>
       </Tabs>
     </div>

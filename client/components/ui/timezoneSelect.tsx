@@ -1,0 +1,138 @@
+// TimezoneSelect.js
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import {
+  addCitiesToDropdown,
+  filterByCities,
+  handleOptionLabel,
+} from "@/utils/timezone";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/components/ui/utils";
+import { ChevronsUpDown } from "lucide-react";
+import { FormControl } from "./form";
+import dayjs from "@/utils/dayjs.index";
+import { ICity } from "./timezoneSelectOlf";
+
+const TimezoneSelect = ({ onTimeZoneChange, selectedTimezone }) => {
+  const [open, setOpen] = React.useState(false);
+  const [cities, setCities] = useState<ICity[]>([]);
+  const [timezones, setTimezones] = useState<{}>([]);
+  const [options, setOptions] = useState<TimezoneInfo[]>([]);
+
+  const { data } = useQuery({
+    queryKey: ["cityTimezones"],
+    queryFn: () =>
+      axios.get("/api/calendar/cityTimezones").then((res) => res.data),
+  });
+
+  useEffect(() => {
+    if (data) {
+      setTimezones(addCitiesToDropdown(data));
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const updatedOptions = convertTimezones(timezones);
+    setOptions(updatedOptions);
+  }, [timezones]);
+
+  const updateTimezones = (currentTz: {}, pastTimezones: {}) => {
+    const updatedTimezones = { ...pastTimezones, ...currentTz };
+    setTimezones(updatedTimezones);
+  };
+  const handleInputChange = (tz: string) => {
+    if (data) {
+      setCities(filterByCities(tz, data));
+      updateTimezones(addCitiesToDropdown(cities), timezones);
+    }
+  };
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <FormControl>
+          <Button
+            variant="outline"
+            role="combobox"
+            className={cn(
+              "w-1/2 justify-start",
+              !selectedTimezone && "text-muted-foreground"
+            )}
+          >
+            {selectedTimezone
+              ? data.find((timezone) => timezone.timezone === selectedTimezone)
+                  .timezone
+              : "Select city"}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </FormControl>
+      </PopoverTrigger>
+      <PopoverContent className="p-4 w-full">
+        <Command onChange={(e) => handleInputChange(e.target.value)}>
+          <CommandInput placeholder="Search timezone..." />
+          <CommandEmpty>No timezone found.</CommandEmpty>
+          <CommandGroup className="h-72 overflow-y-auto">
+            {options.map((option) => (
+              <CommandItem
+                onSelect={() => {
+                  onTimeZoneChange(option.value);
+                  setOpen(false); // Use the value of the selected option
+                }}
+                key={option.label}
+              >
+                {handleOptionLabel(option, cities)}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
+export function convertTimezones(
+  input: Record<string, string>
+): TimezoneInfo[] {
+  const timezonesArray = Object.entries(input).map(([key, value]) => {
+    const now = dayjs().tz(key);
+    const offsetMinutes = now.utcOffset();
+    const offsetHours = Math.floor(offsetMinutes / 60);
+    const offsetMinutesRemainder = offsetMinutes % 60;
+    const offsetString =
+      (offsetHours >= 0 ? "+" : "-") +
+      Math.abs(offsetHours).toString().padStart(2, "0") +
+      ":" +
+      Math.abs(offsetMinutesRemainder).toString().padStart(2, "0");
+    const label = `(GMT${offsetString}) ${value}`;
+
+    return {
+      value: key,
+      label: label,
+      offset: offsetHours + offsetMinutesRemainder / 60,
+      abbrev: now.format("z"),
+      altName: value,
+    };
+  });
+
+  return timezonesArray;
+}
+export type TimezoneInfo = {
+  value: string;
+  label: string;
+  offset: number;
+  abbrev: string;
+  altName: string;
+};
+
+export default TimezoneSelect;

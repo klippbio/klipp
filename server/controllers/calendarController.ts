@@ -16,6 +16,7 @@ import {
   saveGoogleCalendarTokens,
   unlinkGoogleCalendar,
 } from "../services/calendar/calendarSettingService";
+import cityTimezones from "../services/calendar/cityTimezones";
 
 export const calendarController = express.Router();
 
@@ -68,9 +69,12 @@ calendarController.get("/get", async (req: Request, res: Response) => {
     const params = await ZGetOrDeleteScheduleSchema.parseAsync({
       scheduleId: parseInt(req.query.scheduleId as string),
     });
+    console.log(params);
     const result = await getSchedule(params);
+    console.log(result);
     res.status(200).json(result);
   } catch (error) {
+    console.log(error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -128,6 +132,22 @@ calendarController.post(
       const { storeId } = req.body;
       const calendar = await unlinkGoogleCalendar(storeId);
       res.status(200).json({ calendar: calendar });
+    } catch (error) {
+      console.log(error);
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
+  }
+);
+
+calendarController.get(
+  "/cityTimezones",
+  async (req: Request, res: Response) => {
+    try {
+      console.log("getting cities");
+      const cities = await cityTimezones();
+      res.status(200).json(cities);
     } catch (error) {
       console.log(error);
       if (error instanceof CustomError)
