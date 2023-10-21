@@ -148,10 +148,10 @@ function digitalDownloadPage() {
                   </div>
                   <DialogFooter>
                     <Button type="submit">
-                      {isSaving && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      )}
                       <span>Save</span>
+                      {isSaving && (
+                        <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                      )}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -176,7 +176,7 @@ function digitalDownloadPage() {
             <div className="mt-6 flex flex-row gap-8">
               <div>$30</div>
               <div>
-                <Button className="h-" variant={"outline"}>
+                <Button className="" variant={"outline"}>
                   <Copy size={15} />
                 </Button>
               </div>

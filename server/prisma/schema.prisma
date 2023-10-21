@@ -60,12 +60,20 @@ model DigitalProduct {
   id           Int   @id @default(autoincrement()) @unique
   createdAt        DateTime  @default(now())
   updatedAt        DateTime?  @updatedAt
-  name             String
-  price           String
-  description      String?
+  name             String?
+  price            String?
+  recPrice         String?
+  minPrice         String?  
+  file             String?
+  description      Json?
+  currency         String[] @default(["USD"])
   storeItemId      Int   @unique
   shortDescription String?
-  thumbnailUrl     String?
+  flexPrice        Boolean?
+  externalFile     Boolean?
+  visibility       Boolean? 
+  urls             Json?
+   thumbnailUrl     String?
   createdBy        String?
   storeItem        StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
 
