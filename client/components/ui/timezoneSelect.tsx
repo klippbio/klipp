@@ -25,6 +25,7 @@ import { ChevronsUpDown } from "lucide-react";
 import { FormControl } from "./form";
 import dayjs from "@/utils/dayjs.index";
 import { ICity } from "./timezoneSelectOlf";
+import { Skeleton } from "./skeleton";
 
 const TimezoneSelect = ({ onTimeZoneChange, selectedTimezone }) => {
   const [open, setOpen] = React.useState(false);
@@ -32,7 +33,7 @@ const TimezoneSelect = ({ onTimeZoneChange, selectedTimezone }) => {
   const [timezones, setTimezones] = useState<{}>([]);
   const [options, setOptions] = useState<TimezoneInfo[]>([]);
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["cityTimezones"],
     queryFn: () =>
       axios.get("/api/calendar/cityTimezones").then((res) => res.data),
@@ -59,27 +60,27 @@ const TimezoneSelect = ({ onTimeZoneChange, selectedTimezone }) => {
       updateTimezones(addCitiesToDropdown(cities), timezones);
     }
   };
-  return (
+  return isLoading ? (
+    <Skeleton className="h-6 w-40 m-4" />
+  ) : (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <FormControl>
-          <Button
-            variant="outline"
-            role="combobox"
-            className={cn(
-              "w-1/2 justify-start",
-              !selectedTimezone && "text-muted-foreground"
-            )}
-          >
-            {selectedTimezone
-              ? data.find((timezone) => timezone.timezone === selectedTimezone)
-                  .timezone
-              : "Select city"}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </FormControl>
+        <Button
+          variant="outline"
+          role="combobox"
+          className={cn(
+            "w-full justify-between",
+            !selectedTimezone && "text-muted-foreground"
+          )}
+        >
+          {selectedTimezone && data
+            ? data.find((timezone) => timezone.timezone === selectedTimezone)
+                .timezone
+            : "Select city"}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-4 w-full">
+      <PopoverContent className="p-0 w-[300px]">
         <Command onChange={(e) => handleInputChange(e.target.value)}>
           <CommandInput placeholder="Search timezone..." />
           <CommandEmpty>No timezone found.</CommandEmpty>
@@ -101,6 +102,7 @@ const TimezoneSelect = ({ onTimeZoneChange, selectedTimezone }) => {
     </Popover>
   );
 };
+
 export function convertTimezones(
   input: Record<string, string>
 ): TimezoneInfo[] {

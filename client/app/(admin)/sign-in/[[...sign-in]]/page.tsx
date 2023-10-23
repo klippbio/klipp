@@ -1,17 +1,16 @@
-import { SignIn } from '@clerk/nextjs';
+import { SignIn } from "@clerk/nextjs";
 
 const SignInPage = () => (
-  <div className='flex justify-center h-screen items-center'>
+  <div className="flex justify-center h-screen items-center">
     <SignIn
-      redirectUrl="dashboard"
+      redirectUrl="home"
       appearance={{
         elements: {
-          formButtonPrimary: 'bg-black hover:bg-gray-800 text-sm normal-case'
-        }
+          formButtonPrimary: "bg-black hover:bg-gray-800 text-sm normal-case",
+        },
       }}
     />
   </div>
-
 );
 
 export default SignInPage;

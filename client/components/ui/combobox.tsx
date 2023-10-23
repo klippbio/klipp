@@ -21,10 +21,6 @@ import {
 export function Combobox({ options, name, selectedValue, onValueChange }) {
   const [open, setOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    console.log(options);
-  }, [options, open]);
-
   const searchName = "Search " + name;
 
   return (
@@ -35,7 +31,7 @@ export function Combobox({ options, name, selectedValue, onValueChange }) {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-start"
+            className="w-full justify-between"
           >
             {selectedValue
               ? options.find((option) => option.value === selectedValue)?.label
@@ -43,7 +39,7 @@ export function Combobox({ options, name, selectedValue, onValueChange }) {
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-0 w-full ">
+        <PopoverContent className="p-0 w-[300px]">
           <Command>
             <CommandInput placeholder={searchName} />
             <CommandEmpty>No framework found.</CommandEmpty>

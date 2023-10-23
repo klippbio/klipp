@@ -1,5 +1,4 @@
-import type { ITimezoneOption } from "react-timezone-select";
-
+import { TimezoneInfo } from "@/components/ui/timeZoneSelect";
 import type { ICity } from "@/components/ui/timezoneSelectOlf";
 
 function findPartialMatch(itemsToSearch: string, searchString: string) {
@@ -37,7 +36,7 @@ export const addCitiesToDropdown = (cities: ICity[]) => {
   return cityTimezones || {};
 };
 
-export const handleOptionLabel = (option: ITimezoneOption, cities: ICity[]) => {
+export const handleOptionLabel = (option: TimezoneInfo, cities: ICity[]) => {
   const timezoneValue = option.label
     .split(")")[0]
     .replace("(", " ")

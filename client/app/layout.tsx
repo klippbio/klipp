@@ -11,21 +11,6 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
 
-const sidebarNavItems = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-  },
-  {
-    title: "My Products",
-    href: "/products",
-  },
-  {
-    title: "Onboarding",
-    href: "/onboarding",
-  },
-];
-
 export default function RootLayout({
   children,
 }: {

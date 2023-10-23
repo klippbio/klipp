@@ -12,11 +12,16 @@ import {
 } from "../services/calendar/calendarService";
 import CustomError from "../utils/CustomError";
 import {
+  ZGetOrDeleteCalendarSettingSchema,
+  ZUpdateCalendarSettingSchema,
   checkIfCalendarIsConnected,
+  getCalendarSettings,
   saveGoogleCalendarTokens,
   unlinkGoogleCalendar,
+  updateCalendarSettings,
 } from "../services/calendar/calendarSettingService";
 import cityTimezones from "../services/calendar/cityTimezones";
+import { google } from "googleapis";
 
 export const calendarController = express.Router();
 
@@ -98,12 +103,19 @@ calendarController.delete("/delete", async (req: Request, res: Response) => {
 
 calendarController.get("/linkCalendar", async (req: Request, res: Response) => {
   try {
-    const { code, state } = req.query;
-    await saveGoogleCalendarTokens(state as string, code as string);
+    console.log("linking calendar");
+    console.log(req);
+    console.log(req.body, "this was body");
+    const { code, state, scope } = req.query;
+    await saveGoogleCalendarTokens(
+      state as string,
+      code as string,
+      scope as string
+    );
     res.redirect("http://localhost:3000/calendar?message=auth_success");
   } catch (error) {
     console.error(error);
-    res.send("http://localhost:3000/calendar?message=auth_failed");
+    res.redirect("http://localhost:3000/calendar?message=auth_failed");
   }
 });
 
@@ -136,7 +148,7 @@ calendarController.post(
       console.log(error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
-      else res.status(500).json({ error: error });
+      else res.status(500);
     }
   }
 );
@@ -156,3 +168,85 @@ calendarController.get(
     }
   }
 );
+
+calendarController.get("/settings", async (req: Request, res: Response) => {
+  try {
+    const params = await ZGetOrDeleteCalendarSettingSchema.parseAsync({
+      storeId: req.query.storeId as string,
+    });
+    const calendarSettings = await getCalendarSettings(params);
+    res.status(200).json(calendarSettings);
+  } catch (error) {
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
+  }
+});
+
+calendarController.post("/settings", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body);
+    const calendarSettings = await updateCalendarSettings(
+      await ZUpdateCalendarSettingSchema.parseAsync(req.body)
+    );
+    res.status(200).json(calendarSettings);
+  } catch (error) {
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
+  }
+});
+
+calendarController.post("/createEvent", async (req: Request, res: Response) => {
+  try {
+    const { name } = req.body;
+    const oauth2Client = new google.auth.OAuth2({
+      clientId:
+        "59264655502-qodhgr9q58u4724rvrr0i2ums83olras.apps.googleusercontent.com",
+      clientSecret: "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",
+      redirectUri: "http://localhost:4000/calendar/linkCalendar",
+    });
+
+    oauth2Client.setCredentials({
+      refresh_token:
+        "1//01DkyARi5-Et5CgYIARAAGAESNwF-L9Ir1obR_99ImT0bcuFXD3T12idcMLhesEmvgfqkhjcNQHNyyy5mnxQYFujygNQPC0EaWnA",
+    });
+    const calendar = google.calendar({
+      version: "v3",
+      auth: oauth2Client,
+    });
+    const response = await calendar.events.insert({
+      auth: oauth2Client,
+      calendarId: "primary",
+      requestBody: {
+        start: {
+          dateTime: "2023-10-22T09:00:00-07:00",
+          timeZone: "America/Los_Angeles",
+        },
+        end: {
+          dateTime: "2023-10-22T17:00:00-07:00",
+          timeZone: "America/Los_Angeles",
+        },
+        conferenceData: {
+          createRequest: {
+            requestId: "sample123",
+            conferenceSolutionKey: {
+              type: "hangoutsMeet",
+            },
+          },
+        },
+        summary: name,
+        description: "A chance to hear more about Google's developer products.",
+      },
+      conferenceDataVersion: 1,
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
+  }
+});
