@@ -25,6 +25,11 @@ const navItems = [
     href: "/calendar",
     icon: <Calendar size={20} />,
   },
+  {
+    title: "Store",
+    href: "/store",
+    icon: <Server size={20} />,
+  },
   // {
   //   title: "Store",
   //   href: "/store",
