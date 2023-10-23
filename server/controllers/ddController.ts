@@ -7,8 +7,14 @@ import * as ddService from "../services/dd/ddService";
 import {
   ZCreateDigitalProductSchema,
   ZUpdateDigitalProductSchema,
+  deleteFile,
+  getProduct,
 } from "../services/dd/ddService";
-import { createProduct, updateProduct } from "../services/dd/ddService";
+import {
+  createProduct,
+  updateProduct,
+  updateFile,
+} from "../services/dd/ddService";
 import { any } from "zod";
 
 export const ddController = express.Router();
@@ -42,6 +48,38 @@ ddController.post("/update", async (req: Request, res: Response) => {
     //TODO: add validation to make sure that id belongs to sender
 
     const product = await updateProduct(id, req.body);
+    res.status(201).json(product);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+//TODO: add auth
+ddController.post("/file", async (req: Request, res: Response) => {
+  try {
+    const id = req.query.id;
+    const product = await updateFile(id, req.body);
+    res.status(201).json(product);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+//TODO: add auth
+ddController.delete("/file", async (req: Request, res: Response) => {
+  try {
+    const id = req.query.id;
+    await deleteFile(id);
+    res.status(201).json("deleted");
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+ddController.get("/getProduct", async (req: Request, res: Response) => {
+  try {
+    const id = req.query.id;
+    const product = await getProduct(id);
     res.status(201).json(product);
   } catch (error) {
     res.send(error);

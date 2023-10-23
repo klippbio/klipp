@@ -4,7 +4,7 @@ import EditorJS from "@editorjs/editorjs";
 import "./editor.css";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
 
-export default function Editor({ updateEditorData }) {
+export default function Editor({ initialBlocks, updateEditorData }) {
   const [isMounted, setIsMounted] = useState(false);
   const editorRef = useRef();
   const [saved, setSaved] = useState(false);
@@ -33,11 +33,13 @@ export default function Editor({ updateEditorData }) {
     const Marker = require("@editorjs/marker");
     const Underline = require("@editorjs/underline");
     const Paragraph = require("@editorjs/paragraph");
-
+    console.log("initializing editor", initialBlocks);
     if (!ref.current) {
       const editor = new EditorJS({
         holder: "editorjs",
-        data: { blocks: [] },
+        data: {
+          blocks: initialBlocks,
+        },
         onReady() {
           ref.current = editor;
         },

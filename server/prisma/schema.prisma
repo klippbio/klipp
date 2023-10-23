@@ -35,8 +35,7 @@ model Store {
 }
 
 model StoreItem {
-    id           Int   @id @default(autoincrement()) @unique
-
+  id           Int   @id @default(autoincrement()) @unique
   itemOrder      Int             @unique @default(autoincrement())
   storeId        String
   itemType       StoreItemType
@@ -64,7 +63,6 @@ model DigitalProduct {
   price            String?
   recPrice         String?
   minPrice         String?  
-  file             String?
   description      Json?
   currency         String[] @default(["USD"])
   storeItemId      Int   @unique
@@ -73,11 +71,23 @@ model DigitalProduct {
   externalFile     Boolean?
   visibility       Boolean? 
   urls             Json?
-   thumbnailUrl     String?
+  thumbnailUrl     String?
   createdBy        String?
+  ddFiles          DDFile[]
   storeItem        StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
 
   @@index([storeItemId])
+}
+
+model DDFile {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  url       String
+  digitalProductId Int
+  digitalProduct DigitalProduct @relation(fields: [digitalProductId], references: [id], onDelete: Cascade)
+  @@index([digitalProductId])
 }
 
 model SocialSet {
@@ -187,13 +197,15 @@ model CalendarSetting{
   @@index([storeId])
 }
 
+
+
 model GoogleCalendar{
 
   id        Int   @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   refreshToken String
-  accessToken String
+  accessToken String 
   bookings Booking[]
 
   calendarSettingId Int @unique

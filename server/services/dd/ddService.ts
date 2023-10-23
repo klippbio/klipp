@@ -22,6 +22,11 @@ export const ZUpdateDigitalProductSchema = z.object({
   visibility: z.boolean().optional().default(false),
 });
 
+export const ZAddDDFile = z.object({
+  name: z.string(),
+  url: z.string(),
+});
+
 export const allProducts = async (): Promise<DigitalProduct[]> => {
   return db.digitalProduct.findMany({});
 };
@@ -53,7 +58,7 @@ export const updateProduct = async (id: any, input: any) => {
   const refinedData = {
     name: input.name,
     shortDescription: input.shortDescription,
-    thumbnailUrl: input.    ,
+    thumbnailUrl: input.thumbnailUrl,
     externalFile: input.externalFile,
     currency: input.currency,
     price: input.price,
@@ -80,7 +85,7 @@ export const updateProduct = async (id: any, input: any) => {
       shortDescription: parsedRefinedData.shortDescription,
       thumbnailUrl: parsedRefinedData.thumbnailUrl,
       externalFile: parsedRefinedData.externalFile,
-      file: parsedRefinedData.file,
+      //   file: parsedRefinedData.file,
       currency: parsedRefinedData.currency,
       price: parsedRefinedData.price,
       recPrice: parsedRefinedData.recPrice,
@@ -93,4 +98,45 @@ export const updateProduct = async (id: any, input: any) => {
   });
 
   return updatedProduct;
+};
+
+export const updateFile = async (
+  id: any,
+  input: z.infer<typeof ZAddDDFile>
+) => {
+  const allFiles = await db.dDFile.create({
+    data: {
+      name: input.name,
+      url: input.url,
+      digitalProduct: {
+        connect: {
+          id: parseInt(id),
+        },
+      },
+    },
+  });
+
+  return allFiles;
+};
+
+export const deleteFile = async (id: any) => {
+  const allFiles = await db.dDFile.delete({
+    where: {
+      id: id,
+    },
+  });
+  return allFiles;
+};
+
+export const getProduct = async (id: any) => {
+  const product = await db.digitalProduct.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+    include: {
+      ddFiles: true,
+    },
+  });
+
+  return product;
 };
