@@ -27,8 +27,6 @@ function Page() {
         .then((res) => res.data.calendarSetting),
   });
 
-  console.log(data);
-
   return (
     <div>
       <Tabs defaultValue="settings" className="w-full p-4">

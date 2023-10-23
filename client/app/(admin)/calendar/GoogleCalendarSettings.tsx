@@ -38,21 +38,11 @@ export default function GoogleCalendarSettings({
       return response;
     },
     onSuccess: (response) => {
-      console.log("okay");
-      console.log(response);
-
       if (response.status === 200) {
         toast({
           title: "Successfully unlinked Google Calendar",
           description: "It is done really!",
           variant: "default",
-        });
-      } else {
-        const errorResponse = response;
-        toast({
-          title: errorResponse.error,
-          description: "nope",
-          variant: "destructive",
         });
       }
 
@@ -60,7 +50,6 @@ export default function GoogleCalendarSettings({
       queryClient.invalidateQueries(["calendarSettings", storeId]);
     },
     onError: (error: AxiosError) => {
-      console.error("Error unlinking Google Calendar:", error);
       toast({
         title: "Internal server error",
         variant: "destructive",
@@ -124,7 +113,6 @@ export default function GoogleCalendarSettings({
 
       window.location.href = authUrl;
     } catch (error) {
-      console.error("Error linking Google Calendar:", error);
       toast({
         title: "Error linking Google Calendar",
         description: "nope",
@@ -144,11 +132,7 @@ export default function GoogleCalendarSettings({
             <div className="flex items-center">
               <Button
                 className="mr-2"
-                onClick={async () => {
-                  await unlinkCalendarMutation.mutate();
-                  console.log("Unlink button clicked");
-                  // queryClient.invalidateQueries(["calendarSettings", storeId]);
-                }}
+                onClick={() => unlinkCalendarMutation.mutate()}
               >
                 Unlink
               </Button>

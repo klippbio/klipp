@@ -29,7 +29,6 @@ export const calendarController = express.Router();
 
 calendarController.post("/create", async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
     ZCreateScheduleSchema.parseAsync(req.body);
     const schedule = await createSchedule(req.body);
     res.status(201).json(schedule);
@@ -42,8 +41,6 @@ calendarController.post("/create", async (req: Request, res: Response) => {
 
 calendarController.post("/update", async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
-
     // prettier-ignore
     const parsedBody = {
       ...req.body,
@@ -77,7 +74,6 @@ calendarController.get("/get", async (req: Request, res: Response) => {
     const result = await getSchedule(params);
     res.status(200).json(result);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -86,7 +82,6 @@ calendarController.get("/get", async (req: Request, res: Response) => {
 
 calendarController.delete("/delete", async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
     await ZGetOrDeleteScheduleSchema.parseAsync(req.body);
     const result = await deleteSchedule(req.body);
     res.status(200).json(result);
@@ -101,9 +96,6 @@ calendarController.delete("/delete", async (req: Request, res: Response) => {
 
 calendarController.get("/linkCalendar", async (req: Request, res: Response) => {
   try {
-    console.log("linking calendar");
-    console.log(req);
-    console.log(req.body, "this was body");
     const { code, state, scope } = req.query;
     await saveGoogleCalendarTokens(
       state as string,
@@ -112,22 +104,16 @@ calendarController.get("/linkCalendar", async (req: Request, res: Response) => {
     );
     res.redirect("http://localhost:3000/calendar?message=auth_success");
   } catch (error) {
-    console.error(error);
     res.redirect("http://localhost:3000/calendar?message=auth_failed");
   }
 });
 
 calendarController.get("/linkStatus", async (req: Request, res: Response) => {
   try {
-    console.log("checking status");
-    console.log("who the fuck is calling this?");
     const { storeId } = req.query;
-    console.log(storeId);
     const store = await checkIfCalendarIsConnected(storeId as string);
-    console.log(store);
     res.status(200).json(store);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -138,12 +124,10 @@ calendarController.post(
   "/unlinkCalendar",
   async (req: Request, res: Response) => {
     try {
-      console.log("unlinking calendar");
       const { storeId } = req.body;
       const calendar = await unlinkGoogleCalendar(storeId);
       res.status(200).json({ calendar: calendar });
     } catch (error) {
-      console.log(error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500);
@@ -155,11 +139,9 @@ calendarController.get(
   "/cityTimezones",
   async (req: Request, res: Response) => {
     try {
-      console.log("getting cities");
       const cities = await cityTimezones();
       res.status(200).json(cities);
     } catch (error) {
-      console.log(error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -175,7 +157,6 @@ calendarController.get("/settings", async (req: Request, res: Response) => {
     const calendarSettings = await getCalendarSettings(params);
     res.status(200).json(calendarSettings);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -184,13 +165,11 @@ calendarController.get("/settings", async (req: Request, res: Response) => {
 
 calendarController.post("/settings", async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
     const calendarSettings = await updateCalendarSettings(
       await ZUpdateCalendarSettingSchema.parseAsync(req.body)
     );
     res.status(200).json(calendarSettings);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -242,7 +221,6 @@ calendarController.post("/createEvent", async (req: Request, res: Response) => {
     });
     res.json(response.data);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });

@@ -20,10 +20,7 @@ async function revokeAccessWithRefreshToken(refreshToken: string) {
 
     // Revoke the new access token
     await oauth2Client.revokeToken(token as string);
-
-    console.log("Access token revoked successfully");
   } catch (error) {
-    console.error("Error revoking access token:", error);
     throw new CustomError("Error revoking access token", 500);
   }
 }
@@ -57,7 +54,6 @@ export const saveGoogleCalendarTokens = async (
   }
 
   const { tokens } = await oauth2Client.getToken(code);
-  console.log(tokens);
   const { storeId } = JSON.parse(state);
   if (
     tokens.access_token == null ||
@@ -157,15 +153,12 @@ export const checkIfCalendarIsConnected = async (storeId: string) => {
     },
   });
 
-  console.log(store);
-
   if (!store?.calendarSetting?.googleCalendar) {
     throw new CustomError(
       "Google Calendar Not Connected. Please try again",
       404
     );
   }
-  console.log("wow should not be here");
   return store;
 };
 
@@ -197,12 +190,11 @@ export const unlinkGoogleCalendar = async (storeId: string) => {
   );
 
   // Unlink the calendar by deleting the associated calendarSetting
-  const googleCalendar = await db.googleCalendar.delete({
+  await db.googleCalendar.delete({
     where: {
       id: store.calendarSetting.googleCalendar.id,
     },
   });
-  console.log(googleCalendar);
 
   return "Calendar unlinked successfully";
 };
