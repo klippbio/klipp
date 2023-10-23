@@ -77,9 +77,10 @@ export default function GoogleCalendarSettings({
 
   const generateGoogleOAuthUrl = (params: any) => {
     const baseUrl = "https://accounts.google.com/o/oauth2/auth";
-    const clientId =
-      "59264655502-qodhgr9q58u4724rvrr0i2ums83olras.apps.googleusercontent.com";
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID;
     const redirectUri = "http://localhost:4000/calendar/linkCalendar"; // Change to your Express backend URL
+
+    console.log("clientId", clientId);
 
     // Ensure params.scope is an array and join the scopes with a space
     const scope = Array.isArray(params.scope)

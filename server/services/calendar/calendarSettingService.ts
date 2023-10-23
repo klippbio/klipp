@@ -4,9 +4,8 @@ import CustomError from "../../utils/CustomError";
 import { z } from "zod";
 
 const oauth2Client = new google.auth.OAuth2({
-  clientId:
-    "59264655502-qodhgr9q58u4724rvrr0i2ums83olras.apps.googleusercontent.com",
-  clientSecret: "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",
+  clientId: process.env.GOOGLE_AUTH_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET,
   redirectUri: "http://localhost:4000/calendar/linkCalendar",
 });
 

@@ -21,7 +21,6 @@ import {
   updateCalendarSettings,
 } from "../services/calendar/calendarSettingService";
 import cityTimezones from "../services/calendar/cityTimezones";
-import { google } from "googleapis";
 
 export const calendarController = express.Router();
 
@@ -176,53 +175,52 @@ calendarController.post("/settings", async (req: Request, res: Response) => {
   }
 });
 
-calendarController.post("/createEvent", async (req: Request, res: Response) => {
-  try {
-    const { name } = req.body;
-    const oauth2Client = new google.auth.OAuth2({
-      clientId:
-        "59264655502-qodhgr9q58u4724rvrr0i2ums83olras.apps.googleusercontent.com",
-      clientSecret: "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",
-      redirectUri: "http://localhost:4000/calendar/linkCalendar",
-    });
+// calendarController.post("/createEvent", async (req: Request, res: Response) => {
+//   try {
+//     const { name } = req.body;
+//     const oauth2Client = new google.auth.OAuth2({
+//       clientId: process.env.GOOGLE_AUTH_CLIENT_ID,
+//       clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET,
+//       redirectUri: "http://localhost:4000/calendar/linkCalendar",
+//     });
 
-    oauth2Client.setCredentials({
-      refresh_token:
-        "1//01DkyARi5-Et5CgYIARAAGAESNwF-L9Ir1obR_99ImT0bcuFXD3T12idcMLhesEmvgfqkhjcNQHNyyy5mnxQYFujygNQPC0EaWnA",
-    });
-    const calendar = google.calendar({
-      version: "v3",
-      auth: oauth2Client,
-    });
-    const response = await calendar.events.insert({
-      auth: oauth2Client,
-      calendarId: "primary",
-      requestBody: {
-        start: {
-          dateTime: "2023-10-22T09:00:00-07:00",
-          timeZone: "America/Los_Angeles",
-        },
-        end: {
-          dateTime: "2023-10-22T17:00:00-07:00",
-          timeZone: "America/Los_Angeles",
-        },
-        conferenceData: {
-          createRequest: {
-            requestId: "sample123",
-            conferenceSolutionKey: {
-              type: "hangoutsMeet",
-            },
-          },
-        },
-        summary: name,
-        description: "A chance to hear more about Google's developer products.",
-      },
-      conferenceDataVersion: 1,
-    });
-    res.json(response.data);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
-  }
-});
+//     oauth2Client.setCredentials({
+//       refresh_token:
+//         "1//01DkyARi5-Et5CgYIARAAGAESNwF-L9Ir1obR_99ImT0bcuFXD3T12idcMLhesEmvgfqkhjcNQHNyyy5mnxQYFujygNQPC0EaWnA",
+//     });
+//     const calendar = google.calendar({
+//       version: "v3",
+//       auth: oauth2Client,
+//     });
+//     const response = await calendar.events.insert({
+//       auth: oauth2Client,
+//       calendarId: "primary",
+//       requestBody: {
+//         start: {
+//           dateTime: "2023-10-22T09:00:00-07:00",
+//           timeZone: "America/Los_Angeles",
+//         },
+//         end: {
+//           dateTime: "2023-10-22T17:00:00-07:00",
+//           timeZone: "America/Los_Angeles",
+//         },
+//         conferenceData: {
+//           createRequest: {
+//             requestId: "sample123",
+//             conferenceSolutionKey: {
+//               type: "hangoutsMeet",
+//             },
+//           },
+//         },
+//         summary: name,
+//         description: "A chance to hear more about Google's developer products.",
+//       },
+//       conferenceDataVersion: 1,
+//     });
+//     res.json(response.data);
+//   } catch (error) {
+//     if (error instanceof CustomError)
+//       res.status(error.statusCode).json({ error: error.message });
+//     else res.status(500).json({ error: error });
+//   }
+// });
