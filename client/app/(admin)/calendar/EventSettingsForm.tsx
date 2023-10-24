@@ -17,7 +17,7 @@ import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { TimezoneSelect } from "@/components/ui/timeZoneSelect";
+import { TimezoneSelect } from "@/components/ui/timezoneSelect";
 
 const FormSchema = z.object({
   timeZone: z.string({
@@ -105,11 +105,9 @@ export function EventSettingsForm({
     form.setValue("timeZone", selectedTimezone);
   };
 
-  const handleMinimumBookingChange = (
-    minimumBookingNotice: EventSettingsFormProps["minimumBookingNotice"]
-  ) => {
+  const handleMinimumBookingChange = (minimumBookingNotice: string) => {
     // Handle the timeZone change in this function
-    form.setValue("minimumBookingNotice", minimumBookingNotice);
+    form.setValue("minimumBookingNotice", parseInt(minimumBookingNotice));
   };
 
   function onSubmit(data: z.infer<typeof ZUpdateCalendarSettingSchema>) {
@@ -160,9 +158,12 @@ export function EventSettingsForm({
                 <div className="w-full md:w-2/3">
                   <Combobox
                     name="Minimum Notice"
-                    selectedValue={field.value}
+                    selectedValue={field.value.toString()}
                     onValueChange={handleMinimumBookingChange}
-                    options={minimumBookingNoticeOptions}
+                    options={minimumBookingNoticeOptions.map((option) => ({
+                      ...option,
+                      value: option.value.toString(),
+                    }))}
                   />
                   <FormDescription className="ml-2">
                     Set the minimum amount of notice needed.
