@@ -10,20 +10,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import TimezoneSelect from "@/components/ui/timeZoneSelect";
 import { Combobox } from "@/components/ui/combobox";
 import { CalendarClock, Info, MapPinIcon } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { TimezoneSelect } from "@/components/ui/timeZoneSelect";
 
 const FormSchema = z.object({
   timeZone: z.string({

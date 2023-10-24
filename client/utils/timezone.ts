@@ -1,5 +1,4 @@
-import { TimezoneInfo } from "@/components/ui/timeZoneSelect";
-import type { ICity } from "@/components/ui/timezoneSelectOlf";
+import { ICity, TimezoneInfo } from "@/components/ui/timezoneSelect";
 
 function findPartialMatch(itemsToSearch: string, searchString: string) {
   const searchItems = searchString.split(" ");

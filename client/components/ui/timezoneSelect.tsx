@@ -24,10 +24,17 @@ import { cn } from "@/components/ui/utils";
 import { ChevronsUpDown } from "lucide-react";
 import { FormControl } from "./form";
 import dayjs from "@/utils/dayjs.index";
-import { ICity } from "./timezoneSelectOlf";
 import { Skeleton } from "./skeleton";
 
-const TimezoneSelect = ({ onTimeZoneChange, selectedTimezone }) => {
+interface TimezoneSelectProps {
+  onTimeZoneChange: (timezone: string) => void;
+  selectedTimezone: string;
+}
+
+export function TimezoneSelect({
+  onTimeZoneChange,
+  selectedTimezone,
+}: TimezoneSelectProps) {
   const [open, setOpen] = React.useState(false);
   const [cities, setCities] = useState<ICity[]>([]);
   const [timezones, setTimezones] = useState<{}>([]);
@@ -74,14 +81,19 @@ const TimezoneSelect = ({ onTimeZoneChange, selectedTimezone }) => {
           )}
         >
           {selectedTimezone && data
-            ? data.find((timezone) => timezone.timezone === selectedTimezone)
-                .timezone
+            ? data.find(
+                (timezone: ICity) => timezone.timezone === selectedTimezone
+              ).timezone
             : "Select city"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0 w-[300px]">
-        <Command onChange={(e) => handleInputChange(e.target.value)}>
+        <Command
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            handleInputChange(e.target.value)
+          }
+        >
           <CommandInput placeholder="Search timezone..." />
           <CommandEmpty>No timezone found.</CommandEmpty>
           <CommandGroup className="h-72 overflow-y-auto">
@@ -101,7 +113,7 @@ const TimezoneSelect = ({ onTimeZoneChange, selectedTimezone }) => {
       </PopoverContent>
     </Popover>
   );
-};
+}
 
 export function convertTimezones(
   input: Record<string, string>
@@ -129,12 +141,14 @@ export function convertTimezones(
 
   return timezonesArray;
 }
-export type TimezoneInfo = {
+export interface TimezoneInfo {
   value: string;
   label: string;
   offset: number;
   abbrev: string;
   altName: string;
-};
-
-export default TimezoneSelect;
+}
+export interface ICity {
+  city: string;
+  timezone: string;
+}
