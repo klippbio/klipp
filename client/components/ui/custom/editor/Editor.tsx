@@ -33,7 +33,6 @@ export default function Editor({ initialBlocks, updateEditorData }) {
     const Marker = require("@editorjs/marker");
     const Underline = require("@editorjs/underline");
     const Paragraph = require("@editorjs/paragraph");
-    console.log("initializing editor", initialBlocks);
     if (!ref.current) {
       const editor = new EditorJS({
         holder: "editorjs",

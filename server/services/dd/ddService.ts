@@ -27,6 +27,10 @@ export const ZAddDDFile = z.object({
   url: z.string(),
 });
 
+export const ZGetOrDeleteFile = z.object({
+  id: z.string(),
+});
+
 export const allProducts = async (): Promise<DigitalProduct[]> => {
   return db.digitalProduct.findMany({});
 };
@@ -54,7 +58,7 @@ export const createProduct = async (
   return storeItemDigitalDownload;
 };
 
-export const updateProduct = async (id: any, input: any) => {
+export const updateProduct = async (id: string, input: any) => {
   const refinedData = {
     name: input.name,
     shortDescription: input.shortDescription,
@@ -74,7 +78,6 @@ export const updateProduct = async (id: any, input: any) => {
 
   const descriptionJSON = JSON.stringify(input.description);
   const urlsJSON = JSON.stringify(input.urls);
-  console.log(descriptionJSON, urlsJSON);
 
   const updatedProduct = await db.digitalProduct.update({
     where: {
@@ -85,7 +88,6 @@ export const updateProduct = async (id: any, input: any) => {
       shortDescription: parsedRefinedData.shortDescription,
       thumbnailUrl: parsedRefinedData.thumbnailUrl,
       externalFile: parsedRefinedData.externalFile,
-      //   file: parsedRefinedData.file,
       currency: parsedRefinedData.currency,
       price: parsedRefinedData.price,
       recPrice: parsedRefinedData.recPrice,
@@ -101,7 +103,7 @@ export const updateProduct = async (id: any, input: any) => {
 };
 
 export const updateFile = async (
-  id: any,
+  inputId: z.infer<typeof ZGetOrDeleteFile>,
   input: z.infer<typeof ZAddDDFile>
 ) => {
   const allFiles = await db.dDFile.create({
@@ -110,7 +112,7 @@ export const updateFile = async (
       url: input.url,
       digitalProduct: {
         connect: {
-          id: parseInt(id),
+          id: parseInt(inputId.id),
         },
       },
     },
@@ -119,24 +121,23 @@ export const updateFile = async (
   return allFiles;
 };
 
-export const deleteFile = async (id: any) => {
+export const deleteFile = async (input: z.infer<typeof ZGetOrDeleteFile>) => {
   const allFiles = await db.dDFile.delete({
     where: {
-      id: id,
+      id: input.id,
     },
   });
   return allFiles;
 };
 
-export const getProduct = async (id: any) => {
+export const getProduct = async (input: z.infer<typeof ZGetOrDeleteFile>) => {
   const product = await db.digitalProduct.findUnique({
     where: {
-      id: parseInt(id),
+      id: parseInt(input.id),
     },
     include: {
       ddFiles: true,
     },
   });
-
   return product;
 };

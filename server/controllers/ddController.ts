@@ -1,12 +1,12 @@
+//TODO: add auth
+
 import express from "express";
 import { Request, Response } from "express";
-import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import CustomError from "../utils/CustomError";
-
-import * as ddService from "../services/dd/ddService";
 import {
   ZCreateDigitalProductSchema,
-  ZUpdateDigitalProductSchema,
+  ZAddDDFile,
+  ZGetOrDeleteFile,
   deleteFile,
   getProduct,
 } from "../services/dd/ddService";
@@ -15,19 +15,9 @@ import {
   updateProduct,
   updateFile,
 } from "../services/dd/ddService";
-import { any } from "zod";
 
 export const ddController = express.Router();
 
-ddController.get("/", async (req: Request, res: Response) => {
-  try {
-    const users = await ddService.allProducts();
-
-    return res.status(200).json("products");
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
 //TODO: add auth
 ddController.post("/create", async (req: Request, res: Response) => {
   try {
@@ -42,15 +32,17 @@ ddController.post("/create", async (req: Request, res: Response) => {
 });
 
 //TODO: add auth
+//TODO: add validation to make sure that id belongs to sender
 ddController.post("/update", async (req: Request, res: Response) => {
   try {
     const id = req.query.id;
-    //TODO: add validation to make sure that id belongs to sender
-
-    const product = await updateProduct(id, req.body);
+    //parsing is done in services
+    const product = await updateProduct(id as string, req.body);
     res.status(201).json(product);
   } catch (error) {
-    res.send(error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -58,10 +50,16 @@ ddController.post("/update", async (req: Request, res: Response) => {
 ddController.post("/file", async (req: Request, res: Response) => {
   try {
     const id = req.query.id;
-    const product = await updateFile(id, req.body);
+    ZAddDDFile.parseAsync(req.body);
+    const product = await updateFile(
+      await ZGetOrDeleteFile.parseAsync({ id: id }),
+      req.body
+    );
     res.status(201).json(product);
   } catch (error) {
-    res.send(error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -69,19 +67,25 @@ ddController.post("/file", async (req: Request, res: Response) => {
 ddController.delete("/file", async (req: Request, res: Response) => {
   try {
     const id = req.query.id;
-    await deleteFile(id);
+    await deleteFile(await ZGetOrDeleteFile.parseAsync({ id: id }));
     res.status(201).json("deleted");
   } catch (error) {
-    res.send(error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
 ddController.get("/getProduct", async (req: Request, res: Response) => {
   try {
     const id = req.query.id;
-    const product = await getProduct(id);
+    const product = await getProduct(
+      await ZGetOrDeleteFile.parseAsync({ id: id })
+    );
     res.status(201).json(product);
   } catch (error) {
-    res.send(error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });

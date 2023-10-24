@@ -1,5 +1,9 @@
-//TODO: Delete from AWS
 //TODO: Rename files in Bucket with storename + salt
+//TODO: Add file limits
+//TODO: Add file type validation
+//TODO: Add file size validation
+//TODO: Sapertate folders for all different file types
+//TODO: Fix StoreId issue
 //TODO: Add Auth to API routes
 "use client";
 
@@ -10,9 +14,13 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import axios, { Axios, AxiosError } from "axios";
 import { Separator } from "@/components/ui/separator";
-import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
+import {
+  generateUploadURL,
+  uploadFile,
+  deleteFile,
+} from "@/app/services/getS3url";
 import Editor from "@/components/ui/custom/editor/Editor";
 import { Loader2, Trash, Upload } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
@@ -214,17 +222,18 @@ export function ProfileForm({
     return await generateUploadURL();
   }
 
-  async function onThumbnailChange(event: any) {
-    const file = event.target.files[0];
+  async function onThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
     const uploadUrl = await getUploadURL();
     const imageUrl = await uploadFile(uploadUrl, file);
     setSelectedFile(imageUrl);
     setImageUrl(imageUrl);
   }
 
-  async function onFileChange(event: any) {
-    const file = event.target.files[0];
-
+  async function onFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
     const uploadUrl = await getUploadURL();
     const fileUrl = await uploadFile(uploadUrl, file);
     const modData = {
@@ -236,14 +245,14 @@ export function ProfileForm({
 
   //mutations
   const mutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
       return axios.post(
         `/api/digital-downloads/update/?id=${productId}`,
         data,
         {}
       );
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Success!",
         duration: 1000,
@@ -251,18 +260,18 @@ export function ProfileForm({
       });
       setIsSaving(false);
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: error.response.data.error,
+        description: "Failed to create product",
       });
     },
   });
 
   const mutateUploadFile = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: { url: string; name: string }) => {
       setUploadingFile(true);
       return axios.post(
         `/api/digital-downloads/file/?id=${productId}`,
@@ -280,25 +289,28 @@ export function ProfileForm({
       setIsSaving(false);
       setUploadingFile(false);
     },
-    onError: (error: any) => {
+    onError: () => {
       setUploadingFile(false);
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: error.response.data.error,
+        description: "Failed to upload file",
       });
     },
   });
 
   const delteMutation = useMutation({
-    mutationFn: async (fileId: string) => {
+    mutationFn: async (file: fileType) => {
+      const fileId = file.id;
+      const fielUrl = file.url;
+      await deleteFile(fielUrl);
       setUploadedFiles((prevFiles) =>
         prevFiles.filter((file: fileType) => file.id !== fileId)
       );
       return axios.delete(`/api/digital-downloads/file/?id=${fileId}`);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Success!",
         duration: 1000,
@@ -306,7 +318,7 @@ export function ProfileForm({
       });
       setIsSaving(false);
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
         title: "Error",
         variant: "destructive",
@@ -546,7 +558,7 @@ export function ProfileForm({
                             type="button"
                             className="mr-2"
                             onClick={() => {
-                              delteMutation.mutate(file.id);
+                              delteMutation.mutate(file);
                               remove(index);
                             }}
                           >
