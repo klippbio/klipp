@@ -87,9 +87,11 @@ export default function Editor({ initialBlocks, updateEditorData }) {
               uploader: {
                 async uploadByFile(file: File) {
                   const url = await getUploadURL();
-                  //TODO: Add try catch and toast
-
-                  await uploadFileFromEditor(file, url);
+                  try {
+                    await uploadFileFromEditor(file, url);
+                  } catch (error) {
+                    console.log(error);
+                  }
                   return {
                     success: 1,
                     file: {

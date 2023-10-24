@@ -75,12 +75,12 @@ function digitalDownloadPage() {
       router.push(`/digital-downloads/create/?id=${storeId}`);
       setIsSaving(true);
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: error.response.data.error,
+        description: "Something went wrong",
       });
     },
   });

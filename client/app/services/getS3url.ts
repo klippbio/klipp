@@ -47,8 +47,8 @@ export async function uploadFile(uploadUrl: string, file: File) {
   return imageUrl;
 }
 
-export async function deleteFile(fileName: string) {
-  const parsedUrl = new URL(fileName);
+export async function deleteFile(fileUrl: string) {
+  const parsedUrl = new URL(fileUrl);
   const key = parsedUrl.pathname.substring(1);
   console.log("deleting file", key);
 
@@ -61,6 +61,6 @@ export async function deleteFile(fileName: string) {
     return `File ${key} deleted successfully.`;
   } catch (error) {
     console.log("errpr", error);
-    throw new Error(`Error deleting file ${fileName}: ${error}`);
+    throw new Error(`Error deleting file ${fileUrl}: ${error}`);
   }
 }
