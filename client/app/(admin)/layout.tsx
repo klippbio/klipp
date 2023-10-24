@@ -30,6 +30,11 @@ const navItems = [
     href: "/store",
     icon: <Server size={20} />,
   },
+  // {
+  //   title: "Store",
+  //   href: "/store",
+  //   icon: <Server size={20} />,
+  // },
 ];
 
 export default function RootLayout({

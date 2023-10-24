@@ -1,8 +1,8 @@
 import type { Availability } from "@prisma/client";
 import { expect, it, beforeAll, vi } from "vitest";
 
-import dayjs from "../utils/dayjs.index";
-import { getAvailabilityFromSchedule } from "./calendar/availablity";
+import dayjs from "../../utils/dayjs.index";
+import { getAvailabilityFromSchedule } from "./availablity";
 
 beforeAll(() => {
   vi.setSystemTime(new Date("2021-06-20T11:59:59Z"));

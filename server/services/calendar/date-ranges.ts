@@ -1,6 +1,6 @@
-import { Dayjs } from "../utils/dayjs.index";
-import dayjs from "../utils/dayjs.index";
 import type { Availability } from "@prisma/client";
+import { Dayjs } from "../../utils/dayjs.index";
+import dayjs from "../../utils/dayjs.index";
 
 export type DateRange = {
   start: Dayjs;
