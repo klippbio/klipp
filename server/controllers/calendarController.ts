@@ -21,10 +21,12 @@ import {
   updateCalendarSettings,
 } from "../services/calendar/calendarSettingService";
 import cityTimezones from "../services/calendar/cityTimezones";
+import clerkClient, {
+  ClerkExpressRequireAuth,
+  RequireAuthProp,
+} from "@clerk/clerk-sdk-node";
 
 export const calendarController = express.Router();
-
-//schedule apis
 
 calendarController.post("/create", async (req: Request, res: Response) => {
   try {
@@ -162,18 +164,24 @@ calendarController.get("/settings", async (req: Request, res: Response) => {
   }
 });
 
-calendarController.post("/settings", async (req: Request, res: Response) => {
-  try {
-    const calendarSettings = await updateCalendarSettings(
-      await ZUpdateCalendarSettingSchema.parseAsync(req.body)
-    );
-    res.status(200).json(calendarSettings);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+calendarController.post(
+  "/settings",
+  ClerkExpressRequireAuth(),
+  async (req: RequireAuthProp<Request>, res: Response) => {
+    try {
+      const user = await clerkClient.users.getUser(req.auth.userId);
+      console.log(user);
+      const calendarSettings = await updateCalendarSettings(
+        await ZUpdateCalendarSettingSchema.parseAsync(req.body)
+      );
+      res.status(200).json(calendarSettings);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 // calendarController.post("/createEvent", async (req: Request, res: Response) => {
 //   try {
