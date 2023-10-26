@@ -21,6 +21,7 @@ import {
   updateCalendarSettings,
 } from "../services/calendar/calendarSettingService";
 import cityTimezones from "../services/calendar/cityTimezones";
+import { isUsersStore } from "../middlewares/isUsersStore";
 
 export const calendarController = express.Router();
 
@@ -162,18 +163,22 @@ calendarController.get("/settings", async (req: Request, res: Response) => {
   }
 });
 
-calendarController.post("/settings", async (req: Request, res: Response) => {
-  try {
-    const calendarSettings = await updateCalendarSettings(
-      await ZUpdateCalendarSettingSchema.parseAsync(req.body)
-    );
-    res.status(200).json(calendarSettings);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+calendarController.post(
+  "/settings",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      const calendarSettings = await updateCalendarSettings(
+        await ZUpdateCalendarSettingSchema.parseAsync(req.body)
+      );
+      res.status(200).json(calendarSettings);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 // calendarController.post("/createEvent", async (req: Request, res: Response) => {
 //   try {

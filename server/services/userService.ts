@@ -32,10 +32,16 @@ export const onboarding = async (body: OnboardingInput): Promise<User> => {
   });
 };
 
-export const getUserById = async (id: string): Promise<User | null> => {
+//TODO:: make a mapping table between clerkUser and ourUser
+export const getUserById = async (id: string) => {
   return db.user.findUnique({
     where: {
       id: id,
+    },
+    select: {
+      id: true,
+      email: true,
+      stores: true,
     },
   });
 };
