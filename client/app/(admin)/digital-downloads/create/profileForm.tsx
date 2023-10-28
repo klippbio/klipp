@@ -22,7 +22,7 @@ import {
   deleteFile,
 } from "@/app/services/getS3url";
 import Editor from "@/components/ui/custom/editor/Editor";
-import { Loader2, Trash, Upload } from "lucide-react";
+import { Loader2, Router, Trash, Upload } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import {
   Form,
@@ -51,6 +51,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 //types
 const digitalDownloadsSchema = z
@@ -146,13 +147,14 @@ export function ProfileForm({
   const [initialBlocksData, setInitialBlocksData] = useState([]);
   const [uploadingFile, setUploadingFile] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
   const updateEditorData = useCallback((state: any) => {
     setEditorData(state);
   }, []);
   const productData = data as dataType;
 
   const defaultValues: Partial<AccountFormValues> = {
-    name: productData.name,
+    name: productData.name || "",
     shortDescription: productData.shortDescription || "",
     externalFile: productData.externalFile || false,
     currency: productData.currency || "USD",
@@ -259,6 +261,7 @@ export function ProfileForm({
         description: "Product Created.",
       });
       setIsSaving(false);
+      router.push("/digital-downloads");
     },
     onError: (error: AxiosError) => {
       toast({
@@ -730,7 +733,7 @@ export function ProfileForm({
 
                 <Button className="mt-10 w-32 items-center" type="submit">
                   <span>Submit</span>
-                  {isSaving && (
+                  {mutation.isLoading && (
                     <Loader2 className="ml-2 h-4 w-4 animate-spin" />
                   )}
                 </Button>
