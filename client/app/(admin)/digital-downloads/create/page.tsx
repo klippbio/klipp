@@ -26,7 +26,7 @@ function page() {
       return response.data;
     },
     {
-      enabled: true,
+      cacheTime: 0,
     }
   );
   return (

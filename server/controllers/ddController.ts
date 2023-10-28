@@ -9,6 +9,8 @@ import {
   ZGetOrDeleteFile,
   deleteFile,
   getProduct,
+  getAllDigitalProducts,
+  deleteDigitalProduct,
 } from "../services/dd/ddService";
 import {
   createProduct,
@@ -89,3 +91,35 @@ ddController.get("/getProduct", async (req: Request, res: Response) => {
     else res.status(500).json({ error: error });
   }
 });
+
+ddController.get(
+  "/getAllDigitalProducts",
+  async (req: Request, res: Response) => {
+    try {
+      const id = req.query.id;
+      const product = await getAllDigitalProducts(
+        await ZGetOrDeleteFile.parseAsync({ id: id })
+      );
+      res.status(201).json(product);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
+  }
+);
+
+ddController.delete(
+  "/deleteDigitalProduct",
+  async (req: Request, res: Response) => {
+    try {
+      const id = req.query.id;
+      await deleteDigitalProduct(await ZGetOrDeleteFile.parseAsync({ id: id }));
+      res.status(201).json("Digital Product Deleted");
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
+  }
+);

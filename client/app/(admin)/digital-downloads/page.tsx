@@ -10,31 +10,56 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Toast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
-import { Copy, Eye, Loader2 } from "lucide-react";
+import { Loader2, MoreVertical, Pencil, Trash } from "lucide-react";
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import * as z from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import DigitalDownloadSkeleton from "./DigitalDownloadSkeleton";
 
 type ddType = {
   name: string;
   price: string;
+};
+
+type itemType = {
+  name: string;
+  price: string;
+  id: string;
+  visibility: boolean;
+  currency: string[];
 };
 
 const ddCreateSchema = z.object({
@@ -44,11 +69,25 @@ const ddCreateSchema = z.object({
   price: z.string(),
   storeId: z.string().optional(),
 });
+const storeId = "d627bb9e-3605-43d8-b472-98e4f19b7c67";
 
 function digitalDownloadPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useQuery(
+    ["allProducts", storeId],
+    async () => {
+      const response = await axios.get(
+        `/api/digital-downloads/getAllDigitalProducts/?id=${storeId}`
+      );
+      return response.data;
+    },
+    {
+      enabled: true,
+    }
+  );
+
   const { toast } = useToast();
-  const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   const form = useForm<z.infer<typeof ddCreateSchema>>({
     resolver: zodResolver(ddCreateSchema),
@@ -56,12 +95,36 @@ function digitalDownloadPage() {
   });
 
   function onSubmit(data: z.infer<typeof ddCreateSchema>) {
-    setIsSaving(true);
     data.storeId = "d627bb9e-3605-43d8-b472-98e4f19b7c67";
-    mutation.mutate(data);
+    createProductMutation.mutate(data);
   }
 
-  const mutation = useMutation({
+  async function deleteProduct(id: string) {
+    const response = await fetch(
+      `/api/digital-downloads/deleteDigitalProduct/?id=${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+    queryClient.invalidateQueries(["allProducts", storeId]);
+    if (!response?.ok) {
+      toast({
+        title: "Something went wrong.",
+        duration: 2000,
+        description: "Your product was not deleted. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        duration: 2000,
+        description: "Product Deleted Successfully",
+      });
+    }
+    return true;
+  }
+
+  const createProductMutation = useMutation({
     mutationFn: async (data: ddType) => {
       return axios.post("/api/digital-downloads/create", data, {});
     },
@@ -71,9 +134,9 @@ function digitalDownloadPage() {
         duration: 1000,
         description: "Product Created.",
       });
-      const storeId = data.data.id;
-      router.push(`/digital-downloads/create/?id=${storeId}`);
-      setIsSaving(true);
+
+      const productId = data.data.DigitalProduct.id;
+      router.push(`/digital-downloads/create/?id=${productId}`);
     },
     onError: () => {
       toast({
@@ -87,102 +150,173 @@ function digitalDownloadPage() {
 
   return (
     <div>
-      <div className="mt-4 mr-6 grid justify-items-end">
-        <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>Add Product</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <DialogHeader>
-                    <DialogTitle>Add Product</DialogTitle>
-                    <DialogDescription>
-                      Enter the name and price of your digital product.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4 ">
-                    <div className="grid grid-cols-4 items-center gap-4 ">
-                      <Label htmlFor="name" className="text-right">
-                        Name
-                      </Label>
-                      <div className="col-span-3">
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input {...field} name="name" id="name" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+      {isLoading ? (
+        <DigitalDownloadSkeleton />
+      ) : (
+        <div className="mt-4 mr-6 grid justify-items-end">
+          <div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>Add Product</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <DialogHeader>
+                      <DialogTitle>Add Product</DialogTitle>
+                      <DialogDescription>
+                        Enter the name and price of your digital product.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4 ">
+                      <div className="grid grid-cols-4 items-center gap-4 ">
+                        <Label htmlFor="name" className="text-right">
+                          Name
+                        </Label>
+                        <div className="col-span-3">
+                          <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input {...field} name="name" id="name" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label className="text-right">Price</Label>
+
+                        <div className="col-span-3">
+                          <FormField
+                            control={form.control}
+                            name="price"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    name="name"
+                                    type="number"
+                                    id="name"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label className="text-right">Price</Label>
+                    <DialogFooter>
+                      <Button type="submit">
+                        <span>Save</span>
+                        {createProductMutation.isLoading && (
+                          <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                        )}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      )}
 
-                      <div className="col-span-3">
-                        <FormField
-                          control={form.control}
-                          name="price"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  name="name"
-                                  type="number"
-                                  id="name"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+      {data && data.length == 0 && (
+        <div className="flex justify-center">
+          <Card className="flex m-4 md:w-1/3 w-full h-32 justify-center bg-secondary">
+            <div className="flex flex-col justify-center items-center">
+              <div className="text-l font-semibold text-foreground  ">
+                No Products to Show
+              </div>
+              <div className="mt-2 text-sm">
+                Digital products will appear here.
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+      <div className="md:flex md:flex-row m-4 gap-4 flex-wrap">
+        {data &&
+          data.map((item: itemType) => (
+            <Card className="md:w-1/3 w-full h-32 mb-4" key={item.name}>
+              <div className="p-6">
+                <div className="text-xl justify-center font-bold text-bold text-secondary-foreground">
+                  <div className="flex flex-row justify-between">
+                    <div>{item.name}</div>
+                    <div className="mt-1">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild={true}>
+                          <Button variant="ghost">
+                            <MoreVertical size={18} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <AlertDialog>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                router.push(
+                                  `/digital-downloads/create/?id=${item.id}`
+                                )
+                              }
+                              onSelect={(e) => e.preventDefault()}
+                            >
+                              <Pencil className="w-4 h-4 mr-2" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onSelect={(e) => e.preventDefault()}
+                              >
+                                <Trash className="w-4 h-4 mr-2" /> Delete
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure you want to delete this product?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={async (event) => {
+                                    await deleteProduct(item.id);
+                                  }}
+                                  className="bg-destructive hover:bg-destructive"
+                                >
+                                  <Trash className="mr-2 h-4 w-4" />
+
+                                  <span>Delete</span>
+                                </AlertDialogAction>{" "}
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
-                  <DialogFooter>
-                    <Button type="submit">
-                      <span>Save</span>
-                      {isSaving && (
-                        <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                      )}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
-      <div className="md:flex md:flex-row m-4 gap-4 ">
-        <Card className="md:w-1/3 w-full h-32 mb-4">
-          <div className="p-6">
-            <div className="text-xl font-bold text-bold text-secondary-foreground">
-              <div className="flex flex-row space-x-2">
-                <div>E-Book</div>
-                <div>
-                  <Eye></Eye>
+                </div>
+                <div className="mt-6 flex flex-row gap-6">
+                  <div className="text-l font-semiBold">{`USD ${item.price}`}</div>
+                  <Badge variant={"outline"} className="h-6">
+                    {item.visibility ? "Public" : "Private"}
+                  </Badge>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-6 flex flex-row gap-8">
-              <div>$30</div>
-              <div>
-                <Button className="" variant={"outline"}>
-                  <Copy size={15} />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Card>
+            </Card>
+          ))}
       </div>
     </div>
   );

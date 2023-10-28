@@ -53,6 +53,9 @@ export const createProduct = async (
         },
       },
     },
+    include: {
+      DigitalProduct: true,
+    },
   });
 
   return storeItemDigitalDownload;
@@ -140,4 +143,57 @@ export const getProduct = async (input: z.infer<typeof ZGetOrDeleteFile>) => {
     },
   });
   return product;
+};
+
+export const getAllDigitalProducts = async (
+  input: z.infer<typeof ZGetOrDeleteFile>
+) => {
+  const digitalProducts = await db.digitalProduct.findMany({
+    where: {
+      storeItem: {
+        storeId: input.id,
+      },
+    },
+    select: {
+      name: true,
+      id: true,
+      price: true,
+      currency: true,
+      visibility: true,
+    },
+  });
+  return digitalProducts;
+};
+
+export const deleteDigitalProduct = async (
+  input: z.infer<typeof ZGetOrDeleteFile>
+) => {
+  const digitalProductId = parseInt(input.id);
+  const digitalProduct = await db.digitalProduct.findUnique({
+    where: {
+      id: digitalProductId,
+    },
+  });
+
+  if (!digitalProduct) {
+    throw new Error("DigitalProduct not found");
+  }
+
+  // Step 2: Get the associated StoreItem ID
+  const storeItemId = digitalProduct.storeItemId;
+
+  // Step 3: Delete the DigitalProduct
+  await db.digitalProduct.delete({
+    where: {
+      id: digitalProductId,
+    },
+  });
+
+  // Step 4: Delete the associated StoreItem
+  await db.storeItem.delete({
+    where: {
+      id: storeItemId,
+    },
+  });
+  return digitalProduct;
 };
