@@ -1,3 +1,5 @@
+import { useAuthDetails } from "@/app/components/AuthContext";
+import AxiosApi from "@/app/services/axios";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +9,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 
 interface GoogleCalendarSettingsProps {
-  storeId: string;
   googleCalendar: {
     email: string;
   };
@@ -15,19 +16,25 @@ interface GoogleCalendarSettingsProps {
 
 export default function GoogleCalendarSettings({
   googleCalendar,
-  storeId,
 }: GoogleCalendarSettingsProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const authDetails = useAuthDetails();
   const message = useSearchParams().get("message");
   const connectedEmail = googleCalendar?.email;
   const queryClient = useQueryClient();
 
   const unlinkCalendarMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post("/api/calendar/unlinkCalendar", {
-        storeId,
-      });
+      const data = {
+        storeId: authDetails.storeId,
+      };
+      const response = AxiosApi(
+        "POST",
+        "/api/calendar/unlinkCalendar",
+        data,
+        authDetails
+      );
       return response;
     },
     onSuccess: (response) => {
@@ -40,7 +47,7 @@ export default function GoogleCalendarSettings({
       }
 
       // After successful unlink, invalidate the query in the parent component
-      queryClient.invalidateQueries(["calendarSettings", storeId]);
+      queryClient.invalidateQueries(["calendarSettings", authDetails.storeId]);
     },
     onError: (error: AxiosError) => {
       toast({
@@ -101,7 +108,7 @@ export default function GoogleCalendarSettings({
           "https://www.googleapis.com/auth/userinfo.email",
         ],
         state: JSON.stringify({
-          storeId: storeId,
+          storeId: authDetails.storeId,
         }),
       });
 

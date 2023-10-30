@@ -14,18 +14,21 @@ import { EventSettingsForm } from "./EventSettingsForm";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import GoogleCalendarSettings from "./GoogleCalendarSettings";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 function Page() {
-  const storeId =
-    useSearchParams().get("storeId") || "7a61221a-1578-4cd4-a890-d594c92cc33c";
-
+  let calendarSettings;
+  const authDetails = useAuthDetails();
   const { data, isLoading } = useQuery({
-    queryKey: ["calendarSettings", storeId],
+    queryKey: ["calendarSettings", authDetails?.storeId],
     queryFn: async () =>
       await axios
-        .get(`/api/calendar/settings?storeId=${storeId}`)
-        .then((res) => res.data.calendarSetting),
+        .get(`/api/calendar/settings?storeId=${authDetails?.storeId}`)
+        .then((res) => res.data),
   });
+  if (data) {
+    calendarSettings = data.calendarSetting;
+  }
 
   return (
     <div>
@@ -72,9 +75,10 @@ function Page() {
                 </CardHeader>
                 <CardContent>
                   <EventSettingsForm
-                    timeZone={data?.timeZone}
-                    minimumBookingNotice={data?.minimumBookingNotice}
-                    storeId={storeId}
+                    timeZone={calendarSettings?.timeZone}
+                    minimumBookingNotice={
+                      calendarSettings?.minimumBookingNotice
+                    }
                   />
                 </CardContent>
               </Card>
@@ -90,8 +94,9 @@ function Page() {
                 </CardHeader>
                 <CardContent>
                   <GoogleCalendarSettings
-                    googleCalendar={data.googleCalendar}
-                    storeId={storeId}
+                    googleCalendar={
+                      calendarSettings && calendarSettings.googleCalendar
+                    }
                   />
                 </CardContent>
               </Card>

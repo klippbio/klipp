@@ -13,11 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
 import { CalendarClock, Info, MapPinIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { TimezoneSelect } from "@/components/ui/timezoneSelect";
+import AxiosApi from "@/app/services/axios";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 const FormSchema = z.object({
   timeZone: z.string({
@@ -46,16 +47,14 @@ export const ZUpdateCalendarSettingSchema = z.object({
 interface EventSettingsFormProps {
   timeZone: string;
   minimumBookingNotice: number;
-  storeId: string;
 }
 
 export function EventSettingsForm({
   timeZone,
   minimumBookingNotice,
-  storeId,
 }: EventSettingsFormProps) {
-  const { userId, getToken } = useAuth();
   const { toast } = useToast();
+  const authDetails = useAuthDetails();
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -70,15 +69,15 @@ export function EventSettingsForm({
     mutationFn: async (data: z.infer<typeof ZUpdateCalendarSettingSchema>) => {
       const combinedData = {
         ...data,
-        storeId: storeId,
+        storeId: authDetails.storeId,
       };
-      return axios.post("/api/calendar/settings", combinedData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await getToken()}`,
-          mode: "cors",
-        },
-      });
+      const result = await AxiosApi(
+        "POST",
+        "/api/calendar/settings",
+        combinedData,
+        authDetails
+      );
+      return result.data;
     },
     onSuccess: () => {
       toast({
@@ -158,7 +157,7 @@ export function EventSettingsForm({
                 <div className="w-full md:w-2/3">
                   <Combobox
                     name="Minimum Notice"
-                    selectedValue={field.value.toString()}
+                    selectedValue={field.value ? field.value.toString() : ""}
                     onValueChange={handleMinimumBookingChange}
                     options={minimumBookingNoticeOptions.map((option) => ({
                       ...option,
