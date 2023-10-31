@@ -579,10 +579,13 @@ export function ProfileForm({
                         <FormItem className="">
                           <FormLabel htmlFor="name">Description</FormLabel>
                           <FormControl>
-                            <Editor
-                              initialBlocks={initialBlocksData}
-                              updateEditorData={updateEditorData}
-                            />
+                            <div className="border-2 mt-4 rounded-md">
+                              <Editor
+                                initialBlocks={initialBlocksData}
+                                updateEditorData={updateEditorData}
+                                disabled={false}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>

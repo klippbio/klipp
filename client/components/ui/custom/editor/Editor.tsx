@@ -4,7 +4,7 @@ import EditorJS from "@editorjs/editorjs";
 import "./editor.css";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
 
-export default function Editor({ initialBlocks, updateEditorData }) {
+export default function Editor({ initialBlocks, updateEditorData, disabled }) {
   const [isMounted, setIsMounted] = useState(false);
   const editorRef = useRef();
   const [saved, setSaved] = useState(false);
@@ -36,6 +36,7 @@ export default function Editor({ initialBlocks, updateEditorData }) {
     if (!ref.current) {
       const editor = new EditorJS({
         holder: "editorjs",
+        readOnly: disabled,
         data: {
           blocks: initialBlocks,
         },
@@ -139,7 +140,7 @@ export default function Editor({ initialBlocks, updateEditorData }) {
   };
 
   return (
-    <div className="border-2 rounded-md p-7 flex flex-colv w-full">
+    <div className="rounded-md p-7 flex flex-colv w-full">
       <div id="editorjs" className="min-h-[100px] w-full" onBlur={save} />
     </div>
   );
