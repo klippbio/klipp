@@ -11,10 +11,10 @@ import { clerkClient, useAuth, useUser } from "@clerk/nextjs";
 
 // Define a type for authDetails
 export interface AuthDetails {
-  token: string | null;
-  userId: string | null;
-  storeUrl?: string | null;
-  storeId?: string | null;
+  token: string | undefined;
+  userId: string | undefined;
+  storeUrl?: string | undefined;
+  storeId?: string | undefined;
 }
 
 type RefreshAuthDetails = (storeUrl: string, storeId: string) => void;
@@ -24,10 +24,10 @@ const AuthContext = createContext<{
   refreshAuthDetails: RefreshAuthDetails;
 }>({
   authDetails: {
-    token: null,
-    userId: null,
-    storeUrl: null,
-    storeId: null,
+    token: undefined,
+    userId: undefined,
+    storeUrl: undefined,
+    storeId: undefined,
   },
   refreshAuthDetails: (_: string, __: string) => {},
 });
@@ -39,11 +39,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const { user } = useUser();
 
   const [authDetails, setAuthDetails] = useState<AuthDetails>({
-    userId: null,
-    storeUrl: null,
-    token: null,
-    storeId: null,
+    userId: undefined,
+    storeUrl: undefined,
+    token: undefined,
+    storeId: undefined,
   });
+
+  // Function to refresh the token at a regular interval
+  const refreshAuthToken = async () => {
+    const token = await getToken({ template: "klipp" });
+    setAuthDetails((prevAuthDetails) => ({
+      ...prevAuthDetails,
+      token: token || prevAuthDetails.token,
+    }));
+  };
+
+  // Refresh the token every minute (adjust this interval as needed)
+  useEffect(() => {
+    const tokenRefreshInterval = setInterval(refreshAuthToken, 300000);
+    return () => {
+      clearInterval(tokenRefreshInterval);
+    };
+  }, [getToken]);
 
   const refreshAuthDetails: RefreshAuthDetails = (storeUrl, storeId) => {
     setAuthDetails({
@@ -55,15 +72,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     (async () => {
-      const token = await getToken();
+      const token = await getToken({ template: "klipp" });
       setAuthDetails({
-        userId: user?.id ?? null,
-        storeUrl: (user?.publicMetadata?.storeUrl as string) ?? null,
-        storeId: (user?.publicMetadata?.storeId as string) ?? null,
-        token: token ?? null,
+        token: token ?? undefined,
+        userId: user?.id ?? undefined,
+        storeUrl: (user?.publicMetadata?.storeUrl as string) ?? undefined,
+        storeId: (user?.publicMetadata?.storeId as string) ?? undefined,
       });
     })();
-  }, [getToken, user]);
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ authDetails, refreshAuthDetails }}>

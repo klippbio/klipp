@@ -19,7 +19,7 @@ export default function TopBar() {
       <div className="z-1 w-full">
         <nav className="flex sticky h-20 top-0 pl-5 min-h-[50px] items-center justify-between">
           <div className="md:hidden flex p-0 grow-0 shrink-0 basis-auto width-screen">
-            <a href="/dashboard/">
+            <a href="/home">
               <Image src={logo} alt="logo" width={40} />
             </a>
           </div>

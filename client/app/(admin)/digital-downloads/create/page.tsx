@@ -6,10 +6,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
+import AxiosApi from "@/app/services/axios";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 function page() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const authDetails = useAuthDetails();
 
   const id = searchParams.get("id");
   if (!id) {
@@ -20,8 +23,10 @@ function page() {
   const { data, isLoading } = useQuery(
     ["product", productId],
     async () => {
-      const response = await axios.get(
-        `/api/digital-downloads/getproduct/?id=${productId}`
+      const response = await AxiosApi(
+        "GET",
+        `/api/digital-downloads/getproduct/?id=${productId}`,
+        authDetails
       );
       return response.data;
     },

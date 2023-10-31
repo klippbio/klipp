@@ -15,17 +15,23 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import GoogleCalendarSettings from "./GoogleCalendarSettings";
 import { useAuthDetails } from "@/app/components/AuthContext";
+import AxiosApi from "@/app/services/axios";
 
 function Page() {
   let calendarSettings;
   const authDetails = useAuthDetails();
-  const { data, isLoading } = useQuery({
-    queryKey: ["calendarSettings", authDetails?.storeId],
-    queryFn: async () =>
-      await axios
-        .get(`/api/calendar/settings?storeId=${authDetails?.storeId}`)
-        .then((res) => res.data),
-  });
+  const storeId = authDetails?.storeId;
+  const { data, isLoading } = useQuery(
+    ["calendarSettings", storeId],
+    async () =>
+      await AxiosApi("GET", `/api/calendar/settings/?storeId=${storeId}`).then(
+        (res) => res.data
+      ),
+    {
+      enabled: !!storeId,
+    }
+  );
+
   if (data) {
     calendarSettings = data.calendarSetting;
   }

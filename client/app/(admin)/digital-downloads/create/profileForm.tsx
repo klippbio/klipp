@@ -52,6 +52,8 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import AxiosApi from "@/app/services/axios";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 //types
 const digitalDownloadsSchema = z
@@ -134,15 +136,13 @@ export function ProfileForm({
   productId: number;
 }) {
   //consts
-  const { user } = useUser();
-  const email = user?.emailAddresses[0].emailAddress;
+  const authDetails = useAuthDetails();
   const [showUploadFile, setShowUploadFile] = useState(true);
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [editorData, setEditorData] = useState("");
   const [flexPrice, setFlexPrice] = useState(true);
   const [minPrice, setMinPrice] = useState("0");
-  const [isSaving, setIsSaving] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [initialBlocksData, setInitialBlocksData] = useState([]);
   const [uploadingFile, setUploadingFile] = useState(false);
@@ -248,11 +248,13 @@ export function ProfileForm({
   //mutations
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
-      return axios.post(
+      const response = await AxiosApi(
+        "POST",
         `/api/digital-downloads/update/?id=${productId}`,
         data,
-        {}
+        authDetails
       );
+      return response.data;
     },
     onSuccess: () => {
       toast({
@@ -260,7 +262,6 @@ export function ProfileForm({
         duration: 1000,
         description: "Product Created.",
       });
-      setIsSaving(false);
       router.push("/digital-downloads");
     },
     onError: (error: AxiosError) => {
@@ -276,11 +277,13 @@ export function ProfileForm({
   const mutateUploadFile = useMutation({
     mutationFn: async (data: { url: string; name: string }) => {
       setUploadingFile(true);
-      return axios.post(
+      const response = await AxiosApi(
+        "post",
         `/api/digital-downloads/file/?id=${productId}`,
         data,
-        {}
+        authDetails
       );
+      return response.data;
     },
     onSuccess: (data) => {
       toast({
@@ -288,8 +291,7 @@ export function ProfileForm({
         duration: 1000,
         description: "File uploaded successfully.",
       });
-      setUploadedFiles([...uploadedFiles, data.data] as any);
-      setIsSaving(false);
+      setUploadedFiles([...uploadedFiles, data] as any);
       setUploadingFile(false);
     },
     onError: () => {
@@ -311,7 +313,13 @@ export function ProfileForm({
       setUploadedFiles((prevFiles) =>
         prevFiles.filter((file: fileType) => file.id !== fileId)
       );
-      return axios.delete(`/api/digital-downloads/file/?id=${fileId}`);
+      const response = await AxiosApi(
+        "delete",
+        `/api/digital-downloads/file/?id=${fileId}`,
+        {},
+        authDetails
+      );
+      return response.data;
     },
     onSuccess: () => {
       toast({
@@ -319,7 +327,6 @@ export function ProfileForm({
         duration: 1000,
         description: "File Deleted",
       });
-      setIsSaving(false);
     },
     onError: () => {
       toast({

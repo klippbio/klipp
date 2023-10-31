@@ -25,6 +25,7 @@ import { ChevronsUpDown } from "lucide-react";
 import { FormControl } from "./form";
 import dayjs from "@/utils/dayjs.index";
 import { Skeleton } from "./skeleton";
+import AxiosApi from "@/app/services/axios";
 
 interface TimezoneSelectProps {
   onTimeZoneChange: (timezone: string) => void;
@@ -42,8 +43,10 @@ export function TimezoneSelect({
 
   const { data, isLoading } = useQuery({
     queryKey: ["cityTimezones"],
-    queryFn: () =>
-      axios.get("/api/calendar/cityTimezones").then((res) => res.data),
+    queryFn: async () =>
+      await AxiosApi("GET", `/api/calendar/cityTimezones`).then(
+        (res) => res.data
+      ),
   });
 
   useEffect(() => {

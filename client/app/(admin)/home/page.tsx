@@ -8,7 +8,6 @@ function Page() {
   const callAPI = async () => {
     const res = await axios.post("/api/calendar/createEvent", { name: "test" });
     const data = await res.data;
-    console.log(data);
   };
 
   return (

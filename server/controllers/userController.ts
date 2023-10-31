@@ -54,7 +54,6 @@ userController.get(
       if (userId) {
         const user = await userService.getUserById(userId as string);
         if (user) {
-          console.log(user);
           return res.status(200).json(user);
         }
       }
