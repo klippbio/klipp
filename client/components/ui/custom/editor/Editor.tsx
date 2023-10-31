@@ -17,9 +17,7 @@ export default function Editor({ initialBlocks, updateEditorData }) {
   }
 
   async function uploadFileFromEditor(file: File, url: string) {
-    console.log("uploading file");
     const awsUrl = await uploadFile(url, file);
-    console.log(awsUrl);
     setSaved(false);
     return awsUrl;
   }
