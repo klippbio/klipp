@@ -38,7 +38,6 @@ const AxiosApi = async <T>(
     headers: headers,
   };
 
-  console.log("AxiosApi", options);
   return axios(options);
 };
 

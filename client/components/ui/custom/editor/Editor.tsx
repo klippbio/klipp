@@ -56,7 +56,6 @@ export default function Editor({ initialBlocks, updateEditorData }) {
                     removedBlock.data.file &&
                     removedBlock.data.file.url
                   ) {
-                    console.log("This was removed2: ", removedBlock);
                     setDeleteUrls((prev) => [
                       ...prev,
                       removedBlock.data.file.url,
@@ -72,7 +71,6 @@ export default function Editor({ initialBlocks, updateEditorData }) {
                   removedBlock.data.file &&
                   removedBlock.data.file.url
                 ) {
-                  console.log("This was removed2: ", removedBlock);
                   setDeleteUrls((prev) => [
                     ...prev,
                     removedBlock.data.file.url,

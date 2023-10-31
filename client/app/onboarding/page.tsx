@@ -117,7 +117,6 @@ export function ProfileForm() {
     mutationFn: async (data: OnboardingFormValues) => {
       const userId = authDetails.userId;
       const combinedData = { ...data, email, timeZone, userId };
-      console.log(combinedData);
       return AxiosApi(
         "POST",
         "/api/user/onboarding",
