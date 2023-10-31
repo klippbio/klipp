@@ -7,8 +7,9 @@ export const isUsersStore = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("req.auth", req.auth);
-
+  if (!req.auth) {
+    res.status(401).json({ error: "AuthInfo not available" });
+  }
   const clerkUser = await clerkClient.users.getUser(req.auth.userId);
 
   const dbUser = await getUserById(clerkUser.id);

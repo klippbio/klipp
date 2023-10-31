@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "./components/AuthContext";
 
 export default function RootLayout({
   children,
@@ -18,14 +19,16 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <QueryWrapper>
-            <Toaster />
-            {children}
-          </QueryWrapper>
-        </body>
-      </html>
+      <AuthProvider>
+        <html lang="en">
+          <body className={inter.className}>
+            <QueryWrapper>
+              <Toaster />
+              {children}
+            </QueryWrapper>
+          </body>
+        </html>
+      </AuthProvider>
     </ClerkProvider>
   );
 }

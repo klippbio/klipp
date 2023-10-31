@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import EditorJS from "@editorjs/editorjs";
+import EditorJS, { BlockRemovedMutationType } from "@editorjs/editorjs";
 import "./editor.css";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
 
@@ -8,6 +8,7 @@ export default function Editor({ initialBlocks, updateEditorData }) {
   const [isMounted, setIsMounted] = useState(false);
   const editorRef = useRef();
   const [saved, setSaved] = useState(false);
+  const [deleteUrls, setDeleteUrls] = useState<string[]>([]);
 
   const ref = useRef<EditorJS>();
 
@@ -16,7 +17,9 @@ export default function Editor({ initialBlocks, updateEditorData }) {
   }
 
   async function uploadFileFromEditor(file: File, url: string) {
-    return await uploadFile(url, file);
+    const awsUrl = await uploadFile(url, file);
+    setSaved(false);
+    return awsUrl;
   }
 
   const initializeEditor = async () => {
@@ -41,6 +44,42 @@ export default function Editor({ initialBlocks, updateEditorData }) {
         },
         onReady() {
           ref.current = editor;
+        },
+        async onChange(api, event) {
+          if (event) {
+            if (Array.isArray(event)) {
+              event.forEach(async (blockEvent) => {
+                if (blockEvent.type === "block-removed") {
+                  const removedBlock = await blockEvent.detail.target.save(); // Access the removed block
+                  if (
+                    removedBlock &&
+                    removedBlock.data.file &&
+                    removedBlock.data.file.url
+                  ) {
+                    setDeleteUrls((prev) => [
+                      ...prev,
+                      removedBlock.data.file.url,
+                    ]);
+                  }
+                }
+              });
+            } else {
+              if (event.type === "block-removed") {
+                const removedBlock = await event.detail.target.save();
+                if (
+                  removedBlock &&
+                  removedBlock.data.file &&
+                  removedBlock.data.file.url
+                ) {
+                  setDeleteUrls((prev) => [
+                    ...prev,
+                    removedBlock.data.file.url,
+                  ]);
+                }
+              }
+            }
+          }
+          save();
         },
         tools: {
           table: Table,
@@ -71,6 +110,7 @@ export default function Editor({ initialBlocks, updateEditorData }) {
           },
           embed: {
             class: Embed,
+            inlineToolbar: true,
             config: {
               services: {
                 youtube: true,
@@ -86,18 +126,24 @@ export default function Editor({ initialBlocks, updateEditorData }) {
             config: {
               uploader: {
                 async uploadByFile(file: File) {
-                  const url = await getUploadURL();
                   try {
-                    await uploadFileFromEditor(file, url);
+                    const url = await getUploadURL();
+                    const awsUrl = await uploadFileFromEditor(file, url);
+                    return {
+                      success: 1,
+                      file: {
+                        url: awsUrl, // Update with the actual AWS URL
+                      },
+                    };
                   } catch (error) {
-                    console.log(error);
+                    console.error("Error uploading the file:", error);
+                    return {
+                      success: 0,
+                      file: {
+                        url: "", // You can specify a placeholder URL or leave it empty
+                      },
+                    };
                   }
-                  return {
-                    success: 1,
-                    file: {
-                      url: url.split("?")[0],
-                    },
-                  };
                 },
               },
             },
@@ -133,14 +179,17 @@ export default function Editor({ initialBlocks, updateEditorData }) {
     if (ref.current) {
       ref.current.save().then((outputData) => {
         updateEditorData(outputData);
-        setSaved(true);
       });
     }
   };
 
+  useEffect(() => {
+    console.log("Delete urls: ", deleteUrls);
+  }, [deleteUrls]);
+
   return (
     <div className="border-2 rounded-md p-7 flex flex-colv w-full">
-      <div id="editorjs" className="min-h-[100px] w-full" onBlur={save} />
+      <div id="editorjs" className="min-h-[100px] w-full" />
     </div>
   );
 }

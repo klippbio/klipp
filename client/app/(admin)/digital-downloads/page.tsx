@@ -48,6 +48,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DigitalDownloadSkeleton from "./DigitalDownloadSkeleton";
+import AxiosApi from "@/app/services/axios";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 type ddType = {
   name: string;
@@ -69,21 +71,26 @@ const ddCreateSchema = z.object({
   price: z.string(),
   storeId: z.string().optional(),
 });
-const storeId = "d627bb9e-3605-43d8-b472-98e4f19b7c67";
 
 function digitalDownloadPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const authDetails = useAuthDetails();
+  const storeId = authDetails?.storeId;
+
   const { data, isLoading } = useQuery(
     ["allProducts", storeId],
     async () => {
-      const response = await axios.get(
-        `/api/digital-downloads/getAllDigitalProducts/?id=${storeId}`
+      const response = await AxiosApi(
+        "GET",
+        `/api/digital-downloads/getAllDigitalProducts/?id=${storeId}`,
+        {},
+        authDetails
       );
       return response.data;
     },
     {
-      enabled: true,
+      enabled: !!storeId,
     }
   );
 
@@ -95,7 +102,7 @@ function digitalDownloadPage() {
   });
 
   function onSubmit(data: z.infer<typeof ddCreateSchema>) {
-    data.storeId = "d627bb9e-3605-43d8-b472-98e4f19b7c67";
+    data.storeId = storeId;
     createProductMutation.mutate(data);
   }
 
@@ -126,7 +133,13 @@ function digitalDownloadPage() {
 
   const createProductMutation = useMutation({
     mutationFn: async (data: ddType) => {
-      return axios.post("/api/digital-downloads/create", data, {});
+      const response = await AxiosApi(
+        "POST",
+        "/api/digital-downloads/create",
+        data,
+        authDetails
+      );
+      return response.data;
     },
     onSuccess: (data) => {
       toast({
@@ -135,7 +148,7 @@ function digitalDownloadPage() {
         description: "Product Created.",
       });
 
-      const productId = data.data.DigitalProduct.id;
+      const productId = data.DigitalProduct.id;
       router.push(`/digital-downloads/create/?id=${productId}`);
     },
     onError: () => {
