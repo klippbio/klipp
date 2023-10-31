@@ -21,6 +21,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import dayjs from "../../utils/dayjs.index";
+import AxiosApi from "../services/axios";
+import {
+  useAuthDetails,
+  useRefreshAuthDetails,
+} from "../components/AuthContext";
 
 //types
 type OnboardingFormValues = {
@@ -54,19 +60,22 @@ const onboardingFormSchema = z.object({
 
 export function ProfileForm() {
   //consts
-  const { userId, getToken } = useAuth();
+  const authDetails = useAuthDetails();
+  const refreshAuthDetails = useRefreshAuthDetails();
+
   const { user } = useUser();
   const email = user?.emailAddresses[0].emailAddress;
   const router = useRouter();
   const { toast } = useToast();
+  const timeZone = dayjs.tz.guess();
   const fixedPrefix = "klipp.bio/";
 
   //validateing if user is onboarded
   useEffect(() => {
-    if (user?.unsafeMetadata.onboarded) {
-      router.push("/dashboard");
+    if (authDetails && authDetails.storeUrl) {
+      router.push("/home");
     }
-  }, [user]);
+  }, [authDetails]);
 
   //form prefix logic
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
@@ -106,26 +115,34 @@ export function ProfileForm() {
   //save user data
   const mutation = useMutation({
     mutationFn: async (data: OnboardingFormValues) => {
-      const combinedData = { ...data, userId, email };
-      return axios.post("/api/user/onboarding", combinedData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await getToken()}`,
-          mode: "cors",
-        },
-      });
+      const userId = authDetails.userId;
+      const combinedData = { ...data, email, timeZone, userId };
+      return AxiosApi(
+        "POST",
+        "/api/user/onboarding",
+        combinedData,
+        authDetails
+      );
     },
-    onSuccess: (data) => {
-      user?.update({
-        unsafeMetadata: { onboarded: true },
-      });
-      console.log(data);
+    onSuccess: (response) => {
       toast({
         title: "Success!",
         duration: 1000,
         description: "Your profile was created.",
       });
-      router.push("/dashboard");
+      if (
+        response.data &&
+        response.data.stores &&
+        response.data.stores[0] &&
+        response.data.stores[0].storeUrl &&
+        response.data.stores[0].storeId
+      ) {
+        refreshAuthDetails(
+          response.data.stores[0].storeUrl,
+          response.data.stores[0].storeId
+        );
+      }
+      router.push("/home");
     },
     onError: (error: any) => {
       toast({

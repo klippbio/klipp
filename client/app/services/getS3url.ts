@@ -50,7 +50,6 @@ export async function uploadFile(uploadUrl: string, file: File) {
 export async function deleteFile(fileUrl: string) {
   const parsedUrl = new URL(fileUrl);
   const key = parsedUrl.pathname.substring(1);
-  console.log("deleting file", key);
 
   const params = {
     Bucket: bucketName,
@@ -60,7 +59,6 @@ export async function deleteFile(fileUrl: string) {
     await s3.deleteObject(params).promise();
     return `File ${key} deleted successfully.`;
   } catch (error) {
-    console.log("errpr", error);
     throw new Error(`Error deleting file ${fileUrl}: ${error}`);
   }
 }

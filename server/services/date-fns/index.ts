@@ -26,7 +26,6 @@ export const formatTime = (
   timeFormat?: number | null,
   timeZone?: string | null
 ) => {
-  // console.log(timeZone, date);
   return timeZone
     ? dayjs(date)
         .tz(timeZone)
