@@ -124,6 +124,7 @@ export function ProfileForm() {
         authDetails
       );
     },
+
     onSuccess: (response) => {
       toast({
         title: "Success!",
@@ -135,11 +136,12 @@ export function ProfileForm() {
         response.data.stores &&
         response.data.stores[0] &&
         response.data.stores[0].storeUrl &&
-        response.data.stores[0].storeId
+        response.data.stores[0].id
       ) {
+        console.log("refreshing auth details");
         refreshAuthDetails(
           response.data.stores[0].storeUrl,
-          response.data.stores[0].storeId
+          response.data.stores[0].id
         );
       }
       router.push("/home");
