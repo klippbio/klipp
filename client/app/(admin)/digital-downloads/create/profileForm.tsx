@@ -22,7 +22,7 @@ import {
   deleteFile,
 } from "@/app/services/getS3url";
 import Editor from "@/components/ui/custom/editor/Editor";
-import { Loader2, Router, Trash, Upload } from "lucide-react";
+import { Loader2, Router, Trash, Upload, X } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import {
   Form,
@@ -54,7 +54,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
-
 //types
 const digitalDownloadsSchema = z
   .object({
@@ -220,6 +219,12 @@ export function ProfileForm({
     mutation.mutate(data);
   }
 
+  async function onThumbnailRemove() {
+    setSelectedFile("");
+    setImageUrl("");
+    return await deleteFile(imageUrl);
+  }
+
   async function getUploadURL() {
     return await generateUploadURL();
   }
@@ -339,7 +344,7 @@ export function ProfileForm({
   });
 
   return (
-    <Card className=" m-4 lg:w-2/3">
+    <Card className=" m-8 lg:w-2/3">
       <CardHeader>
         <CardTitle className="text-foreground text-lg">
           Digital Products
@@ -370,11 +375,21 @@ export function ProfileForm({
                             }`}
                           >
                             {selectedFile ? (
-                              <img
-                                src={selectedFile}
-                                alt="Selected Thumbnail"
-                                className="w-full h-full md:h-32 object-cover rounded-md"
-                              />
+                              <div className="relative w-full h-full">
+                                <img
+                                  src={selectedFile}
+                                  alt="Selected Thumbnail"
+                                  className="w-full h-full md:h-32 object-cover rounded-md transition-opacity"
+                                />
+                                <div>
+                                  <span
+                                    onClick={onThumbnailRemove}
+                                    className="text-sm cursor-pointer"
+                                  >
+                                    Remove
+                                  </span>
+                                </div>
+                              </div>
                             ) : (
                               <div
                                 className="text-3xl font-bold mb-8 mt-8 text-foreground"
@@ -394,6 +409,7 @@ export function ProfileForm({
                       </FormItem>
                     )}
                   />
+
                   <div className="w-full mt-5 md:mt-0  md:ml-5 space-y-5">
                     <FormField
                       control={form.control}
@@ -586,11 +602,11 @@ export function ProfileForm({
                         <FormItem className="">
                           <FormLabel htmlFor="name">Description</FormLabel>
                           <FormControl>
-                            <div className="border-2 mt-4 rounded-md">
+                            <div className="border-2 mt-4 h-96 p-3 rounded-md">
                               <Editor
                                 initialBlocks={initialBlocksData}
                                 updateEditorData={updateEditorData}
-                                disabled={false}
+                                isReadonly={false}
                               />
                             </div>
                           </FormControl>

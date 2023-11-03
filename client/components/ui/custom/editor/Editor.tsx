@@ -4,10 +4,12 @@ import EditorJS, { BlockRemovedMutationType } from "@editorjs/editorjs";
 import "./editor.css";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
 
-export default function Editor({ initialBlocks, updateEditorData, disabled }) {
+export default function Editor({
+  initialBlocks,
+  updateEditorData,
+  isReadonly,
+}) {
   const [isMounted, setIsMounted] = useState(false);
-  const editorRef = useRef();
-  const [saved, setSaved] = useState(false);
   const [deleteUrls, setDeleteUrls] = useState<string[]>([]);
 
   const ref = useRef<EditorJS>();
@@ -18,7 +20,7 @@ export default function Editor({ initialBlocks, updateEditorData, disabled }) {
 
   async function uploadFileFromEditor(file: File, url: string) {
     const awsUrl = await uploadFile(url, file);
-    setSaved(false);
+
     return awsUrl;
   }
 
@@ -39,7 +41,8 @@ export default function Editor({ initialBlocks, updateEditorData, disabled }) {
     if (!ref.current) {
       const editor = new EditorJS({
         holder: "editorjs",
-        readOnly: disabled,
+        minHeight: 0,
+        readOnly: isReadonly,
         data: {
           blocks: initialBlocks,
         },
@@ -81,6 +84,7 @@ export default function Editor({ initialBlocks, updateEditorData, disabled }) {
             }
           }
           save();
+          // setSaved(false);
         },
         tools: {
           table: Table,
@@ -177,7 +181,7 @@ export default function Editor({ initialBlocks, updateEditorData, disabled }) {
   }, [isMounted]);
 
   const save = () => {
-    if (ref.current) {
+    if (ref.current && !isReadonly) {
       ref.current.save().then((outputData) => {
         updateEditorData(outputData);
       });
@@ -189,8 +193,8 @@ export default function Editor({ initialBlocks, updateEditorData, disabled }) {
   }, [deleteUrls]);
 
   return (
-    <div className="border-2 rounded-md p-7 flex flex-colv w-full">
-      <div id="editorjs" className="min-h-[100px] w-full" />
+    <div className="rounded-md p-7 flex w-full">
+      <div id="editorjs" className=" w-full" />
     </div>
   );
 }
