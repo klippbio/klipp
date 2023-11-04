@@ -400,6 +400,7 @@ export function ProfileForm({
                             )}
                             <Input
                               type="file"
+                              accept="image/*"
                               className="absolute opacity-0 w-full h-full cursor-pointer"
                               onChange={onThumbnailChange}
                             />
@@ -602,7 +603,7 @@ export function ProfileForm({
                         <FormItem className="">
                           <FormLabel htmlFor="name">Description</FormLabel>
                           <FormControl>
-                            <div className="border-2 mt-4 h-96 p-3 rounded-md">
+                            <div className="border-2 mt-4 min-h-[500px] h-auto p-3 rounded-md">
                               <Editor
                                 initialBlocks={initialBlocksData}
                                 updateEditorData={updateEditorData}

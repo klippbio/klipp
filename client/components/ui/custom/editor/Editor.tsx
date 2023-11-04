@@ -174,6 +174,7 @@ export default function Editor({
 
       return () => {
         if (ref.current) {
+          console.log("Destroying editor");
           ref.current.destroy();
         }
       };
@@ -181,8 +182,10 @@ export default function Editor({
   }, [isMounted]);
 
   const save = () => {
+    console.log("sac e called");
     if (ref.current && !isReadonly) {
       ref.current.save().then((outputData) => {
+        console.log("Article data: ", outputData);
         updateEditorData(outputData);
       });
     }
