@@ -1,13 +1,9 @@
 // app/layout.tsx
 import "../globals.css";
-import { Inter } from "next/font/google";
-const inter = Inter({ subsets: ["latin"] });
 import { SideNav } from "../components/sideNav";
 import { Separator } from "@/components/ui/separator";
 import { BottomBar } from "../components/bottomBar";
-import { FileCheck2, LayoutDashboardIcon } from "lucide-react/";
-import { ShoppingBasketIcon } from "lucide-react";
-import { WrapText } from "lucide-react/";
+import { FileCheck2 } from "lucide-react/";
 import TopBar from "../components/topBar";
 import { HomeIcon } from "lucide-react/";
 import { Calendar } from "lucide-react/";

@@ -1,6 +1,4 @@
 "use client";
-import axios from "axios";
-import { useSearchParams } from "next/navigation";
 import React from "react";
 import {
   Card,

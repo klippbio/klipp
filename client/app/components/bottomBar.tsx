@@ -1,14 +1,12 @@
 "use client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
-import { Ghost, LayoutDashboardIcon, RatIcon, WrapText, X } from "lucide-react";
+import { LayoutDashboardIcon, WrapText } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
-import { XIcon } from "lucide-react";
-import path from "path";
 // Bottom Bar Code
-import React, { useState } from "react";
+import React from "react";
 import { Separator } from "@/components/ui/separator";
 import { NavProps } from "admin";
 import {

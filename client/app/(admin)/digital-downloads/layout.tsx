@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 interface DigitalDownloadsLayoutProps {
   children: React.ReactNode;
 }
