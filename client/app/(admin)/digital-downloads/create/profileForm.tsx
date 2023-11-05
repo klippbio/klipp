@@ -11,10 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useAuth } from "@clerk/nextjs";
-import { useUser } from "@clerk/nextjs";
 import { useState, useEffect, useCallback } from "react";
-import axios, { Axios, AxiosError } from "axios";
 import { Separator } from "@/components/ui/separator";
 import {
   generateUploadURL,
@@ -22,7 +19,7 @@ import {
   deleteFile,
 } from "@/app/services/getS3url";
 import Editor from "@/components/ui/custom/editor/Editor";
-import { Loader2, Router, Trash, Upload } from "lucide-react";
+import { Loader2, Trash, Upload } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import {
   Form,
@@ -143,11 +140,12 @@ export function ProfileForm({
   const [editorData, setEditorData] = useState("");
   const [flexPrice, setFlexPrice] = useState(true);
   const [minPrice, setMinPrice] = useState("0");
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState<fileType[]>([]);
   const [initialBlocksData, setInitialBlocksData] = useState([]);
   const [uploadingFile, setUploadingFile] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  //eslint-disable-next-line
   const updateEditorData = useCallback((state: any) => {
     setEditorData(state);
   }, []);
@@ -200,7 +198,7 @@ export function ProfileForm({
     }
 
     if (productData.ddFiles) {
-      setUploadedFiles(productData.ddFiles as any);
+      setUploadedFiles(productData.ddFiles);
     }
   }, []);
 
@@ -264,7 +262,7 @@ export function ProfileForm({
       });
       router.push("/digital-downloads");
     },
-    onError: (error: AxiosError) => {
+    onError: () => {
       toast({
         title: "Error",
         variant: "destructive",
@@ -291,7 +289,8 @@ export function ProfileForm({
         duration: 1000,
         description: "File uploaded successfully.",
       });
-      setUploadedFiles([...uploadedFiles, data] as any);
+      setUploadedFiles([...uploadedFiles, data]);
+      console.log("uploaded", uploadedFiles);
       setUploadingFile(false);
     },
     onError: () => {
@@ -358,7 +357,7 @@ export function ProfileForm({
                   <FormField
                     control={form.control}
                     name="thumbnailUrl"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel htmlFor="thumbnail">Thumbnail</FormLabel>
                         <FormControl>
@@ -385,6 +384,7 @@ export function ProfileForm({
                             )}
                             <Input
                               type="file"
+                              accept="image/*"
                               className="absolute opacity-0 w-full h-full cursor-pointer"
                               onChange={onThumbnailChange}
                             />
@@ -513,7 +513,7 @@ export function ProfileForm({
                   <FormField
                     control={form.control}
                     name="file"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel htmlFor="displayName">Upload File</FormLabel>
                         <FormControl>
@@ -582,7 +582,7 @@ export function ProfileForm({
                     <FormField
                       control={form.control}
                       name="description"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem className="">
                           <FormLabel htmlFor="name">Description</FormLabel>
                           <FormControl>
@@ -607,7 +607,7 @@ export function ProfileForm({
                   <FormField
                     control={form.control}
                     name="currency"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel htmlFor="storeUrl">Currency</FormLabel>
                         <FormControl></FormControl>

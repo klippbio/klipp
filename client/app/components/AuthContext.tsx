@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { clerkClient, useAuth, useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 // Define a type for authDetails
 export interface AuthDetails {

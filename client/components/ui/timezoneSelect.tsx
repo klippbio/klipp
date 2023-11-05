@@ -1,7 +1,6 @@
 // TimezoneSelect.js
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import {
   addCitiesToDropdown,
   filterByCities,
@@ -22,7 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
 import { ChevronsUpDown } from "lucide-react";
-import { FormControl } from "./form";
 import dayjs from "@/utils/dayjs.index";
 import { Skeleton } from "./skeleton";
 import AxiosApi from "@/app/services/axios";
@@ -38,7 +36,7 @@ export function TimezoneSelect({
 }: TimezoneSelectProps) {
   const [open, setOpen] = React.useState(false);
   const [cities, setCities] = useState<ICity[]>([]);
-  const [timezones, setTimezones] = useState<{}>([]);
+  const [timezones, setTimezones] = useState<Record<string, string>>({});
   const [options, setOptions] = useState<TimezoneInfo[]>([]);
 
   const { data, isLoading } = useQuery({
@@ -60,7 +58,10 @@ export function TimezoneSelect({
     setOptions(updatedOptions);
   }, [timezones]);
 
-  const updateTimezones = (currentTz: {}, pastTimezones: {}) => {
+  const updateTimezones = (
+    currentTz: Record<string, string>,
+    pastTimezones: Record<string, string>
+  ) => {
     const updatedTimezones = { ...pastTimezones, ...currentTz };
     setTimezones(updatedTimezones);
   };

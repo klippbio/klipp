@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import ProfileForm from "./profileForm";
-import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";

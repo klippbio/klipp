@@ -1,9 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { PaperclipIcon } from "lucide-react";
 import { CopyIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { usePathname } from "next/navigation";
 import logo from "./../../utils/logo.png";
 import Image from "next/image";

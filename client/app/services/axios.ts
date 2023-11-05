@@ -1,6 +1,5 @@
 import axios, { Method } from "axios";
 import { AuthDetails } from "../components/AuthContext"; // Assuming AuthDetails is the type for your authDetails object
-import { useRouter } from "next/router";
 
 interface ApiRequestOptions<T> {
   method: Method;
