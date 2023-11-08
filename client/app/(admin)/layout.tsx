@@ -1,17 +1,12 @@
 // app/layout.tsx
 import "../globals.css";
-import { Inter } from "next/font/google";
-const inter = Inter({ subsets: ["latin"] });
 import { SideNav } from "../components/sideNav";
-import { Separator } from "@/components/ui/separator";
 import { BottomBar } from "../components/bottomBar";
-import { FileCheck2, LayoutDashboardIcon } from "lucide-react/";
-import { ShoppingBasketIcon } from "lucide-react";
-import { WrapText } from "lucide-react/";
-import TopBar from "../components/topBar";
+import { FileCheck2 } from "lucide-react/";
 import { HomeIcon } from "lucide-react/";
 import { Calendar } from "lucide-react/";
 import { Server } from "lucide-react/";
+import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const navItems = [
@@ -22,7 +17,7 @@ const navItems = [
   },
   {
     title: "Calendar",
-    href: "/calendar",
+    href: "/calendar/products",
     icon: <Calendar size={20} />,
   },
   {
@@ -46,11 +41,9 @@ export default function RootLayout({
     <div className="h-screen w-screen flex flex-col md:flex-row">
       <div className="hidden md:flex md:w-64">
         <SideNav items={navItems} />
+        <Separator orientation="vertical" />
       </div>
-      <Separator orientation="vertical" className="hidden md:block" />
-      <div className="flex flex-col h-screen pb-20 md:pb-0 w-full overflow-hidden ">
-        <TopBar />
-        <Separator orientation="horizontal" />
+      <div className="flex flex-col h-screen pb-20 md:pb-0 w-full overflow-hidden">
         <ScrollArea>{children}</ScrollArea>
       </div>
       <div className="md:hidden w-full">

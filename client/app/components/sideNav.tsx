@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { UserButton, auth, useAuth } from "@clerk/nextjs";
+import { UserButton, useAuth } from "@clerk/nextjs";
 import { NavProps } from "admin";
 import Image from "next/image";
 import logoText from "./../../utils/logoText.png";
@@ -21,7 +21,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
 
   return (
     <>
-      <div className="flex flex-col h-screen w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
+      <div className="flex flex-col h-full w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
         <div className="flex justify-start py-5 px-4 ">
           <Image src={logoText} alt="logoWithText" width={100} />
         </div>

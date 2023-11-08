@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import ProfileForm from "./profileForm";
-import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -37,32 +36,11 @@ function page() {
   return (
     <div>
       {isLoading ? (
-        <Card className=" m-4 lg:w-2/3">
-          <div className="text-center">
-            <Skeleton className="h-8 w-40 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-80 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-            <Skeleton className="h-4 w-120 m-4" />
-          </div>
+        <Card className="md:w-1/2">
+          <Skeleton className="h-6 w-1/2 m-4" />
+          <Skeleton className="h-4 w-10/12 m-4" />
+          <Skeleton className="h-4 w-10/12 m-4" />
+          <Skeleton className="h-4 w-10/12 m-4" />
         </Card>
       ) : (
         <ProfileForm data={data} productId={productId || 0}></ProfileForm>

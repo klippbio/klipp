@@ -5,10 +5,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
   Form,
@@ -146,12 +144,12 @@ export function ProfileForm() {
       }
       router.push("/home");
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: error.response.data.error,
+        description: "Failed to create profile please try again!",
       });
     },
   });
@@ -221,7 +219,7 @@ export function ProfileForm() {
       </div>
 
       {/* Right Section */}
-      <div className="flex bg-foreground lg:w-1/3 md:w-1/4"></div>
+      <div className="flex bg-foreground md:w-1/3 md:w-1/4"></div>
     </div>
   );
 }
