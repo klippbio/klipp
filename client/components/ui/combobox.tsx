@@ -62,6 +62,11 @@ export function Combobox({
                     onValueChange(option.value);
                     setOpen(false);
                   }}
+                  className={
+                    option.value === selectedValue
+                      ? "bg-accent text-accent-foreground"
+                      : ""
+                  }
                 >
                   {option.label}
                 </CommandItem>
