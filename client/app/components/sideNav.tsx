@@ -32,7 +32,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
               href={item.href}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
-                pathname?.startsWith(item.href) &&
+                pathname?.startsWith(item.baseHref) &&
                   "bg-overlay text-overlay-foreground",
                 "justify-start flex items-center hover:bg-overlay hover:text-primary"
               )}

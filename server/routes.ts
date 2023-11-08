@@ -8,4 +8,4 @@ export const routes = express.Router();
 routes.use("/user", userController);
 
 routes.use("/calendar", calendarController);
-routes.use("/digital-downloads", ddController);
+routes.use("/digital-products", ddController);

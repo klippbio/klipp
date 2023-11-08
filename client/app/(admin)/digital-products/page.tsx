@@ -82,7 +82,7 @@ function digitalDownloadPage() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/digital-downloads/getAllDigitalProducts/?id=${storeId}`,
+        `/api/digital-products/getAllDigitalProducts/?id=${storeId}`,
         {},
         authDetails
       );
@@ -107,7 +107,7 @@ function digitalDownloadPage() {
 
   async function deleteProduct(id: string) {
     const response = await fetch(
-      `/api/digital-downloads/deleteDigitalProduct/?id=${id}`,
+      `/api/digital-products/deleteDigitalProduct/?id=${id}`,
       {
         method: "DELETE",
       }
@@ -134,7 +134,7 @@ function digitalDownloadPage() {
     mutationFn: async (data: ddType) => {
       const response = await AxiosApi(
         "POST",
-        "/api/digital-downloads/create",
+        "/api/digital-products/create",
         data,
         authDetails
       );
@@ -148,7 +148,7 @@ function digitalDownloadPage() {
       });
 
       const productId = data.DigitalProduct.id;
-      router.push(`/digital-downloads/create/?id=${productId}`);
+      router.push(`/digital-products/create/?id=${productId}`);
     },
     onError: () => {
       toast({
@@ -273,7 +273,7 @@ function digitalDownloadPage() {
                               <DropdownMenuItem
                                 onClick={() =>
                                   router.push(
-                                    `/digital-downloads/create/?id=${item.id}`
+                                    `/digital-products/create/?id=${item.id}`
                                   )
                                 }
                                 onSelect={(e) => e.preventDefault()}

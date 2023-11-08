@@ -94,7 +94,7 @@ export function BottomBar({ className, items, ...props }: NavProps) {
                             size: "lg",
                           }),
                           "justify-start flex items-center rounded-3xl h-12 hover:bg-overlay",
-                          pathname?.startsWith(item.href) &&
+                          pathname?.startsWith(item.baseHref) &&
                             "bg-overlay text-overlay-foreground"
                         )}
                       >

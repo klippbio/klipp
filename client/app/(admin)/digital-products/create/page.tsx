@@ -24,7 +24,7 @@ function page() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/digital-downloads/getproduct/?id=${productId}`,
+        `/api/digital-products/getproduct/?id=${productId}`,
         authDetails
       );
       return response.data;

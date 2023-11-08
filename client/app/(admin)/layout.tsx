@@ -13,21 +13,25 @@ const navItems = [
   {
     title: "Home",
     href: "/home",
+    baseHref: "/home",
     icon: <HomeIcon size={20} />,
   },
   {
     title: "Calendar",
     href: "/calendar/products",
+    baseHref: "/calendar",
     icon: <Calendar size={20} />,
   },
   {
     title: "Store",
     href: "/store",
+    baseHref: "/store",
     icon: <Server size={20} />,
   },
   {
     title: "Digital Products",
     href: "/digital-products",
+    baseHref: "/digital-products",
     icon: <FileCheck2 size={20} />,
   },
 ];
