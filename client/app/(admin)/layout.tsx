@@ -27,7 +27,7 @@ const navItems = [
   },
   {
     title: "Digital Products",
-    href: "/digital-downloads",
+    href: "/digital-products",
     icon: <FileCheck2 size={20} />,
   },
 ];

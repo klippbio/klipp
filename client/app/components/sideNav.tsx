@@ -12,10 +12,7 @@ import logoText from "./../../utils/logoText.png";
 import { SettingsIcon } from "lucide-react";
 
 export function SideNav({ className, items, ...props }: NavProps) {
-  const currentPage = usePathname();
-  const pageTitle =
-    currentPage.split("/")[1].charAt(0).toUpperCase() +
-    currentPage.split("/")[1].slice(1);
+  const pathname = usePathname();
 
   const { userId } = useAuth();
 
@@ -35,7 +32,8 @@ export function SideNav({ className, items, ...props }: NavProps) {
               href={item.href}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
-                pageTitle == item.title && "bg-overlay text-overlay-foreground",
+                pathname?.startsWith(item.href) &&
+                  "bg-overlay text-overlay-foreground",
                 "justify-start flex items-center hover:bg-overlay hover:text-primary"
               )}
             >

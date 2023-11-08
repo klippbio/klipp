@@ -37,7 +37,7 @@ function Page() {
     <div>
       {isLoading && !data ? (
         <div>
-          <Card className="md:w-1/2">
+          <Card className="md:w-1/2 mb-4">
             <Skeleton className="h-6 w-1/2 m-4" />
             <Skeleton className="h-4 w-10/12 m-4" />
             <Skeleton className="h-4 w-10/12 m-4" />
