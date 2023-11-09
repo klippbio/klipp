@@ -69,22 +69,26 @@ export function BottomBar({ className, items, ...props }: NavProps) {
           </SheetTrigger>
           <SheetContent side={"bottom"} className="h-4/5">
             <SheetHeader>
-              <SheetTitle className="text-left text-primary">
-                <Image src={logoText} alt="logoWithText" width={100} />
+              <SheetTitle className="text-left text-primary mb-2">
+                <Image
+                  src={logoText}
+                  alt="logoWithText"
+                  width={100}
+                  priority={true}
+                />
               </SheetTitle>
               <Separator orientation="horizontal" />
               <SheetDescription className="text-left">
                 <nav
                   className={cn(
-                    "flex flex-col space-y-5 align-center",
+                    "flex flex-col space-y-5 align-center pt-4",
                     className
                   )}
                   {...props}
                 >
-                  <div className="pt-2"></div>
                   {items.map((item) => (
                     // If the pathname is the same as the item.href, then show the SheetClose button, else show the Link button
-                    <SheetClose asChild>
+                    <SheetClose asChild key={item.href}>
                       <Link
                         key={item.href}
                         href={item.href}

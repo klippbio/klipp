@@ -20,7 +20,12 @@ export function SideNav({ className, items, ...props }: NavProps) {
     <>
       <div className="flex flex-col h-full w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
         <div className="flex justify-start py-5 px-4 ">
-          <Image src={logoText} alt="logoWithText" width={100} />
+          <Image
+            src={logoText}
+            alt="logoWithText"
+            width={100}
+            priority={true}
+          />
         </div>
         <nav
           className={cn("flex flex-col space-y-1 align-center pt-2", className)}
