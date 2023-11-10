@@ -36,7 +36,7 @@ export function BottomBar({ className, items, ...props }: NavProps) {
           href="/mypage"
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "flex flex-col items-center"
+            "flex flex-col items-center "
           )}
         >
           <div className="flex flex-col items-center">
@@ -49,7 +49,7 @@ export function BottomBar({ className, items, ...props }: NavProps) {
           href="/home"
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "flex flex-col items-center hover:text-overlay-foreground",
+            "flex flex-col items-center hover:bg-background",
             pathname === "/home" && "text-overlay-foreground"
           )}
         >
