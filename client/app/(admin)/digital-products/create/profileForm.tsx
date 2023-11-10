@@ -248,7 +248,7 @@ export function ProfileForm({
     mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
       const response = await AxiosApi(
         "POST",
-        `/api/digital-downloads/update/?id=${productId}`,
+        `/api/digital-products/update/?id=${productId}`,
         data,
         authDetails
       );
@@ -260,7 +260,7 @@ export function ProfileForm({
         duration: 1000,
         description: "Product Created.",
       });
-      router.push("/digital-downloads");
+      router.push("/digital-products");
     },
     onError: () => {
       toast({
@@ -277,7 +277,7 @@ export function ProfileForm({
       setUploadingFile(true);
       const response = await AxiosApi(
         "post",
-        `/api/digital-downloads/file/?id=${productId}`,
+        `/api/digital-products/file/?id=${productId}`,
         data,
         authDetails
       );
@@ -314,7 +314,7 @@ export function ProfileForm({
       );
       const response = await AxiosApi(
         "delete",
-        `/api/digital-downloads/file/?id=${fileId}`,
+        `/api/digital-products/file/?id=${fileId}`,
         {},
         authDetails
       );
@@ -338,7 +338,7 @@ export function ProfileForm({
   });
 
   return (
-    <Card className=" m-4 lg:w-2/3">
+    <Card className="my-4 lg:w-2/3">
       <CardHeader>
         <CardTitle className="text-foreground text-lg">
           Digital Products

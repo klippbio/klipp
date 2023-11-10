@@ -102,9 +102,11 @@ calendarController.get("/linkCalendar", async (req: Request, res: Response) => {
       code as string,
       scope as string
     );
-    res.redirect("http://localhost:3000/calendar?message=auth_success");
+    res.redirect(
+      "http://localhost:3000/calendar/settings?message=auth_success"
+    );
   } catch (error) {
-    res.redirect("http://localhost:3000/calendar?message=auth_failed");
+    res.redirect("http://localhost:3000/calendar/settings?message=auth_failed");
   }
 });
 

@@ -108,6 +108,11 @@ export function TimezoneSelect({
                   setOpen(false); // Use the value of the selected option
                 }}
                 key={option.label}
+                className={
+                  option.value === selectedTimezone
+                    ? "bg-accent text-accent-foreground"
+                    : ""
+                }
               >
                 {handleOptionLabel(option, cities)}
               </CommandItem>

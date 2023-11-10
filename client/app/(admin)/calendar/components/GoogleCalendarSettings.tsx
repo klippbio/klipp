@@ -63,13 +63,13 @@ export default function GoogleCalendarSettings({
           title: "Successfully linked Google Calendar",
           variant: "default",
         });
-        router.replace("/calendar");
+        router.replace("/calendar/settings");
       } else if (message == "auth_failed") {
         toast({
           title: "Failed to link Google Calendar. Please try again",
           variant: "destructive",
         });
-        router.replace("/calendar");
+        router.replace("/calendar/settings");
       }
     }
   }, [message]);
