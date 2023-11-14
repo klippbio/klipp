@@ -105,6 +105,7 @@ function digitalDownloadPage() {
     createProductMutation.mutate(data);
   }
 
+  //TODO: Add delete mutation
   async function deleteProduct(id: string) {
     const response = await fetch(
       `/api/digital-products/deleteDigitalProduct/?id=${id}`,
@@ -181,8 +182,8 @@ function digitalDownloadPage() {
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4 ">
-                      <div className="grid grid-cols-4 items-center gap-4 ">
-                        <Label htmlFor="name" className="text-right">
+                      <div className="grid grid-cols-4 gap-4 ">
+                        <Label htmlFor="name" className="text-right pt-3">
                           Name
                         </Label>
                         <div className="col-span-3">
@@ -200,8 +201,8 @@ function digitalDownloadPage() {
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Price</Label>
+                      <div className="grid grid-cols-4 gap-4">
+                        <Label className="text-right pt-3">Price</Label>
 
                         <div className="col-span-3">
                           <FormField

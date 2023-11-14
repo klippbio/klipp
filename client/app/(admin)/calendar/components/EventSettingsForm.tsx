@@ -53,6 +53,7 @@ export function EventSettingsForm({
 }: EventSettingsFormProps) {
   const { toast } = useToast();
   const authDetails = useAuthDetails();
+  console.log(authDetails, "authDetails");
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {

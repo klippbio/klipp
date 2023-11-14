@@ -24,7 +24,6 @@ export const ZCreateScheduleSchema = z.object({
       )
     )
     .optional(),
-  timeZone: z.string(),
 });
 
 export const ZUpdateInputSchema = z.object({
@@ -74,6 +73,7 @@ export const createSchedule = async (
         select: {
           id: true,
           defaultScheduleId: true,
+          timeZone: true,
         },
       },
     },
@@ -89,7 +89,7 @@ export const createSchedule = async (
   const schedule = await db.schedule.create({
     data: {
       name: input.name,
-      timeZone: input.timeZone,
+      timeZone: store.calendarSetting.timeZone,
       store: {
         connect: {
           id: input.storeId,
@@ -131,10 +131,7 @@ export const createSchedule = async (
       store.calendarSetting = calendarSetting;
     }
   }
-  return {
-    schedule,
-    store: store,
-  };
+  return schedule;
 };
 
 export const updateSchedule = async (
@@ -299,6 +296,87 @@ export const getSchedule = async (
   };
 };
 
+export const getAllSchedules = async (storeId: string) => {
+  const schedules = await db.schedule.findMany({
+    where: {
+      storeId,
+    },
+    select: {
+      id: true,
+      name: true,
+      availability: true,
+      calendarSetting: {
+        select: {
+          id: true,
+          timeZone: true,
+          defaultScheduleId: true,
+        },
+      },
+      timeZone: true,
+    },
+  });
+  const timeZone =
+    schedules.at(0)?.timeZone || schedules.at(0)?.calendarSetting.timeZone;
+
+  return schedules.map((schedule) => ({
+    id: schedule.id,
+    name: schedule.name,
+    workingHours: getWorkingHours(
+      { timeZone: schedule.timeZone || undefined, utcOffset: 0 },
+      schedule.availability || []
+    ),
+    schedule: schedule.availability,
+    availability: convertScheduleToAvailability(schedule).map((a) =>
+      a.map((startAndEnd) => ({
+        ...startAndEnd,
+        // Turn our limited granularity into proper end of day.
+        end: new Date(
+          startAndEnd.end
+            .toISOString()
+            .replace("23:59:00.000Z", "23:59:59.999Z")
+        ),
+      }))
+    ),
+    timeZone: schedule.timeZone || schedule.calendarSetting.timeZone,
+    dateOverrides: schedule.availability.reduce((acc, override) => {
+      // only iff future date override
+      if (
+        !override.date ||
+        (timeZone != null &&
+          dayjs.tz(override.date, timeZone).isBefore(dayjs(), "day"))
+      ) {
+        return acc;
+      }
+      const newValue = {
+        start: dayjs
+          .utc(override.date)
+          .hour(override.startTime.getUTCHours())
+          .minute(override.startTime.getUTCMinutes())
+          .toDate(),
+        end: dayjs
+          .utc(override.date)
+          .hour(override.endTime.getUTCHours())
+          .minute(override.endTime.getUTCMinutes())
+          .toDate(),
+      };
+      const dayRangeIndex = acc.findIndex(
+        // early return prevents override.date from ever being empty.
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        (item) => yyyymmdd(item.ranges[0].start) === yyyymmdd(override.date!)
+      );
+      if (dayRangeIndex === -1) {
+        acc.push({ ranges: [newValue] });
+        return acc;
+      }
+      acc[dayRangeIndex].ranges.push(newValue);
+      return acc;
+    }, [] as { ranges: TimeRange[] }[]),
+    isDefault:
+      !schedule.id ||
+      schedule.calendarSetting.defaultScheduleId === schedule.id,
+  }));
+};
+
 export const deleteSchedule = async (
   input: z.infer<typeof ZGetOrDeleteScheduleSchema>
 ) => {
@@ -312,6 +390,28 @@ export const deleteSchedule = async (
       calendarSetting: true,
     },
   });
+
+  if (schedule && schedule.calendarSetting.defaultScheduleId === schedule.id) {
+    const scheduleToSetAsDefault = await db.schedule.findFirst({
+      where: {
+        storeId: schedule.storeId,
+        NOT: {
+          id: schedule.id,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    await db.calendarSetting.update({
+      where: {
+        id: schedule.calendarSetting.id,
+      },
+      data: {
+        defaultScheduleId: scheduleToSetAsDefault?.id,
+      },
+    });
+  }
 
   if (!schedule) {
     throw new CustomError("Schedule not found", 404);
