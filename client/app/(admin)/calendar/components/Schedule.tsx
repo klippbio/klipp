@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AddScheduleModal from "./AddScheduleModal";
+import { useEffect } from "react";
 export type MockSchedule = {
   id: number;
   name: string;
@@ -123,10 +124,12 @@ export default function Schedule() {
   const authDetails = useAuthDetails();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const currentScheduleId = searchParams.get("scheduleId");
   const updateUrlSchedule = (id: number) => {
+    console.log("this is the id", id);
     router.push("?scheduleId=" + id);
   };
-  const { data: allScehdules, isLoading } = useQuery(
+  const { data: response, isLoading } = useQuery(
     ["allScehdules", authDetails?.storeId],
     async () =>
       await AxiosApi(
@@ -137,21 +140,17 @@ export default function Schedule() {
       enabled: !!authDetails?.storeId,
     }
   );
-
-  const currentScheduleId = searchParams.get("scheduleId");
-  console.log(currentScheduleId, "currentScheduleId");
-  let currentSchedule = allScehdules?.find(
-    (schedule) => schedule.id === Number(currentScheduleId)
-  );
-
-  if (allScehdules && !currentScheduleId) {
-    currentSchedule = allScehdules.find((schedule) => schedule.isDefault);
-    updateUrlSchedule(currentSchedule.id);
-  }
+  const allScehdules = response?.schedules;
+  const defaultSchedule = response?.defaultSchedule;
+  useEffect(() => {
+    if (defaultSchedule) {
+      updateUrlSchedule(defaultSchedule.id);
+    }
+  }, [defaultSchedule]);
 
   return (
     <div className="flex flex-col w-full md:w-5/6">
-      {isLoading || !allScehdules || !currentSchedule ? (
+      {isLoading || !allScehdules || !currentScheduleId ? (
         <div className="flex justify-center items-center h-full w-full">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
@@ -181,23 +180,28 @@ export default function Schedule() {
               </div>
             </div>
             <div className="lg:hidden">
-              <Select defaultValue={currentSchedule.name}>
+              <Select
+                defaultValue={`${defaultSchedule.id}-${defaultSchedule.name}`}
+                onValueChange={(value) => {
+                  const [id] = value.split("-"); // Extract the ID
+                  updateUrlSchedule(Number(id)); // Update the URL with the extracted ID
+                }}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a schedule" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     {allScehdules &&
-                      allScehdules.map((schedule) => {
-                        return (
-                          <SelectItem
-                            value={schedule.name}
-                            onClick={() => updateUrlSchedule(schedule.id)}
-                          >
-                            {schedule.name}
-                          </SelectItem>
-                        );
-                      })}
+                      allScehdules.map((schedule) => (
+                        // Use the combination of ID and name as the value, but only display the name
+                        <SelectItem
+                          value={`${schedule.id}-${schedule.name}`}
+                          key={schedule.id}
+                        >
+                          {schedule.name}
+                        </SelectItem>
+                      ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -207,10 +211,7 @@ export default function Schedule() {
             </div>
           </div>
           <div>
-            <ScheduleForm
-              schedule={currentSchedule}
-              authDetails={authDetails}
-            />
+            <ScheduleForm authDetails={authDetails} />
           </div>
         </div>
       )}

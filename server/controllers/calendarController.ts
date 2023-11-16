@@ -41,7 +41,6 @@ calendarController.post("/create", async (req: Request, res: Response) => {
 });
 
 calendarController.post("/update", async (req: Request, res: Response) => {
-  console.log("reached here for update");
   try {
     let parsedBody = req.body;
     if (req.body.availability) {
@@ -59,7 +58,6 @@ calendarController.post("/update", async (req: Request, res: Response) => {
         ),
       };
     }
-    console.log(req.body.dateOverrides);
     if (req.body.dateOverrides) {
       parsedBody = {
         ...parsedBody,
@@ -71,7 +69,6 @@ calendarController.post("/update", async (req: Request, res: Response) => {
         })),
       };
     }
-    console.log(parsedBody);
     await ZUpdateInputSchema.parseAsync(parsedBody);
     const result = await updateSchedule(parsedBody);
     res.status(200).json(result);

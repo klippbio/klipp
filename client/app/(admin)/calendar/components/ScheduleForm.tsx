@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MockSchedule } from "./Schedule";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFieldArray, useForm } from "react-hook-form";
 import {
@@ -11,26 +10,26 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import ScheduleFormDay from "./ScheduleFormDay";
-import { Input } from "@/components/ui/input";
-import { PencilIcon } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
+
 import AxiosApi from "@/app/services/axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthDetails } from "@/app/components/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
-import DeleteScheduleModal from "./DeleteScheduleModal";
 import BlockDatesForm from "./BlockDatesForm";
 import {
   formatDateOverridesForUpdate,
   parseDateOverrides,
 } from "@/utils/timezone";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
+import DeleteScheduleModal from "./DeleteScheduleModal";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { PencilIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface ScheduleFormProps {
-  schedule: MockSchedule;
   authDetails: AuthDetails;
 }
 
@@ -39,29 +38,52 @@ const ScheduleFormSchema = z.object({
   availability: z
     .array(
       z.array(
-        z.object({
-          start: z.string().min(1, "Please select a start time"),
-          end: z.string().min(1, "Please select an end time"),
-        })
+        z
+          .object({
+            start: z.string().min(1, "Please select a start time"),
+            end: z.string().min(1, "Please select an end time"),
+          })
+          .refine(
+            (data) => {
+              return new Date(data.start) < new Date(data.end);
+            },
+            {
+              message: "End time must be greater than start time",
+              path: ["end"],
+            }
+          )
       )
     )
-    .length(7)
+    .length(7, "Availability must have exactly 7 days")
     .optional(),
   isDefault: z.boolean().optional(),
   dateOverrides: z.array(z.date()).optional(),
 });
 
-export default function ScheduleForm({
-  schedule,
-  authDetails,
-}: ScheduleFormProps) {
+export default function ScheduleForm({ authDetails }: ScheduleFormProps) {
+  const searchParams = useSearchParams();
+
+  const currentScheduleId = searchParams.get("scheduleId");
+
+  const { data: schedule, isLoading: currentScheduleLoading } = useQuery(
+    ["schedule", currentScheduleId, authDetails?.storeId],
+    async () =>
+      await AxiosApi(
+        "GET",
+        `/api/calendar/get?scheduleId=${currentScheduleId}`
+      ).then((res) => res.data),
+    {
+      enabled: !!currentScheduleId,
+    }
+  );
+
   const form = useForm<z.infer<typeof ScheduleFormSchema>>({
     resolver: zodResolver(ScheduleFormSchema),
     defaultValues: {
-      name: schedule.name,
-      availability: schedule.availability,
-      isDefault: schedule.isDefault,
-      dateOverrides: parseDateOverrides(schedule.dateOverrides),
+      name: "",
+      availability: [],
+      isDefault: false,
+      dateOverrides: [],
     },
     mode: "all",
   });
@@ -69,12 +91,14 @@ export default function ScheduleForm({
   const router = useRouter();
 
   useEffect(() => {
-    form.reset({
-      name: schedule.name,
-      availability: schedule.availability,
-      isDefault: schedule.isDefault,
-      dateOverrides: parseDateOverrides(schedule.dateOverrides),
-    });
+    if (schedule) {
+      form.reset({
+        name: schedule.name,
+        availability: schedule.availability,
+        isDefault: schedule.isDefault,
+        dateOverrides: parseDateOverrides(schedule.dateOverrides),
+      });
+    }
   }, [schedule, form]);
 
   const { toast } = useToast();
@@ -103,7 +127,11 @@ export default function ScheduleForm({
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries([
+        "allScehdules",
+        authDetails?.storeId,
+      ]);
       toast({
         title: "Success!",
         duration: 1000,
@@ -133,8 +161,11 @@ export default function ScheduleForm({
       );
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["allScehdules", authDetails?.storeId]);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries([
+        "allScehdules",
+        authDetails?.storeId,
+      ]);
       toast({
         title: "Success!",
         duration: 1000,
@@ -165,97 +196,114 @@ export default function ScheduleForm({
   }
   return (
     <Card className="w-full">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardHeader>
-            <CardTitle className="flex flex-col lg:flex-row text-foreground text-lg w-full space-y-2 items-center">
-              <div>
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem className="flex space-x-2 items-center space-y-0">
-                      <div
-                        className="flex space-x-2"
-                        onBlur={() => setEditName(false)}
-                      >
-                        <FormControl>
-                          <Input
-                            {...field}
-                            ref={scheduleNameRef}
-                            readOnly={!editName}
-                            autoFocus={editName}
-                            className="border-none shadow-none text-lg focus-visible:border-none focus-visible:shadow-none "
-                            onClick={() => setEditName(true)}
-                            onFocus={() => setEditName(true)}
-                            onBlur={() => setEditName(false)}
-                          />
-                        </FormControl>
-                        {!editName && (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            className="hover:bg-background hover:text-foreground ml-2"
-                            onClick={() => {
-                              setEditName(true);
-                              if (scheduleNameRef.current) {
-                                scheduleNameRef.current.focus();
-                              }
-                            }}
-                          >
-                            <PencilIcon className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex space-x-2 lg:ml-auto">
-                <FormField
-                  control={form.control}
-                  name="isDefault"
-                  render={({ field }) => (
-                    <FormItem className="flex">
-                      <div className="flex space-x-2 items-center">
-                        <div className="text-card-foreground text-sm">
-                          Set to Default
+      {schedule && Number(schedule.id) !== Number(currentScheduleId) ? (
+        <div>
+          <div>{schedule && schedule.id}</div>
+          <div>{currentScheduleId}</div>
+          <div>Loading...</div>
+        </div>
+      ) : (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardHeader>
+              <CardTitle className="flex flex-col lg:flex-row text-foreground text-lg w-full space-y-2  h-full">
+                <div className="pt-4 lg:order-1 order-2">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="flex space-x-2 items-center space-y-0">
+                        <div
+                          className="flex space-x-2"
+                          onBlur={() => setEditName(false)}
+                        >
+                          <FormControl>
+                            <Input
+                              {...field}
+                              ref={scheduleNameRef}
+                              readOnly={!editName}
+                              autoFocus={editName}
+                              className="border-none shadow-none text-lg focus-visible:border-none focus-visible:shadow-none w-fit"
+                              onClick={() => setEditName(true)}
+                              onFocus={() => setEditName(true)}
+                              onBlur={() => setEditName(false)}
+                            />
+                          </FormControl>
+                          {!editName && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              className="hover:bg-background hover:text-foreground ml-2"
+                              onClick={() => {
+                                setEditName(true);
+                                if (scheduleNameRef.current) {
+                                  scheduleNameRef.current.focus();
+                                }
+                              }}
+                            >
+                              <PencilIcon className="h-4 w-4 " />
+                            </Button>
+                          )}
                         </div>
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <Separator orientation="vertical" />
-                <DeleteScheduleModal onDelete={onDelete} />
-                <Separator orientation="vertical" />
-                <Button type="submit" className="w-16">
-                  Save
-                </Button>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="lg:order-2 order-1 flex justify-between space-x-2 lg:ml-auto h-full">
+                  <FormField
+                    control={form.control}
+                    name="isDefault"
+                    render={({ field }) => (
+                      <FormItem className="flex">
+                        <div className="flex space-x-2 items-center">
+                          <div className="text-card-foreground text-sm">
+                            Set to Default
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex space-x-2">
+                    <Separator
+                      orientation="vertical"
+                      className="hidden lg:block h-10"
+                    />
+                    <DeleteScheduleModal onDelete={onDelete} />
+                    <Separator
+                      orientation="vertical"
+                      className="hidden lg:block h-10"
+                    />
+                    <Button type="submit" className="w-16">
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="w-full">
+              <div className="w-full space-y-4">
+                {availabilityFields.map((day, dayIndex) => (
+                  <ScheduleFormDay
+                    form={form}
+                    day={day}
+                    dayIndex={dayIndex}
+                    key={dayIndex}
+                    dayAvailability={schedule?.availability[dayIndex]}
+                  />
+                ))}
+                <BlockDatesForm form={form} />
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="w-full">
-            <div className="w-full space-y-4">
-              {availabilityFields.map((day, dayIndex) => (
-                <ScheduleFormDay
-                  form={form}
-                  day={day}
-                  dayIndex={dayIndex}
-                  key={dayIndex}
-                />
-              ))}
-              <BlockDatesForm form={form} />
-            </div>
-          </CardContent>
-        </form>
-      </Form>
+            </CardContent>
+          </form>
+        </Form>
+      )}
     </Card>
   );
 }

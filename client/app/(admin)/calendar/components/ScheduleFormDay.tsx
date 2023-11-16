@@ -8,16 +8,21 @@ import { FormField, FormMessage } from "@/components/ui/form";
 import { getTimeListForSchedule } from "@/utils/timezone";
 import { Label } from "@/components/ui/label";
 const days = [
+  "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
   "Saturday",
-  "Sunday",
 ];
 const timeList = getTimeListForSchedule();
-export default function ScheduleFormDay({ form, day, dayIndex }) {
+export default function ScheduleFormDay({
+  form,
+  day,
+  dayIndex,
+  dayAvailability,
+}) {
   const {
     fields: slotFields,
     append,
@@ -27,7 +32,17 @@ export default function ScheduleFormDay({ form, day, dayIndex }) {
     control: form.control,
   });
 
-  const [showSlots, setShowSlots] = React.useState(slotFields.length > 0);
+  console.log(dayAvailability, dayIndex);
+
+  // Determine if slots should be shown based on the passed availability data
+  const [showSlots, setShowSlots] = React.useState(
+    dayAvailability && dayAvailability.length > 0
+  );
+
+  // Update showSlots when the schedule data changes
+  useEffect(() => {
+    setShowSlots(dayAvailability && dayAvailability.length > 0);
+  }, [dayAvailability]);
 
   useEffect(() => {
     if (showSlots && slotFields.length === 0) {

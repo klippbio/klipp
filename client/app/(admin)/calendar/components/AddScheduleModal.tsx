@@ -58,14 +58,16 @@ export default function AddScheduleModal({ authDetails }) {
       );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast({
         title: "Success!",
         duration: 1000,
         description: "Schedule Created.",
       });
-      console.log(data.id, "here");
-      queryClient.invalidateQueries(["allScehdules", authDetails?.storeId]);
+      await queryClient.invalidateQueries([
+        "allScehdules",
+        authDetails?.storeId,
+      ]);
       router.push("?scheduleId=" + data.id);
     },
     onError: () => {

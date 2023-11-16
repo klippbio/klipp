@@ -113,7 +113,7 @@ function digitalDownloadPage() {
         method: "DELETE",
       }
     );
-    queryClient.invalidateQueries(["allProducts", storeId]);
+    await queryClient.invalidateQueries(["allProducts", storeId]);
     if (!response?.ok) {
       toast({
         title: "Something went wrong.",
