@@ -7,10 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { EventSettingsForm } from "../components/EventSettingsForm";
+import { EventSettingsForm } from "./components/EventSettingsForm";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import GoogleCalendarSettings from "../components/GoogleCalendarSettings";
+import GoogleCalendarSettings from "./components/GoogleCalendarSettings";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import AxiosApi from "@/app/services/axios";
 
