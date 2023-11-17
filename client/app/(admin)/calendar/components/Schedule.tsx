@@ -121,9 +121,15 @@ export default function Schedule() {
             </div>
             <div className="lg:hidden">
               <Select
+                key={currentScheduleId}
                 defaultValue={
-                  defaultSchedule
-                    ? `${defaultSchedule.id}-${defaultSchedule.name}`
+                  currentScheduleId
+                    ? `${currentScheduleId}-${
+                        allScehdules.find(
+                          (schedule) =>
+                            schedule.id === Number(currentScheduleId)
+                        )?.name
+                      }`
                     : ""
                 }
                 onValueChange={(value) => {

@@ -64,6 +64,10 @@ export default function AddScheduleModal({
       return response.data;
     },
     onSuccess: async (data) => {
+      await queryClient.invalidateQueries([
+        "allScehdules",
+        authDetails?.storeId,
+      ]);
       toast({
         title: "Success!",
         duration: 1000,
