@@ -217,7 +217,7 @@ export default function ScheduleForm({
                     control={form.control}
                     name="name"
                     render={({ field }) => (
-                      <FormItem className="flex space-x-2 items-center space-y-0">
+                      <FormItem className="flex flex-col lg:flex-row space-x-2 lg:items-center space-y-0">
                         <div
                           className="flex space-x-2"
                           onBlur={() => setEditName(false)}

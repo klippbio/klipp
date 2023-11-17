@@ -61,14 +61,6 @@ export default function ScheduleFormDay({
     setShowSlots(!showSlots);
   };
 
-  const handleStartTimeChange = (value: string, index: number) => {
-    form.setValue(`availability.${dayIndex}.${index}.start`, value);
-  };
-
-  const handleEndTimeChange = (value: string, index: number) => {
-    form.setValue(`availability.${dayIndex}.${index}.end`, value);
-  };
-
   return (
     <div
       key={`availability.${dayIndex}`}
@@ -97,9 +89,7 @@ export default function ScheduleFormDay({
                           selectedValue={
                             field.value ? field.value.toString() : ""
                           }
-                          onValueChange={(value) =>
-                            handleStartTimeChange(value, index)
-                          }
+                          onValueChange={field.onChange}
                           options={timeList}
                         />
                         <FormMessage />
@@ -116,9 +106,7 @@ export default function ScheduleFormDay({
                           selectedValue={
                             field.value ? field.value.toString() : ""
                           }
-                          onValueChange={(value) =>
-                            handleEndTimeChange(value, index)
-                          }
+                          onValueChange={field.onChange}
                           options={timeList}
                         />
                         <FormMessage />
