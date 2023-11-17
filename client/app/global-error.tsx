@@ -11,7 +11,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error(error);
-  }, []);
+  }, [error]);
   return (
     <html>
       <body>

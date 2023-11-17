@@ -3,6 +3,7 @@
 import React, {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -46,13 +47,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   });
 
   // Function to refresh the token at a regular interval
-  const refreshAuthToken = async () => {
+  const refreshAuthToken = useCallback(async () => {
     const token = await getToken({ template: "klipp" });
     setAuthDetails((prevAuthDetails) => ({
       ...prevAuthDetails,
       token: token || prevAuthDetails.token,
     }));
-  };
+  }, [setAuthDetails, getToken]); // add dependencies here
 
   // Refresh the token every minute (adjust this interval as needed)
   useEffect(() => {
@@ -60,7 +61,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     return () => {
       clearInterval(tokenRefreshInterval);
     };
-  }, [getToken]);
+  }, [getToken, refreshAuthToken]);
 
   const refreshAuthDetails: RefreshAuthDetails = (storeUrl, storeId) => {
     setAuthDetails({
@@ -80,7 +81,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         storeId: (user?.publicMetadata?.storeId as string) ?? undefined,
       });
     })();
-  }, [user]);
+  }, [getToken, user]);
 
   return (
     <AuthContext.Provider value={{ authDetails, refreshAuthDetails }}>

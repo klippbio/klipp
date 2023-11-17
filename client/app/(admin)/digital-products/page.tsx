@@ -71,7 +71,7 @@ const ddCreateSchema = z.object({
   storeId: z.string().optional(),
 });
 
-function digitalDownloadPage() {
+function Page() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const authDetails = useAuthDetails();
@@ -105,6 +105,7 @@ function digitalDownloadPage() {
     createProductMutation.mutate(data);
   }
 
+  //TODO: Add delete mutation
   async function deleteProduct(id: string) {
     const response = await fetch(
       `/api/digital-products/deleteDigitalProduct/?id=${id}`,
@@ -112,7 +113,7 @@ function digitalDownloadPage() {
         method: "DELETE",
       }
     );
-    queryClient.invalidateQueries(["allProducts", storeId]);
+    await queryClient.invalidateQueries(["allProducts", storeId]);
     if (!response?.ok) {
       toast({
         title: "Something went wrong.",
@@ -181,8 +182,8 @@ function digitalDownloadPage() {
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4 ">
-                      <div className="grid grid-cols-4 items-center gap-4 ">
-                        <Label htmlFor="name" className="text-right">
+                      <div className="grid grid-cols-4 gap-4 ">
+                        <Label htmlFor="name" className="text-right pt-3">
                           Name
                         </Label>
                         <div className="col-span-3">
@@ -200,8 +201,8 @@ function digitalDownloadPage() {
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Price</Label>
+                      <div className="grid grid-cols-4 gap-4">
+                        <Label className="text-right pt-3">Price</Label>
 
                         <div className="col-span-3">
                           <FormField
@@ -335,4 +336,4 @@ function digitalDownloadPage() {
   );
 }
 
-export default digitalDownloadPage;
+export default Page;

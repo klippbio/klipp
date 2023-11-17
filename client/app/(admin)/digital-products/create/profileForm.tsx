@@ -200,7 +200,13 @@ export function ProfileForm({
     if (productData.ddFiles) {
       setUploadedFiles(productData.ddFiles);
     }
-  }, []);
+  }, [
+    productData.ddFiles,
+    productData.description,
+    productData.externalFile,
+    productData.flexPrice,
+    productData.thumbnailUrl,
+  ]);
 
   useEffect(() => {
     const price = watch("price");
@@ -208,7 +214,7 @@ export function ProfileForm({
     setMinPrice(price);
 
     form.setValue("minPrice", price);
-  }, [watch("price")]);
+  }, [form, watch]);
 
   //functions
   function onSubmit(data: z.infer<typeof digitalDownloadsSchema>) {

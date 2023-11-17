@@ -8,14 +8,15 @@ import { Card } from "@/components/ui/card";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
 
-function page() {
+function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const authDetails = useAuthDetails();
 
   const id = searchParams.get("id");
+
   if (!id) {
-    return router.push("/");
+    router.push("/");
   }
   const productId = id ? parseInt(id as string) : null;
 
@@ -49,4 +50,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

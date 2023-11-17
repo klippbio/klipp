@@ -30,7 +30,7 @@ export default function GlobalError({
             Internal Server Error
           </CardTitle>
           <CardDescription>
-            Whoops! We are sorry, that shouldn't have happened !
+            Whoops! We are sorry, that should not have happened !
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-center">

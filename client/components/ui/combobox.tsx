@@ -17,7 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-interface ComboboxProps {
+export interface ComboboxProps {
   options: { value: string; label: string }[];
   name: string;
   selectedValue?: string | undefined;
@@ -32,7 +32,7 @@ export function Combobox({
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
-  const searchName = "Search " + name;
+  const currentLabel = options.find((option) => option.value === selectedValue);
 
   return (
     <div className="w-full">
@@ -42,19 +42,17 @@ export function Combobox({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between"
+            className="w-full"
           >
-            {selectedValue
-              ? options.find((option) => option.value === selectedValue)?.label
-              : searchName}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            {currentLabel?.label || name}
+            <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 " />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-0 w-[300px]">
           <Command>
-            <CommandInput placeholder={searchName} />
+            <CommandInput placeholder={name} />
             <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup>
+            <CommandGroup className=" h-72 overflow-y-auto">
               {options.map((option) => (
                 <CommandItem
                   key={option.value}

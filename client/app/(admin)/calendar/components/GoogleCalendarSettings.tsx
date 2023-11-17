@@ -36,7 +36,7 @@ export default function GoogleCalendarSettings({
       );
       return response;
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (response.status === 200) {
         toast({
           title: "Successfully unlinked Google Calendar",
@@ -46,7 +46,10 @@ export default function GoogleCalendarSettings({
       }
 
       // After successful unlink, invalidate the query in the parent component
-      queryClient.invalidateQueries(["calendarSettings", authDetails.storeId]);
+      await queryClient.invalidateQueries([
+        "calendarSettings",
+        authDetails.storeId,
+      ]);
     },
     onError: () => {
       toast({
@@ -72,7 +75,7 @@ export default function GoogleCalendarSettings({
         router.replace("/calendar/settings");
       }
     }
-  }, [message]);
+  }, [message, router, toast]);
 
   const generateGoogleOAuthUrl = (params: {
     access_type: string;
