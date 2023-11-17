@@ -96,7 +96,6 @@ calendarController.get("/get", async (req: Request, res: Response) => {
 calendarController.get("/getAll", async (req: Request, res: Response) => {
   try {
     const { storeId } = req.query;
-    console.log(storeId);
     const result = await getAllSchedules(
       await ZCreateScheduleSchema.shape.storeId.parseAsync(storeId)
     );

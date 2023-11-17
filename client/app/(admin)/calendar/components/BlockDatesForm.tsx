@@ -14,9 +14,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import React from "react";
+import { UseFormReturn } from "react-hook-form";
+import { z } from "zod";
+import { ScheduleFormSchema } from "./ScheduleForm";
 
-export default function BlockDatesForm({ form }) {
-  const currentBlockDates = form.watch("dateOverrides").map((date) => {
+export default function BlockDatesForm({
+  form,
+}: {
+  form: UseFormReturn<z.infer<typeof ScheduleFormSchema>>;
+}) {
+  form.watch("dateOverrides");
+  const dateOverrides = form.watch("dateOverrides") ?? [];
+  const currentBlockDates = dateOverrides.map((date) => {
     return new Date(date).toDateString();
   });
   currentBlockDates.sort((a, b) => {

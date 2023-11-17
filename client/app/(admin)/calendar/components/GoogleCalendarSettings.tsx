@@ -75,7 +75,7 @@ export default function GoogleCalendarSettings({
         router.replace("/calendar/settings");
       }
     }
-  }, [message]);
+  }, [message, router, toast]);
 
   const generateGoogleOAuthUrl = (params: {
     access_type: string;

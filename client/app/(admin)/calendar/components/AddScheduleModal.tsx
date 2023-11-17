@@ -27,6 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
+import { AuthDetails } from "@/app/components/AuthContext";
 
 const scheduleCreateSchema = z.object({
   name: z.string().min(1, { message: "Please enter schedule name" }).max(30, {
@@ -34,7 +35,11 @@ const scheduleCreateSchema = z.object({
   }),
 });
 
-export default function AddScheduleModal({ authDetails }) {
+export default function AddScheduleModal({
+  authDetails,
+}: {
+  authDetails: AuthDetails;
+}) {
   const { toast } = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -82,7 +87,6 @@ export default function AddScheduleModal({ authDetails }) {
 
   const onSubmit = (data: z.infer<typeof scheduleCreateSchema>) => {
     createScheduleMutation.mutate(data);
-    console.log(data, "data");
   };
 
   return (

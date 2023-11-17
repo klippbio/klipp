@@ -13,7 +13,11 @@ import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import React from "react";
 
-export default function DeleteScheduleModal({ onDelete }) {
+export default function DeleteScheduleModal({
+  onDelete,
+}: {
+  onDelete: () => void;
+}) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

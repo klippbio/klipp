@@ -71,7 +71,7 @@ const ddCreateSchema = z.object({
   storeId: z.string().optional(),
 });
 
-function digitalDownloadPage() {
+function Page() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const authDetails = useAuthDetails();
@@ -336,4 +336,4 @@ function digitalDownloadPage() {
   );
 }
 
-export default digitalDownloadPage;
+export default Page;

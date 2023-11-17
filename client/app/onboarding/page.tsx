@@ -81,7 +81,7 @@ export function ProfileForm() {
     } else if (authDetails.userId && !authDetails.storeUrl) {
       setIsLoading(false);
     }
-  }, [isLoading, authDetails]);
+  }, [isLoading, authDetails, router, toast]);
 
   //form prefix logic
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
@@ -144,7 +144,6 @@ export function ProfileForm() {
         response.data.stores[0].storeUrl &&
         response.data.stores[0].id
       ) {
-        console.log("refreshing auth details");
         refreshAuthDetails(
           response.data.stores[0].storeUrl,
           response.data.stores[0].id

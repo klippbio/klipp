@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -28,12 +28,12 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { PencilIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ScheduleAvailabilityType } from "./Schedule";
+import { AxiosError } from "axios";
+import { ErrorResponse } from "@/lib/utils";
 
-interface ScheduleFormProps {
-  authDetails: AuthDetails;
-}
-
-const ScheduleFormSchema = z.object({
+export const ScheduleFormSchema = z.object({
   name: z.string().min(1, "Please enter a name"),
   availability: z
     .array(
@@ -60,12 +60,16 @@ const ScheduleFormSchema = z.object({
   dateOverrides: z.array(z.date()).optional(),
 });
 
-export default function ScheduleForm({ authDetails }: ScheduleFormProps) {
+export default function ScheduleForm({
+  authDetails,
+}: {
+  authDetails: AuthDetails;
+}) {
   const searchParams = useSearchParams();
 
   const currentScheduleId = searchParams.get("scheduleId");
 
-  const { data: schedule, isLoading: currentScheduleLoading } = useQuery(
+  const { data: schedule } = useQuery<ScheduleAvailabilityType>(
     ["schedule", currentScheduleId, authDetails?.storeId],
     async () =>
       await AxiosApi(
@@ -107,18 +111,18 @@ export default function ScheduleForm({ authDetails }: ScheduleFormProps) {
   const [editName, setEditName] = useState(false);
   const scheduleNameRef = useRef<HTMLInputElement>(null);
 
-  const { fields: availabilityFields } = useFieldArray({
-    name: "availability",
-    control: form.control,
-  });
-
   const updateScheduleMutation = useMutation({
     mutationFn: async (data: z.infer<typeof ScheduleFormSchema>) => {
+      if (!schedule) {
+        return Error("No schedule found");
+      }
       const combinedData = {
         ...data,
+        dateOverrides: formatDateOverridesForUpdate(data.dateOverrides),
         storeId: authDetails.storeId,
         scheduleId: schedule.id,
       };
+
       const response = await AxiosApi(
         "POST",
         `/api/calendar/update`,
@@ -150,6 +154,9 @@ export default function ScheduleForm({ authDetails }: ScheduleFormProps) {
 
   const deleteScheduleMutation = useMutation({
     mutationFn: async () => {
+      if (!schedule) {
+        return Error("No schedule found");
+      }
       const response = await AxiosApi(
         "DELETE",
         `/api/calendar/delete`,
@@ -173,34 +180,32 @@ export default function ScheduleForm({ authDetails }: ScheduleFormProps) {
       });
       router.push("/calendar/schedule");
     },
-    onError: () => {
+    onError: (error: AxiosError<ErrorResponse>) => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: "Failed to delete schedule",
+        description: error.response?.data?.error,
       });
     },
   });
 
   function onSubmit(data: z.infer<typeof ScheduleFormSchema>) {
-    const updatedData = {
-      ...data,
-      dateOverrides: formatDateOverridesForUpdate(data.dateOverrides),
-    };
-    updateScheduleMutation.mutate(updatedData);
+    updateScheduleMutation.mutate(data);
   }
 
   function onDelete() {
     deleteScheduleMutation.mutate();
   }
+
   return (
     <Card className="w-full">
-      {schedule && Number(schedule.id) !== Number(currentScheduleId) ? (
+      {Number(currentScheduleId) != Number(schedule?.id) ? (
         <div>
-          <div>{schedule && schedule.id}</div>
-          <div>{currentScheduleId}</div>
-          <div>Loading...</div>
+          <Skeleton className="h-6 w-1/2 m-4" />
+          <Skeleton className="h-4 w-10/12 m-4" />
+          <Skeleton className="h-4 w-10/12 m-4" />
+          <Skeleton className="h-4 w-10/12 m-4" />
         </div>
       ) : (
         <Form {...form}>
@@ -289,10 +294,9 @@ export default function ScheduleForm({ authDetails }: ScheduleFormProps) {
             </CardHeader>
             <CardContent className="w-full">
               <div className="w-full space-y-4">
-                {availabilityFields.map((day, dayIndex) => (
+                {schedule?.availability.map((day, dayIndex) => (
                   <ScheduleFormDay
                     form={form}
-                    day={day}
                     dayIndex={dayIndex}
                     key={dayIndex}
                     dayAvailability={schedule?.availability[dayIndex]}

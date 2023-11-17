@@ -17,7 +17,7 @@ export default function NotFound() {
             404 Not Found
           </CardTitle>
           <CardDescription>
-            Whoops! We couldn't find anything at that location.
+            Whoops! We could not find anything at that location.
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-center">

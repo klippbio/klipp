@@ -15,8 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AddScheduleModal from "./AddScheduleModal";
-import { useEffect } from "react";
-export type MockSchedule = {
+import { useCallback, useEffect } from "react";
+export type ScheduleAvailabilityType = {
   id: number;
   name: string;
   workingHours: {
@@ -47,89 +47,29 @@ export type MockSchedule = {
   }>;
 };
 
-export default function Schedule() {
-  // const mockSchedules: MockSchedule[] = [
-  //   {
-  //     id: 5,
-  //     name: "test2",
-  //     workingHours: [
-  //       {
-  //         days: [1, 2, 3, 4, 5],
-  //         startTime: 540,
-  //         endTime: 1020,
-  //       },
-  //     ],
-  //     schedule: [
-  //       {
-  //         id: 23,
-  //         calendarProductId: null,
-  //         days: [1, 2, 3, 4, 5],
-  //         startTime: "1970-01-01T09:00:00.000Z",
-  //         endTime: "1970-01-01T17:00:00.000Z",
-  //         date: null,
-  //         scheduleId: 5,
-  //       },
-  //     ],
-  //     availability: [
-  //       [],
-  //       [
-  //         // {
-  //         //   start: "2023-11-11T09:00:00.000Z",
-  //         //   end: "2023-11-11T17:00:00.000Z",
-  //         // },
-  //       ],
-  //       [
-  //         {
-  //           start: "2023-11-11T09:00:00.000Z",
-  //           end: "2023-11-11T17:00:00.000Z",
-  //         },
-  //         {
-  //           start: "2023-11-11T17:15:00.000Z",
-  //           end: "2023-11-11T18:00:00.000Z",
-  //         },
-  //         // {
-  //         //   start: "2023-11-11T18:15:00.000Z",
-  //         //   end: "2023-11-11T19:00:00.000Z",
-  //         // },
-  //       ],
-  //       [
-  //         // {
-  //         //   start: "2023-11-11T09:00:00.000Z",
-  //         //   end: "2023-11-11T17:00:00.000Z",
-  //         // },
-  //       ],
-  //       [
-  //         // {
-  //         //   start: "2023-11-11T09:00:00.000Z",
-  //         //   end: "2023-11-11T17:00:00.000Z",
-  //         // },
-  //       ],
-  //       [
-  //         // {
-  //         //   start: "2023-11-11T17:00:00.000Z",
-  //         //   end: "2023-11-11T18:15:00.000Z",
-  //         // },
-  //         // {
-  //         //   start: "2023-11-11T18:45:00.000Z",
-  //         //   end: "2023-11-11T22:15:00.000Z",
-  //         // },
-  //       ],
-  //       [],
-  //     ],
-  //     timeZone: "America/Toronto",
-  //     isDefault: false,
-  //   },
-  // ];
+export type allScehdulesResponse = {
+  schedules: {
+    name: string;
+    id: number;
+  }[];
+  defaultSchedule: {
+    name: string;
+    id: number;
+  };
+};
 
+export default function Schedule() {
   const authDetails = useAuthDetails();
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentScheduleId = searchParams.get("scheduleId");
-  const updateUrlSchedule = (id: number) => {
-    console.log("this is the id", id);
-    router.push("?scheduleId=" + id);
-  };
-  const { data: response, isLoading } = useQuery(
+  const updateUrlSchedule = useCallback(
+    (id: number) => {
+      router.push("?scheduleId=" + id);
+    },
+    [router]
+  );
+  const { data: response, isLoading } = useQuery<allScehdulesResponse>(
     ["allScehdules", authDetails?.storeId],
     async () =>
       await AxiosApi(
@@ -143,10 +83,10 @@ export default function Schedule() {
   const allScehdules = response?.schedules;
   const defaultSchedule = response?.defaultSchedule;
   useEffect(() => {
-    if (defaultSchedule) {
+    if (defaultSchedule && !currentScheduleId) {
       updateUrlSchedule(defaultSchedule.id);
     }
-  }, [defaultSchedule]);
+  }, [defaultSchedule, currentScheduleId, updateUrlSchedule]);
 
   return (
     <div className="flex flex-col w-full md:w-5/6">
@@ -181,7 +121,11 @@ export default function Schedule() {
             </div>
             <div className="lg:hidden">
               <Select
-                defaultValue={`${defaultSchedule.id}-${defaultSchedule.name}`}
+                defaultValue={
+                  defaultSchedule
+                    ? `${defaultSchedule.id}-${defaultSchedule.name}`
+                    : ""
+                }
                 onValueChange={(value) => {
                   const [id] = value.split("-"); // Extract the ID
                   updateUrlSchedule(Number(id)); // Update the URL with the extracted ID

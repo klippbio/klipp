@@ -360,12 +360,12 @@ export const isInDST = (date: Dayjs) => {
 };
 
 export const getTimeListForSchedule = () => {
-  const format12Hour = (hours, minutes) => {
+  const format12Hour = (hours: number, minutes: number) => {
     const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    return `${hours}:${minutes} ${ampm}`;
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${hours}:${formattedMinutes} ${ampm}`;
   };
 
   const timeList = [];
