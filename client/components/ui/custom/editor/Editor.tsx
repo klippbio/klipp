@@ -26,8 +26,7 @@ export default function Editor({
 
   const initializeEditor = async () => {
     const EditorJS = (await import("@editorjs/editorjs")).default;
-    const Table = require("@editorjs/table");
-    const Quote = require("@editorjs/quote");
+    const Table = require("editorjs-table");
     const ImageTool = require("@editorjs/image");
     const Delimiter = require("@editorjs/delimiter");
     const Header = require("@editorjs/header");
@@ -83,12 +82,16 @@ export default function Editor({
               }
             }
           }
-          save();
+          if (!isReadonly) {
+            editor.save().then((outputData) => {
+              console.log("Article data: ", outputData);
+              updateEditorData(outputData);
+            });
+          }
           // setSaved(false);
         },
         tools: {
           table: Table,
-          quote: Quote,
           header: Header,
           paragraph: {
             class: Paragraph,
@@ -181,15 +184,15 @@ export default function Editor({
     }
   }, [isMounted]);
 
-  const save = () => {
-    console.log("sac e called");
-    if (ref.current && !isReadonly) {
-      ref.current.save().then((outputData) => {
-        console.log("Article data: ", outputData);
-        updateEditorData(outputData);
-      });
-    }
-  };
+  // const save = () => {
+  //   console.log("sac e called");
+  //   if (ref.current && !isReadonly) {
+  //     ref.current.save().then((outputData) => {
+  //       console.log("Article data: ", outputData);
+  //       updateEditorData(outputData);
+  //     });
+  //   }
+  // };
 
   useEffect(() => {
     console.log("Delete urls: ", deleteUrls);
