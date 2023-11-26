@@ -82,14 +82,15 @@ const digitalDownloadsSchema = z
         data.recPrice !== undefined &&
         data.recPrice !== "" &&
         data.price !== undefined &&
-        data.price !== ""
+        data.price !== "" &&
+        data.flexPrice == true
       ) {
         return Number(data.price) <= Number(data.recPrice);
       }
       return true;
     },
     {
-      message: "Recprice must be greater than price",
+      message: "Recommended price must be greater than price",
       path: ["recPrice"],
     }
   );
