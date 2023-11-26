@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 
-function DigitalDownloadSkeleton() {
+export default function CalendarSkeleton() {
   return (
     <div className="md:flex md:flex-row gap-4 flex-wrap">
       <Card className="md:w-1/3 w-full mb-4">
@@ -38,5 +38,3 @@ function DigitalDownloadSkeleton() {
     </div>
   );
 }
-
-export default DigitalDownloadSkeleton;

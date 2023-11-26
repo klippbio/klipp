@@ -65,7 +65,7 @@ export default function AddScheduleModal({
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries([
-        "allScehdules",
+        "allSchedules",
         authDetails?.storeId,
       ]);
       toast({
@@ -74,7 +74,7 @@ export default function AddScheduleModal({
         description: "Schedule Created.",
       });
       await queryClient.invalidateQueries([
-        "allScehdules",
+        "allSchedules",
         authDetails?.storeId,
       ]);
       router.push("?scheduleId=" + data.id);

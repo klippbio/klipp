@@ -250,6 +250,25 @@ export const updateCalendarSettings = async (
       timeZone: input.timeZone,
     },
   });
+
+  //change timezone in all schedules
+  const schedules = await db.schedule.findMany({
+    where: {
+      calendarSettingId: calendarSetting.id,
+    },
+  });
+
+  schedules.map(async (schedule) => {
+    return await db.schedule.update({
+      where: {
+        id: schedule.id,
+      },
+      data: {
+        timeZone: input.timeZone,
+      },
+    });
+  });
+
   return calendarSetting;
 };
 
