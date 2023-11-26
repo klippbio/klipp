@@ -133,7 +133,7 @@ export default function ScheduleForm({
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries([
-        "allScehdules",
+        "allSchedules",
         authDetails?.storeId,
       ]);
       toast({
@@ -170,7 +170,7 @@ export default function ScheduleForm({
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries([
-        "allScehdules",
+        "allSchedules",
         authDetails?.storeId,
       ]);
       toast({

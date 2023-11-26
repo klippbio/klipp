@@ -47,7 +47,7 @@ export type ScheduleAvailabilityType = {
   }>;
 };
 
-export type allScehdulesResponse = {
+export type allSchedulesResponse = {
   schedules: {
     name: string;
     id: number;
@@ -69,8 +69,8 @@ export default function Schedule() {
     },
     [router]
   );
-  const { data: response, isLoading } = useQuery<allScehdulesResponse>(
-    ["allScehdules", authDetails?.storeId],
+  const { data: response, isLoading } = useQuery<allSchedulesResponse>(
+    ["allSchedules", authDetails?.storeId],
     async () =>
       await AxiosApi(
         "GET",
@@ -80,7 +80,7 @@ export default function Schedule() {
       enabled: !!authDetails?.storeId,
     }
   );
-  const allScehdules = response?.schedules;
+  const allSchedules = response?.schedules;
   const defaultSchedule = response?.defaultSchedule;
   useEffect(() => {
     if (defaultSchedule && !currentScheduleId) {
@@ -90,7 +90,7 @@ export default function Schedule() {
 
   return (
     <div className="flex flex-col w-full md:w-5/6">
-      {isLoading || !allScehdules || !currentScheduleId ? (
+      {isLoading || !allSchedules || !currentScheduleId ? (
         <div className="flex justify-center items-center h-full w-full">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
@@ -99,8 +99,8 @@ export default function Schedule() {
           <div className="flex">
             <div className="hidden lg:flex">
               <div className="flex space-x-2">
-                {allScehdules &&
-                  allScehdules.map((schedule) => {
+                {allSchedules &&
+                  allSchedules.map((schedule) => {
                     return (
                       <Button
                         value={schedule.name}
@@ -125,7 +125,7 @@ export default function Schedule() {
                 defaultValue={
                   currentScheduleId
                     ? `${currentScheduleId}-${
-                        allScehdules.find(
+                        allSchedules.find(
                           (schedule) =>
                             schedule.id === Number(currentScheduleId)
                         )?.name
@@ -142,8 +142,8 @@ export default function Schedule() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {allScehdules &&
-                      allScehdules.map((schedule) => (
+                    {allSchedules &&
+                      allSchedules.map((schedule) => (
                         // Use the combination of ID and name as the value, but only display the name
                         <SelectItem
                           value={`${schedule.id}-${schedule.name}`}
