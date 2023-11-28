@@ -11,11 +11,9 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
-import { CalendarClock, Info, MapPinIcon } from "lucide-react";
+import { CalendarClock, MapPinIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
 import { TimezoneSelect } from "@/components/ui/timezoneSelect";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
@@ -55,7 +53,6 @@ export function EventSettingsForm({
 }: EventSettingsFormProps) {
   const { toast } = useToast();
   const authDetails = useAuthDetails();
-  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -85,7 +82,6 @@ export function EventSettingsForm({
         duration: 3000,
         description: "Calendar Settings Updated",
       });
-      router.push("/calendar");
     },
     onError: () => {
       toast({
@@ -165,7 +161,7 @@ export function EventSettingsForm({
                     }))}
                   />
                   <FormDescription className="ml-2">
-                    Set the minimum amount of notice needed.
+                    Set the minimum amount of notice needed.
                   </FormDescription>
                 </div>
               </div>

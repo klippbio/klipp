@@ -1,6 +1,8 @@
+/* eslint-disable */
+//@ts-nocheck
 "use client";
 import { useEffect, useRef, useState } from "react";
-import EditorJS, { BlockRemovedMutationType } from "@editorjs/editorjs";
+import EditorJS from "@editorjs/editorjs";
 import "./editor.css";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
 

@@ -7,6 +7,7 @@ import {
   ZUpdateInputSchema,
   createSchedule,
   deleteSchedule,
+  getAllSchedules,
   getSchedule,
   updateSchedule,
 } from "../services/calendar/calendarService";
@@ -41,21 +42,33 @@ calendarController.post("/create", async (req: Request, res: Response) => {
 
 calendarController.post("/update", async (req: Request, res: Response) => {
   try {
-    // prettier-ignore
-    const parsedBody = {
-      ...req.body,
-      availability: req.body.availability.map((slot: any) =>    //eslint-disable-line
-        slot.map((item: any) => ({//eslint-disable-line
+    let parsedBody = req.body;
+    if (req.body.availability) {
+      parsedBody = {
+        ...parsedBody,
+        availability: req.body.availability.map(
+          (
+            slot: any //eslint-disable-line
+          ) =>
+            //eslint-disable-next-line
+            slot.map((item: any) => ({
+              start: new Date(item.start),
+              end: new Date(item.end),
+            }))
+        ),
+      };
+    }
+    if (req.body.dateOverrides) {
+      parsedBody = {
+        ...parsedBody,
+        //eslint-disable-next-line
+        dateOverrides: req.body.dateOverrides.map((item: any) => ({
+          //eslint-disable-line
           start: new Date(item.start),
           end: new Date(item.end),
-        }))
-      ),
-      dateOverrides: req.body.dateOverrides.map((item: any) => ({//eslint-disable-line
-        start: new Date(item.start),
-        end: new Date(item.end),
-      })),
-    };
-
+        })),
+      };
+    }
     await ZUpdateInputSchema.parseAsync(parsedBody);
     const result = await updateSchedule(parsedBody);
     res.status(200).json(result);
@@ -72,6 +85,20 @@ calendarController.get("/get", async (req: Request, res: Response) => {
       scheduleId: parseInt(req.query.scheduleId as string),
     });
     const result = await getSchedule(params);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
+  }
+});
+
+calendarController.get("/getAll", async (req: Request, res: Response) => {
+  try {
+    const { storeId } = req.query;
+    const result = await getAllSchedules(
+      await ZCreateScheduleSchema.shape.storeId.parseAsync(storeId)
+    );
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof CustomError)
@@ -102,9 +129,11 @@ calendarController.get("/linkCalendar", async (req: Request, res: Response) => {
       code as string,
       scope as string
     );
-    res.redirect("http://localhost:3000/calendar?message=auth_success");
+    res.redirect(
+      "http://localhost:3000/calendar/settings?message=auth_success"
+    );
   } catch (error) {
-    res.redirect("http://localhost:3000/calendar?message=auth_failed");
+    res.redirect("http://localhost:3000/calendar/settings?message=auth_failed");
   }
 });
 
@@ -149,19 +178,23 @@ calendarController.get(
   }
 );
 
-calendarController.get("/settings", async (req: Request, res: Response) => {
-  try {
-    const params = await ZGetOrDeleteCalendarSettingSchema.parseAsync({
-      storeId: req.query.storeId as string,
-    });
-    const calendarSettings = await getCalendarSettings(params);
-    res.status(200).json(calendarSettings);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+calendarController.get(
+  "/settings",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      const params = await ZGetOrDeleteCalendarSettingSchema.parseAsync({
+        storeId: req.query.storeId as string,
+      });
+      const calendarSettings = await getCalendarSettings(params);
+      res.status(200).json(calendarSettings);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 calendarController.post(
   "/settings",

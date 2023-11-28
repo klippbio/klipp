@@ -149,14 +149,25 @@ model Availability {
 
 model CalendarProduct {
   id                              Int                     @id @default(autoincrement())
+  createdAt                       DateTime                @default(now())
+  updatedAt                       DateTime                @updatedAt
+
   title                           String
-  slug                            String
-  description                     String?
+  thumbnailUrl                    String?
+  slug                            String                  @unique
+  shortDescription                String?
+  description                     Json?
   length                          Int                 
   hidden                          Boolean                 @default(false)
   bookings                        Booking[]
   availability                    Availability[]
   timeZone                        String?
+
+  price                           String?                 @default("0")
+  recPrice                        String?                 @default("0")
+  minPrice                        String?                 @default("0")
+  flexPrice                       Boolean?                @default(false)   
+  currency                        String[]                @default(["USD"])
 
   periodType                      PeriodType              @default(UNLIMITED)
   periodStartDate                 DateTime?
@@ -167,15 +178,14 @@ model CalendarProduct {
   afterEventBuffer                Int                     @default(0)
   
   schedule                        Schedule?               @relation(fields: [scheduleId], references: [id])
-  scheduleId                      Int? @unique
+  scheduleId                      Int?
 
-  calendarSettingId               Int @unique
+  calendarSettingId               Int
   calendarSetting                 CalendarSetting        @relation(fields: [calendarSettingId], references: [id])
   storeItemId Int @unique
 
   storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
 
-  price                          Int?
 
   @@unique([storeItemId,slug])
   @@index([storeItemId])
@@ -221,7 +231,7 @@ model Booking{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  storeId String @unique
+  storeId String 
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
   calendarProductId Int
   calendarProduct CalendarProduct? @relation(fields: [calendarProductId], references: [id])

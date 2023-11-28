@@ -1,6 +1,7 @@
 import { db } from "../../utils/db.server";
 import type { DigitalProduct } from "@prisma/client";
 import { z } from "zod";
+import CustomError from "../../utils/CustomError";
 
 export const ZCreateDigitalProductSchema = z.object({
   name: z.string(),
@@ -142,6 +143,9 @@ export const getProduct = async (input: z.infer<typeof ZGetOrDeleteFile>) => {
       ddFiles: true,
     },
   });
+  if (!product) {
+    throw new CustomError("Product not found", 404);
+  }
   return product;
 };
 

@@ -11,10 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useAuth } from "@clerk/nextjs";
-import { useUser } from "@clerk/nextjs";
 import { useState, useEffect, useCallback } from "react";
-import axios, { Axios, AxiosError } from "axios";
 import { Separator } from "@/components/ui/separator";
 import {
   generateUploadURL,
@@ -22,7 +19,7 @@ import {
   deleteFile,
 } from "@/app/services/getS3url";
 import Editor from "@/components/ui/custom/editor/Editor";
-import { Loader2, Router, Trash, Upload, X } from "lucide-react";
+import { Loader2, Trash, Upload } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import {
   Form,
@@ -84,14 +81,15 @@ const digitalDownloadsSchema = z
         data.recPrice !== undefined &&
         data.recPrice !== "" &&
         data.price !== undefined &&
-        data.price !== ""
+        data.price !== "" &&
+        data.flexPrice == true
       ) {
         return Number(data.price) <= Number(data.recPrice);
       }
       return true;
     },
     {
-      message: "Price must be less than recPrice",
+      message: "Recommended price must be greater than price",
       path: ["recPrice"],
     }
   );
@@ -105,7 +103,7 @@ type fileType = {
   digitalProductId: number;
 };
 
-interface dataType {
+export interface DigitalProductDataType {
   id: number;
   createdAt: string;
   updatedAt: string;
@@ -131,7 +129,7 @@ export function ProfileForm({
   data,
   productId,
 }: {
-  data: dataType;
+  data: DigitalProductDataType;
   productId: number;
 }) {
   //consts
@@ -142,15 +140,16 @@ export function ProfileForm({
   const [editorData, setEditorData] = useState("");
   const [flexPrice, setFlexPrice] = useState(true);
   const [minPrice, setMinPrice] = useState("0");
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState<fileType[]>([]);
   const [initialBlocksData, setInitialBlocksData] = useState([]);
   const [uploadingFile, setUploadingFile] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  //eslint-disable-next-line
   const updateEditorData = useCallback((state: any) => {
     setEditorData(state);
   }, []);
-  const productData = data as dataType;
+  const productData = data as DigitalProductDataType;
 
   const defaultValues: Partial<AccountFormValues> = {
     name: productData.name || "",
@@ -199,17 +198,20 @@ export function ProfileForm({
     }
 
     if (productData.ddFiles) {
-      setUploadedFiles(productData.ddFiles as any);
+      setUploadedFiles(productData.ddFiles);
     }
-  }, []);
+  }, [
+    productData.ddFiles,
+    productData.description,
+    productData.externalFile,
+    productData.flexPrice,
+    productData.thumbnailUrl,
+  ]);
+  const price = watch("price");
 
   useEffect(() => {
-    const price = watch("price");
-
     setMinPrice(price);
-
-    form.setValue("minPrice", price);
-  }, [watch("price")]);
+  }, [price, form]);
 
   //functions
   function onSubmit(data: z.infer<typeof digitalDownloadsSchema>) {
@@ -255,7 +257,7 @@ export function ProfileForm({
     mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
       const response = await AxiosApi(
         "POST",
-        `/api/digital-downloads/update/?id=${productId}`,
+        `/api/digital-products/update/?id=${productId}`,
         data,
         authDetails
       );
@@ -267,9 +269,9 @@ export function ProfileForm({
         duration: 1000,
         description: "Product Created.",
       });
-      router.push("/digital-downloads");
+      router.push("/digital-products");
     },
-    onError: (error: AxiosError) => {
+    onError: () => {
       toast({
         title: "Error",
         variant: "destructive",
@@ -284,7 +286,7 @@ export function ProfileForm({
       setUploadingFile(true);
       const response = await AxiosApi(
         "post",
-        `/api/digital-downloads/file/?id=${productId}`,
+        `/api/digital-products/file/?id=${productId}`,
         data,
         authDetails
       );
@@ -296,7 +298,8 @@ export function ProfileForm({
         duration: 1000,
         description: "File uploaded successfully.",
       });
-      setUploadedFiles([...uploadedFiles, data] as any);
+      setUploadedFiles([...uploadedFiles, data]);
+      console.log("uploaded", uploadedFiles);
       setUploadingFile(false);
     },
     onError: () => {
@@ -320,7 +323,7 @@ export function ProfileForm({
       );
       const response = await AxiosApi(
         "delete",
-        `/api/digital-downloads/file/?id=${fileId}`,
+        `/api/digital-products/file/?id=${fileId}`,
         {},
         authDetails
       );
@@ -344,7 +347,7 @@ export function ProfileForm({
   });
 
   return (
-    <Card className=" m-8 lg:w-2/3">
+    <Card className="my-4 lg:w-2/3">
       <CardHeader>
         <CardTitle className="text-foreground text-lg">
           Digital Products
@@ -363,7 +366,7 @@ export function ProfileForm({
                   <FormField
                     control={form.control}
                     name="thumbnailUrl"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel htmlFor="thumbnail">Thumbnail</FormLabel>
                         <FormControl>
@@ -530,7 +533,7 @@ export function ProfileForm({
                   <FormField
                     control={form.control}
                     name="file"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel htmlFor="displayName">Upload File</FormLabel>
                         <FormControl>
@@ -599,7 +602,7 @@ export function ProfileForm({
                     <FormField
                       control={form.control}
                       name="description"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem className="">
                           <FormLabel htmlFor="name">Description</FormLabel>
                           <FormControl>
@@ -627,7 +630,7 @@ export function ProfileForm({
                   <FormField
                     control={form.control}
                     name="currency"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel htmlFor="storeUrl">Currency</FormLabel>
                         <FormControl></FormControl>
@@ -675,6 +678,7 @@ export function ProfileForm({
                           checked={field.value}
                           onCheckedChange={(newValue) => {
                             field.onChange(newValue);
+                            form.setValue("recPrice", minPrice);
                             setFlexPrice(!newValue);
                           }}
                         />

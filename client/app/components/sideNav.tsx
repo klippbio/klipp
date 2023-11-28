@@ -1,29 +1,31 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { UserButton, auth, useAuth } from "@clerk/nextjs";
+import { UserButton, useAuth } from "@clerk/nextjs";
 import { NavProps } from "admin";
 import Image from "next/image";
 import logoText from "./../../utils/logoText.png";
 import { SettingsIcon } from "lucide-react";
 
 export function SideNav({ className, items, ...props }: NavProps) {
-  const currentPage = usePathname();
-  const pageTitle =
-    currentPage.split("/")[1].charAt(0).toUpperCase() +
-    currentPage.split("/")[1].slice(1);
+  const pathname = usePathname();
 
   const { userId } = useAuth();
 
   return (
     <>
-      <div className="flex flex-col h-screen w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
+      <div className="flex flex-col h-full w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
         <div className="flex justify-start py-5 px-4 ">
-          <Image src={logoText} alt="logoWithText" width={100} />
+          <Image
+            src={logoText}
+            alt="logoWithText"
+            width={100}
+            priority={true}
+          />
         </div>
         <nav
           className={cn("flex flex-col space-y-1 align-center pt-2", className)}
@@ -35,7 +37,8 @@ export function SideNav({ className, items, ...props }: NavProps) {
               href={item.href}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
-                pageTitle == item.title && "bg-overlay text-overlay-foreground",
+                pathname?.startsWith(item.baseHref) &&
+                  "bg-overlay text-overlay-foreground",
                 "justify-start flex items-center hover:bg-overlay hover:text-primary"
               )}
             >

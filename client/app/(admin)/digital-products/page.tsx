@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import * as z from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -72,7 +71,7 @@ const ddCreateSchema = z.object({
   storeId: z.string().optional(),
 });
 
-function digitalDownloadPage() {
+function Page() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const authDetails = useAuthDetails();
@@ -83,7 +82,7 @@ function digitalDownloadPage() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/digital-downloads/getAllDigitalProducts/?id=${storeId}`,
+        `/api/digital-products/getAllDigitalProducts/?id=${storeId}`,
         {},
         authDetails
       );
@@ -106,14 +105,15 @@ function digitalDownloadPage() {
     createProductMutation.mutate(data);
   }
 
+  //TODO: Add delete mutation
   async function deleteProduct(id: string) {
     const response = await fetch(
-      `/api/digital-downloads/deleteDigitalProduct/?id=${id}`,
+      `/api/digital-products/deleteDigitalProduct/?id=${id}`,
       {
         method: "DELETE",
       }
     );
-    queryClient.invalidateQueries(["allProducts", storeId]);
+    await queryClient.invalidateQueries(["allProducts", storeId]);
     if (!response?.ok) {
       toast({
         title: "Something went wrong.",
@@ -135,7 +135,7 @@ function digitalDownloadPage() {
     mutationFn: async (data: ddType) => {
       const response = await AxiosApi(
         "POST",
-        "/api/digital-downloads/create",
+        "/api/digital-products/create",
         data,
         authDetails
       );
@@ -149,7 +149,7 @@ function digitalDownloadPage() {
       });
 
       const productId = data.DigitalProduct.id;
-      router.push(`/digital-downloads/create/?id=${productId}`);
+      router.push(`/digital-products/create/?id=${productId}`);
     },
     onError: () => {
       toast({
@@ -166,13 +166,13 @@ function digitalDownloadPage() {
       {isLoading ? (
         <DigitalDownloadSkeleton />
       ) : (
-        <div className="mt-4 mr-6 grid justify-items-end">
+        <div className="mt-4 mr-6 grid ">
           <div>
             <Dialog>
               <DialogTrigger asChild>
                 <Button>Add Product</Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)}>
                     <DialogHeader>
@@ -182,8 +182,8 @@ function digitalDownloadPage() {
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4 ">
-                      <div className="grid grid-cols-4 items-center gap-4 ">
-                        <Label htmlFor="name" className="text-right">
+                      <div className="grid grid-cols-4 gap-4 ">
+                        <Label htmlFor="name" className="text-right pt-3">
                           Name
                         </Label>
                         <div className="col-span-3">
@@ -201,8 +201,8 @@ function digitalDownloadPage() {
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Price</Label>
+                      <div className="grid grid-cols-4 gap-4">
+                        <Label className="text-right pt-3">Price</Label>
 
                         <div className="col-span-3">
                           <FormField
@@ -240,8 +240,7 @@ function digitalDownloadPage() {
           </div>
         </div>
       )}
-
-      {data && data.length == 0 && (
+      {data && data.length == 0 ? (
         <div className="flex justify-center">
           <Card className="flex m-4 md:w-1/3 w-full h-32 justify-center bg-secondary">
             <div className="flex flex-col justify-center items-center">
@@ -254,85 +253,87 @@ function digitalDownloadPage() {
             </div>
           </Card>
         </div>
-      )}
-      <div className="md:flex md:flex-row m-4 gap-4 flex-wrap">
-        {data &&
-          data.map((item: itemType) => (
-            <Card className="md:w-1/3 w-full h-32 mb-4" key={item.name}>
-              <div className="p-6">
-                <div className="text-xl justify-center font-bold text-bold text-secondary-foreground">
-                  <div className="flex flex-row justify-between">
-                    <div>{item.name}</div>
-                    <div className="mt-1">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild={true}>
-                          <Button variant="ghost">
-                            <MoreVertical size={18} />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <AlertDialog>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                router.push(
-                                  `/digital-downloads/create/?id=${item.id}`
-                                )
-                              }
-                              onSelect={(e) => e.preventDefault()}
-                            >
-                              <Pencil className="w-4 h-4 mr-2" /> Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-
-                            <AlertDialogTrigger asChild>
+      ) : (
+        <div className="md:flex md:flex-row gap-x-4 mt-4 flex-wrap">
+          {data &&
+            data.map((item: itemType) => (
+              <Card className="md:w-1/3 w-full h-32 mb-4" key={item.name}>
+                <div className="p-6">
+                  <div className="text-xl justify-center font-bold text-bold text-secondary-foreground">
+                    <div className="flex flex-row justify-between">
+                      <div>{item.name}</div>
+                      <div className="mt-1">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild={true}>
+                            <Button variant="ghost">
+                              <MoreVertical size={18} />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <AlertDialog>
                               <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
+                                onClick={() =>
+                                  router.push(
+                                    `/digital-products/create/?id=${item.id}`
+                                  )
+                                }
                                 onSelect={(e) => e.preventDefault()}
                               >
-                                <Trash className="w-4 h-4 mr-2" /> Delete
+                                <Pencil className="w-4 h-4 mr-2" /> Edit
                               </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Are you sure you want to delete this product?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={async (event) => {
-                                    await deleteProduct(item.id);
-                                  }}
-                                  className="bg-destructive hover:bg-destructive"
-                                >
-                                  <Trash className="mr-2 h-4 w-4" />
+                              <DropdownMenuSeparator />
 
-                                  <span>Delete</span>
-                                </AlertDialogAction>{" "}
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive"
+                                  onSelect={(e) => e.preventDefault()}
+                                >
+                                  <Trash className="w-4 h-4 mr-2" /> Delete
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you sure you want to delete this
+                                    product?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={async () => {
+                                      await deleteProduct(item.id);
+                                    }}
+                                    className="bg-destructive hover:bg-destructive"
+                                  >
+                                    <Trash className="mr-2 h-4 w-4" />
+
+                                    <span>Delete</span>
+                                  </AlertDialogAction>{" "}
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
                   </div>
+                  <div className="mt-6 flex flex-row gap-6">
+                    <div className="text-l font-semiBold">{`USD ${item.price}`}</div>
+                    <Badge variant={"outline"} className="h-6">
+                      {item.visibility ? "Public" : "Private"}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="mt-6 flex flex-row gap-6">
-                  <div className="text-l font-semiBold">{`USD ${item.price}`}</div>
-                  <Badge variant={"outline"} className="h-6">
-                    {item.visibility ? "Public" : "Private"}
-                  </Badge>
-                </div>
-              </div>
-            </Card>
-          ))}
-      </div>
+              </Card>
+            ))}
+        </div>
+      )}
     </div>
   );
 }
 
-export default digitalDownloadPage;
+export default Page;

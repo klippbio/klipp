@@ -24,7 +24,6 @@ export const ZCreateScheduleSchema = z.object({
       )
     )
     .optional(),
-  timeZone: z.string(),
 });
 
 export const ZUpdateInputSchema = z.object({
@@ -74,6 +73,7 @@ export const createSchedule = async (
         select: {
           id: true,
           defaultScheduleId: true,
+          timeZone: true,
         },
       },
     },
@@ -89,7 +89,7 @@ export const createSchedule = async (
   const schedule = await db.schedule.create({
     data: {
       name: input.name,
-      timeZone: input.timeZone,
+      timeZone: store.calendarSetting.timeZone,
       store: {
         connect: {
           id: input.storeId,
@@ -131,10 +131,7 @@ export const createSchedule = async (
       store.calendarSetting = calendarSetting;
     }
   }
-  return {
-    schedule,
-    store: store,
-  };
+  return schedule;
 };
 
 export const updateSchedule = async (
@@ -192,7 +189,7 @@ export const updateSchedule = async (
   });
 
   if (input.isDefault) {
-    db.calendarSetting.update({
+    await db.calendarSetting.update({
       where: {
         id: schedule.calendarSetting.id,
       },
@@ -299,6 +296,38 @@ export const getSchedule = async (
   };
 };
 
+export const getAllSchedules = async (storeId: string) => {
+  const schedules = await db.schedule.findMany({
+    where: {
+      storeId,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+  schedules.sort((a, b) => a.name.localeCompare(b.name));
+  const calendarSetting = await db.calendarSetting.findUnique({
+    where: {
+      storeId,
+    },
+    select: {
+      defaultScheduleId: true,
+    },
+  });
+  const defaultSchedule = schedules.find(
+    (schedule) => schedule.id === calendarSetting?.defaultScheduleId
+  );
+  if (!defaultSchedule) {
+    throw new CustomError("Default schedule not found", 404);
+  }
+  //just return a list of all schedules with their id and name and entire default schedule
+  return {
+    schedules,
+    defaultSchedule,
+  };
+};
+
 export const deleteSchedule = async (
   input: z.infer<typeof ZGetOrDeleteScheduleSchema>
 ) => {
@@ -312,6 +341,28 @@ export const deleteSchedule = async (
       calendarSetting: true,
     },
   });
+
+  if (schedule && schedule.calendarSetting.defaultScheduleId === schedule.id) {
+    const scheduleToSetAsDefault = await db.schedule.findFirst({
+      where: {
+        storeId: schedule.storeId,
+        NOT: {
+          id: schedule.id,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    await db.calendarSetting.update({
+      where: {
+        id: schedule.calendarSetting.id,
+      },
+      data: {
+        defaultScheduleId: scheduleToSetAsDefault?.id,
+      },
+    });
+  }
 
   if (!schedule) {
     throw new CustomError("Schedule not found", 404);

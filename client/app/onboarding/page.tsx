@@ -4,11 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { useEffect } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Form,
@@ -27,6 +24,8 @@ import {
   useAuthDetails,
   useRefreshAuthDetails,
 } from "../components/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 //types
 type OnboardingFormValues = {
@@ -69,13 +68,20 @@ export function ProfileForm() {
   const { toast } = useToast();
   const timeZone = dayjs.tz.guess();
   const fixedPrefix = "klipp.bio/";
+  const [isLoading, setIsLoading] = useState(true);
 
   //validateing if user is onboarded
   useEffect(() => {
     if (authDetails && authDetails.storeUrl) {
+      toast({
+        title: "User already onboarded!",
+        duration: 3000,
+      });
       router.push("/home");
+    } else if (authDetails.userId && !authDetails.storeUrl) {
+      setIsLoading(false);
     }
-  }, [authDetails]);
+  }, [isLoading, authDetails, router, toast]);
 
   //form prefix logic
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
@@ -124,6 +130,7 @@ export function ProfileForm() {
         authDetails
       );
     },
+
     onSuccess: (response) => {
       toast({
         title: "Success!",
@@ -135,21 +142,21 @@ export function ProfileForm() {
         response.data.stores &&
         response.data.stores[0] &&
         response.data.stores[0].storeUrl &&
-        response.data.stores[0].storeId
+        response.data.stores[0].id
       ) {
         refreshAuthDetails(
           response.data.stores[0].storeUrl,
-          response.data.stores[0].storeId
+          response.data.stores[0].id
         );
       }
       router.push("/home");
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: error.response.data.error,
+        description: "Failed to create profile please try again!",
       });
     },
   });
@@ -159,67 +166,80 @@ export function ProfileForm() {
   }
 
   return (
-    <div className="flex h-screen">
-      {/* Left Section */}
+    <div>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen w-screen">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      ) : (
+        <div className="flex h-screen">
+          {/* Left Section */}
+          {isLoading}
+          <div className="flex-1 bg-background p-10 flex flex-col justify-center items-center rounded-l-lg">
+            <h1 className="text-3xl font-bold mb-6">klipp</h1>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <FormField
+                  control={form.control}
+                  name="storeUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="storeUrl">Unique Url</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          id="storeUrl"
+                          value={dynamicValue}
+                          onChange={handleChange}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        This is your unique url. You can change it later.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="storeTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="storeTitle">Title</FormLabel>
+                      <FormControl>
+                        <Input {...field} id="storeTitle" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="storeDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="storeDescription">
+                        Description
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} id="storeDescription" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Next</Button>
+              </form>
+            </Form>
+          </div>
 
-      <div className="flex-1 bg-background p-10 flex flex-col justify-center items-center rounded-l-lg">
-        <h1 className="text-3xl font-bold mb-6">klipp</h1>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="storeUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="storeUrl">Unique Url</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      id="storeUrl"
-                      value={dynamicValue}
-                      onChange={handleChange}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    This is your unique url. You can change it later.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="storeTitle"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="storeTitle">Title</FormLabel>
-                  <FormControl>
-                    <Input {...field} id="storeTitle" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="storeDescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="storeDescription">Description</FormLabel>
-                  <FormControl>
-                    <Input {...field} id="storeDescription" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Next</Button>
-          </form>
-        </Form>
-      </div>
-
-      {/* Right Section */}
-      <div className="flex bg-foreground lg:w-1/3 md:w-1/4"></div>
+          {/* Right Section */}
+          <div className="flex bg-foreground md:w-1/3 "></div>
+        </div>
+      )}
     </div>
   );
 }

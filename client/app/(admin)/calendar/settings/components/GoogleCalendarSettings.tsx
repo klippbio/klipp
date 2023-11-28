@@ -3,7 +3,6 @@ import AxiosApi from "@/app/services/axios";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
 import { Calendar } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
@@ -37,7 +36,7 @@ export default function GoogleCalendarSettings({
       );
       return response;
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (response.status === 200) {
         toast({
           title: "Successfully unlinked Google Calendar",
@@ -47,9 +46,12 @@ export default function GoogleCalendarSettings({
       }
 
       // After successful unlink, invalidate the query in the parent component
-      queryClient.invalidateQueries(["calendarSettings", authDetails.storeId]);
+      await queryClient.invalidateQueries([
+        "calendarSettings",
+        authDetails.storeId,
+      ]);
     },
-    onError: (error: AxiosError) => {
+    onError: () => {
       toast({
         title: "Internal server error",
         variant: "destructive",
@@ -64,18 +66,22 @@ export default function GoogleCalendarSettings({
           title: "Successfully linked Google Calendar",
           variant: "default",
         });
-        router.replace("/calendar");
+        router.replace("/calendar/settings");
       } else if (message == "auth_failed") {
         toast({
           title: "Failed to link Google Calendar. Please try again",
           variant: "destructive",
         });
-        router.replace("/calendar");
+        router.replace("/calendar/settings");
       }
     }
-  }, [message]);
+  }, [message, router, toast]);
 
-  const generateGoogleOAuthUrl = (params: any) => {
+  const generateGoogleOAuthUrl = (params: {
+    access_type: string;
+    scope: string[] | string;
+    state?: string;
+  }) => {
     const baseUrl = "https://accounts.google.com/o/oauth2/auth";
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID;
     const redirectUri = "http://localhost:4000/calendar/linkCalendar"; // Change to your Express backend URL
