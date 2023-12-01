@@ -4,7 +4,6 @@
 //img invisible on smaller screens
 "use client";
 import React, { useState } from "react";
-import SidePanel from "./sidePanel";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { usePathname } from "next/navigation";
@@ -13,19 +12,9 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Editor from "@/components/ui/custom/editor/Editor";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@radix-ui/react-separator";
-import { DialogFooter, DialogHeader } from "@/components/ui/dialog";
-import { DialogTitle } from "@radix-ui/react-dialog";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -63,12 +52,12 @@ function PublicDigitalProduct() {
     console.log(data);
   }
   return (
-    <div className="flex justify-center items-center md:m-8 ">
-      {isLoading ? <div>Loading...</div> : <div></div>}
+    <div className="md:flex md:justify-center md:m-8 ">
+      {isLoading ? <div>Loading...</div> : null}
       {data && (
-        <Card className="border-hidden md:border-solid md:w-10/12">
-          <CardHeader className="p-0">
-            <div className="h-64 p-8 bg-secondary rounded-md flex flex-row gap-8 justify-between">
+        <Card className="border-hidden md:border-solid md:w-9/12">
+          <CardHeader className="bg-secondary rounded-t-xl">
+            <div className="h-64 bg-secondary rounded-md flex flex-row justify-between">
               <div className="md:w-2/3 w-full flex flex-col justify-between">
                 <div className="">
                   <div className="font-bold text-2xl text-foreground">
@@ -91,19 +80,18 @@ function PublicDigitalProduct() {
                 </div>
               </div>
               {/* image */}
-              <div className="hidden md:block">
+              <div>
                 <Image
                   alt="a"
-                  className="rounded-xl visible border-white border-4"
-                  height="280"
-                  width="280"
-                  style={{ objectFit: "contain" }}
+                  className="rounded-xl"
                   src={data.DigitalProduct.thumbnailUrl}
+                  width="200"
+                  height="200"
                 />
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <div className="text-secondary-foreground">
               <Editor
                 initialBlocks={initialBlocksData}

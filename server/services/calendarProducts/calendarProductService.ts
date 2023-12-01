@@ -231,6 +231,14 @@ export const deleteCalendarProduct = async (id: number) => {
     where: { id },
   });
 
+  const storeItemId = calendarProduct.storeItemId;
+
+  await db.storeItem.delete({
+    where: {
+      id: storeItemId,
+    },
+  });
+
   return calendarProduct;
 };
 

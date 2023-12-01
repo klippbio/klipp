@@ -28,7 +28,6 @@ export default function Editor({
 
   const initializeEditor = async () => {
     const EditorJS = (await import("@editorjs/editorjs")).default;
-    const Table = require("editorjs-table");
     const ImageTool = require("@editorjs/image");
     const Delimiter = require("@editorjs/delimiter");
     const Header = require("@editorjs/header");
@@ -93,7 +92,6 @@ export default function Editor({
           // setSaved(false);
         },
         tools: {
-          table: Table,
           header: Header,
           paragraph: {
             class: Paragraph,
@@ -177,8 +175,15 @@ export default function Editor({
     if (isMounted) {
       init();
 
-      return () => {
+      return async () => {
+        console.log("Unmounting editor");
         if (ref.current) {
+          if (!isReadonly) {
+            await ref.current.save().then((outputData) => {
+              console.log("Article data final: ", outputData);
+              updateEditorData(outputData);
+            });
+          }
           console.log("Destroying editor");
           ref.current.destroy();
         }
@@ -201,7 +206,7 @@ export default function Editor({
   }, [deleteUrls]);
 
   return (
-    <div className="rounded-md p-7 flex w-full">
+    <div className="rounded-md flex w-full">
       <div id="editorjs" className=" w-full" />
     </div>
   );

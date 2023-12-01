@@ -606,7 +606,7 @@ export function ProfileForm({
                         <FormItem className="">
                           <FormLabel htmlFor="name">Description</FormLabel>
                           <FormControl>
-                            <div className="border-2 mt-4 min-h-[500px] h-auto p-3 rounded-md">
+                            <div className="border-2 mt-4 min-h-[500px] h-auto px-12 py-8 rounded-md">
                               <Editor
                                 initialBlocks={initialBlocksData}
                                 updateEditorData={updateEditorData}

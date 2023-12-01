@@ -360,10 +360,13 @@ export function CalendarProductEdit({
                         <FormItem className="">
                           <FormLabel htmlFor="name">Description</FormLabel>
                           <FormControl>
-                            <Editor
-                              initialBlocks={initialBlocksData}
-                              updateEditorData={updateEditorData}
-                            />
+                            <div className="border-2 mt-4 min-h-[500px] h-auto p-3 rounded-md">
+                              <Editor
+                                initialBlocks={initialBlocksData}
+                                updateEditorData={updateEditorData}
+                                isReadonly={false}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>

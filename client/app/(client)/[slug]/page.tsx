@@ -2,8 +2,6 @@
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { url } from "inspector";
-import { Badge } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import React from "react";
 
@@ -38,9 +36,7 @@ function Mypage() {
             >
               <div className="p-6">
                 <div className="text-xl justify-center font-bold text-bold text-secondary-foreground">
-                  <div className="flex flex-row justify-between">
-                    <div>{item.DigitalProduct.name}</div>
-                  </div>
+                  <div className="flex flex-row justify-between">{item.id}</div>
                 </div>
               </div>
             </Card>

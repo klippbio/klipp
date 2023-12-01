@@ -29,3 +29,7 @@ h6.ce-header {
 .ce-toolbar__content {
   max-width: inherit; /* example value, adjust for your own use case */
 }
+
+.codex-editor--narrow .codex-editor__redactor {
+  margin-right: 0px;
+}
