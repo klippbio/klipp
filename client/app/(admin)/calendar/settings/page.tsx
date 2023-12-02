@@ -13,16 +13,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import GoogleCalendarSettings from "./components/GoogleCalendarSettings";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import AxiosApi from "@/app/services/axios";
+import { AxiosError, AxiosResponse } from "axios";
 
 function Page() {
   let calendarSettings;
   const authDetails = useAuthDetails();
   const storeId = authDetails?.storeId;
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, error } = useQuery<AxiosResponse, AxiosError>(
     ["calendarSettings", storeId],
     async () =>
       await AxiosApi("GET", `/api/calendar/settings/?storeId=${storeId}`).then(
-        (res) => res.data
+        (res) => res
       ),
     {
       enabled: !!storeId,
@@ -30,7 +31,11 @@ function Page() {
   );
 
   if (data) {
-    calendarSettings = data.calendarSetting;
+    calendarSettings = data.data.calendarSetting;
+  }
+
+  if (error?.response?.status === 500) {
+    throw Error("Internal Server Error");
   }
 
   return (

@@ -51,7 +51,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
-
 //types
 const digitalDownloadsSchema = z
   .object({
@@ -222,6 +221,12 @@ export function ProfileForm({
     mutation.mutate(data);
   }
 
+  async function onThumbnailRemove() {
+    setSelectedFile("");
+    setImageUrl("");
+    return await deleteFile(imageUrl);
+  }
+
   async function getUploadURL() {
     return await generateUploadURL();
   }
@@ -373,11 +378,21 @@ export function ProfileForm({
                             }`}
                           >
                             {selectedFile ? (
-                              <img
-                                src={selectedFile}
-                                alt="Selected Thumbnail"
-                                className="w-full h-full md:h-32 object-cover rounded-md"
-                              />
+                              <div className="relative w-full h-full">
+                                <img
+                                  src={selectedFile}
+                                  alt="Selected Thumbnail"
+                                  className="w-full h-full md:h-32 object-cover rounded-md transition-opacity"
+                                />
+                                <div>
+                                  <span
+                                    onClick={onThumbnailRemove}
+                                    className="text-sm cursor-pointer"
+                                  >
+                                    Remove
+                                  </span>
+                                </div>
+                              </div>
                             ) : (
                               <div
                                 className="text-3xl font-bold mb-8 mt-8 text-foreground"
@@ -398,6 +413,7 @@ export function ProfileForm({
                       </FormItem>
                     )}
                   />
+
                   <div className="w-full mt-5 md:mt-0  md:ml-5 space-y-5">
                     <FormField
                       control={form.control}
@@ -590,10 +606,13 @@ export function ProfileForm({
                         <FormItem className="">
                           <FormLabel htmlFor="name">Description</FormLabel>
                           <FormControl>
-                            <Editor
-                              initialBlocks={initialBlocksData}
-                              updateEditorData={updateEditorData}
-                            />
+                            <div className="border-2 mt-4 min-h-[500px] h-auto px-12 py-8 rounded-md">
+                              <Editor
+                                initialBlocks={initialBlocksData}
+                                updateEditorData={updateEditorData}
+                                isReadonly={false}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>

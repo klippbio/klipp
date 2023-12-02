@@ -10,31 +10,42 @@ import { Badge } from "@/components/ui/badge";
 import CalendarProductDropdown from "./CalendarProductDropdown";
 import { CalendarProductApiResponse } from "@/types/apiResponse";
 import CalendarSkeleton from "./CalendarSkeleton";
+import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 
 function CalendarHome() {
   const authDetails = useAuthDetails();
   const storeId = authDetails?.storeId;
+  const router = useRouter();
 
-  const { data: calendarProducts, isLoading: calendarProductsLoading } =
-    useQuery<Array<CalendarProductApiResponse>>(
-      ["calendarProducts", storeId],
-      async () => {
-        const response = await AxiosApi(
-          "GET",
-          `/api/calendar-products/getAllCalendarProducts?id=${storeId}`,
-          {},
-          authDetails
-        );
-        return response.data;
-      },
-      {
-        enabled: !!storeId,
-      }
-    );
+  const {
+    data: calendarProducts,
+    isLoading: calendarProductsLoading,
+    isError,
+    error,
+  } = useQuery<Array<CalendarProductApiResponse>, AxiosError>(
+    ["calendarProducts", storeId],
+    async () => {
+      const response = await AxiosApi(
+        "GET",
+        `/api/calendar-products/getAllCalendarProducts?id=${storeId}`,
+        {},
+        authDetails
+      );
+      return response.data;
+    },
+    {
+      enabled: !!storeId,
+    }
+  );
+
+  if (error?.response?.status === 500) {
+    throw Error("Internal Server Error");
+  }
 
   return (
     <div className="w-full">
-      {calendarProductsLoading ? (
+      {calendarProductsLoading && !calendarProducts ? (
         <CalendarSkeleton />
       ) : (
         <div className="w-full">

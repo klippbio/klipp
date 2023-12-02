@@ -49,6 +49,7 @@ import {
 import DigitalDownloadSkeleton from "./DigitalDownloadSkeleton";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
+import { AxiosError } from "axios";
 
 type ddType = {
   name: string;
@@ -77,7 +78,10 @@ function Page() {
   const authDetails = useAuthDetails();
   const storeId = authDetails?.storeId;
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isError, error } = useQuery<
+    Array<itemType>,
+    AxiosError
+  >(
     ["allProducts", storeId],
     async () => {
       const response = await AxiosApi(
@@ -92,6 +96,10 @@ function Page() {
       enabled: !!storeId,
     }
   );
+
+  if (error?.response?.status === 500) {
+    throw Error("Internal Server Error");
+  }
 
   const { toast } = useToast();
 
@@ -163,7 +171,7 @@ function Page() {
 
   return (
     <div>
-      {isLoading ? (
+      {isLoading || isError ? (
         <DigitalDownloadSkeleton />
       ) : (
         <div className="mt-4 mr-6 grid ">

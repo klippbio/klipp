@@ -9,7 +9,6 @@ export const ZCreateCalendarProductSchema = z.object({
   id: z.number().optional(),
   title: z.string(),
   thumbnailUrl: z.string().optional(),
-  slug: z.string(),
   shortDescription: z.string().optional(),
   description: z.any().optional(),
   length: z.number(),
@@ -79,7 +78,7 @@ export const createCalendarProduct = async (
 
   const calendarProduct = await db.storeItem.create({
     data: {
-      itemType: "CALENDER",
+      itemType: "CALENDAR",
       store: {
         connect: {
           id: storeId,
@@ -229,6 +228,14 @@ export const getAllCalendarProducts = async (
 export const deleteCalendarProduct = async (id: number) => {
   const calendarProduct = await db.calendarProduct.delete({
     where: { id },
+  });
+
+  const storeItemId = calendarProduct.storeItemId;
+
+  await db.storeItem.delete({
+    where: {
+      id: storeItemId,
+    },
   });
 
   return calendarProduct;

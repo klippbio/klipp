@@ -25,7 +25,6 @@ export interface CalendarProductApiResponse {
   updatedAt: string; // ISO 8601 string format
   title: string;
   thumbnailUrl?: string;
-  slug: string;
   shortDescription?: string;
   description?: string;
   length: number;
