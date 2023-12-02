@@ -23,7 +23,7 @@ function Page() {
     ["calendarSettings", storeId],
     async () =>
       await AxiosApi("GET", `/api/calendar/settings/?storeId=${storeId}`).then(
-        (res) => res.data
+        (res) => res
       ),
     {
       enabled: !!storeId,
