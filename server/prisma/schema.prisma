@@ -154,7 +154,6 @@ model CalendarProduct {
 
   title                           String
   thumbnailUrl                    String?
-  slug                            String                  @unique
   shortDescription                String?
   description                     Json?
   length                          Int                 
@@ -187,7 +186,6 @@ model CalendarProduct {
   storeItem StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
 
 
-  @@unique([storeItemId,slug])
   @@index([storeItemId])
 }
 

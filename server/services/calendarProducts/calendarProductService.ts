@@ -9,7 +9,6 @@ export const ZCreateCalendarProductSchema = z.object({
   id: z.number().optional(),
   title: z.string(),
   thumbnailUrl: z.string().optional(),
-  slug: z.string(),
   shortDescription: z.string().optional(),
   description: z.any().optional(),
   length: z.number(),

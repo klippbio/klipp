@@ -26,11 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Input,
-  PrefixInputLeft,
-  PrefixInputRight,
-} from "@/components/ui/input";
+import { Input, PrefixInputRight } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -58,7 +54,6 @@ export const calendarProductSchema = z
   .object({
     title: z.string(),
     thumbnailUrl: z.string().optional(),
-    slug: z.string(),
     shortDescription: z.string().optional(),
     description: z.any().optional(),
     length: z.string().min(1, { message: "Please enter duration " }),
@@ -131,7 +126,6 @@ export function CalendarProductEdit({
     flexPrice: productData.flexPrice || false,
     hidden: productData.hidden,
     length: String(productData.length),
-    slug: productData.slug || "",
   };
 
   const form = useForm<z.infer<typeof calendarProductSchema>>({
@@ -334,23 +328,6 @@ export function CalendarProductEdit({
                     />
                   </div>
                 </div>
-                <FormField
-                  control={form.control}
-                  name="slug"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="slug">Slug</FormLabel>
-                      <FormControl>
-                        <PrefixInputLeft
-                          {...field}
-                          prefix={`klipp.io/${storeUrl}/`}
-                          id="slug"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <div className="flex flex-col space-y-5 mt-5">
                   <div>
                     <FormField

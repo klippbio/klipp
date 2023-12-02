@@ -23,8 +23,8 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen bg-secondary">
-      <Card className="md:w-1/4">
+    <div className="flex items-center justify-center h-full w-full">
+      <Card className="bg-secondary">
         <CardHeader className="text-center">
           <CardTitle className="text-xl font-semibold text-foreground">
             Internal Server Error

@@ -14,11 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Label } from "@/components/ui/label";
-import {
-  Input,
-  PrefixInputLeft,
-  PrefixInputRight,
-} from "@/components/ui/input";
+import { Input, PrefixInputRight } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
@@ -36,7 +32,6 @@ import { useRouter } from "next/navigation";
 
 const calendarProductCreateSchema = z.object({
   title: z.string().min(1, { message: "Please enter product name" }),
-  slug: z.string().min(1, { message: "Please enter product url" }),
   length: z.string().min(1, { message: "Please enter duration " }),
   shortDescription: z
     .string()
@@ -50,20 +45,16 @@ export default function AddCalendarProduct({
 }) {
   const { toast } = useToast();
   const router = useRouter();
-  const storeUrl = authDetails.storeUrl;
   const [open, setOpen] = React.useState(false);
-  const [slug, setSlug] = React.useState("");
   const form = useForm<z.infer<typeof calendarProductCreateSchema>>({
     defaultValues: {
       title: "",
-      slug: "",
       length: "15",
       shortDescription: "",
     },
     resolver: zodResolver(calendarProductCreateSchema),
     mode: "all",
   });
-  const { watch } = form;
 
   const createCalendarProductMutation = useMutation({
     mutationFn: async (data: z.infer<typeof calendarProductCreateSchema>) => {
@@ -103,27 +94,6 @@ export default function AddCalendarProduct({
     createCalendarProductMutation.mutate(data);
   };
 
-  // Watch for changes in the title field
-  const title = watch("title");
-
-  React.useEffect(() => {
-    // Function to convert title to slug format
-    const createSlug = (title: string) => {
-      // Check if title is defined and is a string
-      if (typeof title === "string") {
-        return title
-          .toLowerCase()
-          .replace(/ /g, "-")
-          .replace(/[^\w-]+/g, "");
-      }
-      return ""; // Return an empty string if title is not defined
-    };
-
-    // Update the slug state based on the title
-    setSlug(createSlug(title));
-    form.setValue("slug", createSlug(title));
-  }, [title, form]); // Run this effect whenever the title changes
-
   return (
     <div className="w-full">
       <Dialog open={open} onOpenChange={setOpen}>
@@ -156,31 +126,6 @@ export default function AddCalendarProduct({
                               name="title"
                               id="title"
                               placeholder="Quick Chat"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-4 gap-4">
-                  <Label htmlFor="url" className="text-right mt-3">
-                    URL
-                  </Label>
-                  <div className="col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="slug"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <PrefixInputLeft
-                              {...field}
-                              prefix={`klipp.io/${storeUrl}/`}
-                              id="slug"
-                              defaultValue={slug} // Set the slug value here
                             />
                           </FormControl>
                           <FormMessage />

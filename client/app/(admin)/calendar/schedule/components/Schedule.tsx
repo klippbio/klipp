@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import AddScheduleModal from "./AddScheduleModal";
 import { useCallback, useEffect } from "react";
+import { AxiosError } from "axios";
 export type ScheduleAvailabilityType = {
   id: number;
   name: string;
@@ -69,7 +70,11 @@ export default function Schedule() {
     },
     [router]
   );
-  const { data: response, isLoading } = useQuery<allSchedulesResponse>(
+  const {
+    data: response,
+    isLoading,
+    error,
+  } = useQuery<allSchedulesResponse, AxiosError>(
     ["allSchedules", authDetails?.storeId],
     async () =>
       await AxiosApi(
@@ -80,6 +85,9 @@ export default function Schedule() {
       enabled: !!authDetails?.storeId,
     }
   );
+  if (error?.response?.status === 500) {
+    throw Error("Internal Server Error");
+  }
   const allSchedules = response?.schedules;
   const defaultSchedule = response?.defaultSchedule;
   useEffect(() => {
