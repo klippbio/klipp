@@ -1,5 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import SidePanel from "./[productId]/sidePanel";
+import SidePanel from "./components/sidePanel";
 
 interface DigitalDownloadsLayoutProps {
   children: React.ReactNode;

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import EditorJS from "@editorjs/editorjs";
 import "./editor.css";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
+import { read } from "fs";
 
 export default function Editor({
   initialBlocks,
@@ -97,8 +98,9 @@ export default function Editor({
             class: Paragraph,
             inlineToolbar: true,
             config: {
-              placeholder:
-                "Type your product description here. Press TAB to get started...",
+              placeholder: isReadonly
+                ? ""
+                : "Type your product description here. Press TAB to get started...",
               preserveBlank: true,
             },
           },

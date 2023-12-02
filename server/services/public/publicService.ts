@@ -1,7 +1,5 @@
 import { z } from "zod";
 import { db } from "../../utils/db.server";
-import type { DigitalProduct } from "@prisma/client";
-import { parse } from "path";
 
 export const ZUserName = z.object({
   userName: z.string(),
@@ -32,23 +30,26 @@ export const getPublicProduct = async (input: z.infer<typeof ZProductId>) => {
     where: {
       id: parseInt(input.id),
     },
-    include: {
-      DigitalProduct: {
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          recPrice: true,
-          minPrice: true,
-          flexPrice: true,
-          currency: true,
-          shortDescription: true,
-          thumbnailUrl: true,
-          description: true,
-          visibility: true,
-        },
-      },
-    },
   });
+
+  if (product?.itemType === "DIGITALPRODUCT") {
+    const digitalProduct = await db.digitalProduct.findUnique({
+      where: {
+        storeItemId: parseInt(input.id),
+      },
+    });
+    return { ...product, itemDetails: digitalProduct };
+  }
+  if (product?.itemType === "CALENDAR") {
+    const calendar = await db.calendarProduct.findUnique({
+      where: {
+        storeItemId: parseInt(input.id),
+      },
+    });
+    if (!calendar) return product;
+    const itemDetails = { ...calendar, name: calendar.title };
+    return { ...product, itemDetails };
+  }
+
   return product;
 };

@@ -79,7 +79,7 @@ export const createCalendarProduct = async (
 
   const calendarProduct = await db.storeItem.create({
     data: {
-      itemType: "CALENDER",
+      itemType: "CALENDAR",
       store: {
         connect: {
           id: storeId,

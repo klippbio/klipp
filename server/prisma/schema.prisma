@@ -107,7 +107,7 @@ enum StoreItemType {
   LINK @map("link")
   DIGITALPRODUCT @map("digitalproduct")
   SOCIALSET @map("socialset")
-  CALENDER @map("calender")
+  CALENDAR @map("calendar")
   WEBINAR @map("webinar")
   COURSE @map("course")
 }

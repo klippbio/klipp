@@ -90,79 +90,90 @@ export default function Schedule() {
 
   return (
     <div className="flex flex-col w-full md:w-5/6">
-      {isLoading || !allSchedules || !currentScheduleId ? (
+      {isLoading ? (
         <div className="flex justify-center items-center h-full w-full">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       ) : (
-        <div className="flex w-full flex-col space-y-4">
-          <div className="flex">
-            <div className="hidden lg:flex">
-              <div className="flex space-x-2">
-                {allSchedules &&
-                  allSchedules.map((schedule) => {
-                    return (
-                      <Button
-                        value={schedule.name}
-                        key={schedule.id}
-                        variant="ghost"
-                        className={
-                          schedule.id === Number(currentScheduleId)
-                            ? "text-overlay-foreground bg-overlay"
-                            : ""
-                        }
-                        onClick={() => updateUrlSchedule(schedule.id)}
-                      >
-                        {schedule.name}
-                      </Button>
-                    );
-                  })}
+        <div>
+          {!defaultSchedule ? (
+            <div className="flex flex-row justify-between items-center">
+              <div>
+                <AddScheduleModal authDetails={authDetails} />
               </div>
             </div>
-            <div className="lg:hidden">
-              <Select
-                key={currentScheduleId}
-                defaultValue={
-                  currentScheduleId
-                    ? `${currentScheduleId}-${
-                        allSchedules.find(
-                          (schedule) =>
-                            schedule.id === Number(currentScheduleId)
-                        )?.name
-                      }`
-                    : ""
-                }
-                onValueChange={(value) => {
-                  const [id] = value.split("-"); // Extract the ID
-                  updateUrlSchedule(Number(id)); // Update the URL with the extracted ID
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select a schedule" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
+          ) : (
+            <div className="flex w-full flex-col space-y-4">
+              <div className="flex">
+                <div className="hidden lg:flex">
+                  <div className="flex space-x-2">
                     {allSchedules &&
-                      allSchedules.map((schedule) => (
-                        // Use the combination of ID and name as the value, but only display the name
-                        <SelectItem
-                          value={`${schedule.id}-${schedule.name}`}
-                          key={schedule.id}
-                        >
-                          {schedule.name}
-                        </SelectItem>
-                      ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                      allSchedules.map((schedule) => {
+                        return (
+                          <Button
+                            value={schedule.name}
+                            key={schedule.id}
+                            variant="ghost"
+                            className={
+                              schedule.id === Number(currentScheduleId)
+                                ? "text-overlay-foreground bg-overlay"
+                                : ""
+                            }
+                            onClick={() => updateUrlSchedule(schedule.id)}
+                          >
+                            {schedule.name}
+                          </Button>
+                        );
+                      })}
+                  </div>
+                </div>
+                <div className="lg:hidden">
+                  <Select
+                    key={currentScheduleId}
+                    defaultValue={
+                      currentScheduleId
+                        ? `${currentScheduleId}-${
+                            allSchedules &&
+                            allSchedules.find(
+                              (schedule) =>
+                                schedule.id === Number(currentScheduleId)
+                            )?.name
+                          }`
+                        : ""
+                    }
+                    onValueChange={(value) => {
+                      const [id] = value.split("-"); // Extract the ID
+                      updateUrlSchedule(Number(id)); // Update the URL with the extracted ID
+                    }}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select a schedule" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {allSchedules &&
+                          allSchedules.map((schedule) => (
+                            // Use the combination of ID and name as the value, but only display the name
+                            <SelectItem
+                              value={`${schedule.id}-${schedule.name}`}
+                              key={schedule.id}
+                            >
+                              {schedule.name}
+                            </SelectItem>
+                          ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="ml-auto">
+                  <AddScheduleModal authDetails={authDetails} />
+                </div>
+              </div>
+              <div>
+                <ScheduleForm authDetails={authDetails} />
+              </div>
             </div>
-            <div className="ml-auto">
-              <AddScheduleModal authDetails={authDetails} />
-            </div>
-          </div>
-          <div>
-            <ScheduleForm authDetails={authDetails} />
-          </div>
+          )}
         </div>
       )}
     </div>
