@@ -10,18 +10,15 @@ import { Badge } from "@/components/ui/badge";
 import CalendarProductDropdown from "./CalendarProductDropdown";
 import { CalendarProductApiResponse } from "@/types/apiResponse";
 import CalendarSkeleton from "./CalendarSkeleton";
-import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 
 function CalendarHome() {
   const authDetails = useAuthDetails();
   const storeId = authDetails?.storeId;
-  const router = useRouter();
 
   const {
     data: calendarProducts,
     isLoading: calendarProductsLoading,
-    isError,
     error,
   } = useQuery<Array<CalendarProductApiResponse>, AxiosError>(
     ["calendarProducts", storeId],

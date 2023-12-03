@@ -12,7 +12,8 @@ publicController.get("/publicUser", async (req: Request, res: Response) => {
     const publicUser = await publicService.getPublicUser(
       await publicService.ZUserName.parseAsync({ userName: userName })
     );
-    res.status(201).json(publicUser);
+    if (!publicUser) throw new CustomError("User not found", 404);
+    res.status(200).json(publicUser);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
@@ -23,10 +24,12 @@ publicController.get("/publicUser", async (req: Request, res: Response) => {
 publicController.get("/product", async (req: Request, res: Response) => {
   try {
     const id = req.query.id;
-    const publicUser = await publicService.getPublicProduct(
-      await publicService.ZProductId.parseAsync({ id: id })
+    const username = req.query.username;
+    const product = await publicService.getPublicProduct(
+      await publicService.ZProduct.parseAsync({ id: id, userName: username })
     );
-    res.status(201).json(publicUser);
+    if (!product) throw new CustomError("Product not found", 404);
+    res.status(200).json(product);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });

@@ -101,7 +101,6 @@ export function CalendarProductEdit({
 }) {
   //consts
   const authDetails = useAuthDetails();
-  const storeUrl = authDetails.storeUrl;
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [editorData, setEditorData] = useState("");
