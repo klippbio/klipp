@@ -5,7 +5,7 @@
 "use client";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { AxiosError } from "axios";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -21,15 +21,33 @@ import { ArrowLeft, CalendarClock, FileDown } from "lucide-react";
 import DigitalDownloadContent from "../components/digitalDownloadContent";
 import CalendarContent from "../components/calendarContent";
 import { useAuthDetails } from "@/app/components/AuthContext";
+import AxiosApi from "@/app/services/axios";
+import ProductNotFound from "../components/ProductNotFound";
+import { storeItem } from "../..";
 
 function PublicDigitalProduct() {
+  const username = usePathname().split("/")[1];
   const id = usePathname().split("/").pop();
-  const { data, isLoading } = useQuery(["productId", id], async () => {
-    const response = await axios.get(`/api/product/?id=${id}`);
-    return response.data;
-  });
   const router = useRouter();
   const authDetails = useAuthDetails();
+
+  const { data, isLoading, error } = useQuery<storeItem, AxiosError>(
+    ["productId", id],
+    async () => {
+      const response = await AxiosApi(
+        "GET",
+        `/api/product/?id=${id}&username=${username}`
+      );
+      return response.data;
+    }
+  );
+
+  if (error?.response?.status === 404) {
+    return <ProductNotFound />;
+  }
+  if (error?.response?.status === 500) {
+    throw Error("Internal Server Error");
+  }
 
   return (
     <div className="md:flex md:justify-center md:mt-8 md:mx-8 ">
