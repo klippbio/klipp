@@ -160,7 +160,7 @@ model CalendarProduct {
   hidden                          Boolean                 @default(false)
   bookings                        Booking[]
   availability                    Availability[]
-  timeZone                        String?
+  timeZone                        String
 
   price                           String?                 @default("0")
   recPrice                        String?                 @default("0")

@@ -1,0 +1,206 @@
+
+// export const getAvailableSlots = async (input: z.infer<typeof ZGetAvailableSlotSchema>) => {
+
+//     const calendarProduct = await db.calendarProduct.findUnique({ 
+//         where: { id: input.calendarProductId },
+//         include: {
+//             availability: true,
+//             bookings: true,
+//             schedule: true,
+//         },
+//     });
+
+//     if (!calendarProduct) throw new CustomError("Calendar product not found", 404);
+  
+//     const getStartTime = (startTimeInput: string, timeZone?: string) => {
+//       const startTimeMin = dayjs.utc().add(calendarProduct.minimumBookingNotice, "minutes");
+//       const startTime = timeZone === "Etc/GMT" ? dayjs.utc(startTimeInput) : dayjs(startTimeInput).tz(timeZone);
+  
+//       return startTimeMin.isAfter(startTime) ? startTimeMin.tz(timeZone) : startTime;
+//     };
+  
+//     const startTime = getStartTime(input.startTime, input.timeZone);
+//     const endTime =
+//       input.timeZone === "Etc/GMT" ? dayjs.utc(input.endTime) : dayjs(input.endTime).utc().tz(input.timeZone);
+  
+//     if (!startTime.isValid() || !endTime.isValid()) {
+//       throw new CustomError("Invalid time range given.", 400);
+//     }
+  
+//     const startTimeDate = startTime.toDate();
+  
+//     const endTimeDate = endTime.toDate();
+  
+//     const sharedQuery = {
+//       startTime: { gte: startTimeDate },
+//       endTime: { lte: endTimeDate },
+//     };
+  
+//     const currentBookingsAllUsers = await db.booking.findMany({
+//       where: {
+//         OR: [
+//           // User is primary host (individual events, or primary organizer)
+//           {
+//             ...sharedQuery,
+//             userId: {
+//               in: usersWithCredentials.map((user) => user.id),
+//             },
+//           },
+//           // The current user has a different booking at this time he/she attends
+//           {
+//             ...sharedQuery,
+//             attendees: {
+//               some: {
+//                 email: {
+//                   in: usersWithCredentials.map((user) => user.email),
+//                 },
+//               },
+//             },
+//           },
+//         ],
+//       },
+//       select: {
+//         id: true,
+//         uid: true,
+//         userId: true,
+//         startTime: true,
+//         endTime: true,
+//         title: true,
+//         attendees: true,
+//         eventType: {
+//           select: {
+//             id: true,
+//             afterEventBuffer: true,
+//             beforeEventBuffer: true,
+//             seatsPerTimeSlot: true,
+//           },
+//         },
+//         ...(!!eventType?.seatsPerTimeSlot && {
+//           _count: {
+//             select: {
+//               seatsReferences: true,
+//             },
+//           },
+//         }),
+//       },
+//     });
+  
+//     /* We get all users working hours and busy slots */
+//     const userAvailability = await Promise.all(
+//       usersWithCredentials.map(async (currentUser) => {
+//         const {
+//           busy,
+//           dateRanges,
+//           currentSeats: _currentSeats,x
+//           timeZone,
+//         } = await getUserAvailability(
+//           {
+//             userId: currentUser.id,
+//             username: currentUser.username || "",
+//             dateFrom: startTime.format(),
+//             dateTo: endTime.format(),
+//             eventTypeId: eventType.id,
+//             afterEventBuffer: eventType.afterEventBuffer,
+//             beforeEventBuffer: eventType.beforeEventBuffer,
+//             duration: input.duration || 0,
+//           },
+//           {
+//             user: currentUser,
+//             eventType,
+//             currentSeats,
+//             rescheduleUid: input.rescheduleUid,
+//             currentBookings: currentBookingsAllUsers
+//               .filter(
+//                 (b) => b.userId === currentUser.id || b.attendees?.some((a) => a.email === currentUser.email)
+//               )
+//               .map((bookings) => {
+//                 const { attendees: _attendees, ...bookingWithoutAttendees } = bookings;
+//                 return bookingWithoutAttendees;
+//               }),
+//           }
+//         );
+//         if (!currentSeats && _currentSeats) currentSeats = _currentSeats;
+//         return {
+//           timeZone,
+//           dateRanges,
+//           busy,
+//           user: currentUser,
+//         };
+//       })
+//     );
+  
+  
+//     const getSlotsTime = 0;
+//     const checkForAvailabilityTime = 0;
+//     const getSlotsCount = 0;
+//     const checkForAvailabilityCount = 0;
+
+//     if (!calendarProduct.schedule?.timeZone || !calendarProduct.timeZone) {
+//         throw new CustomError("Sorry the Store Owner hasn't configured timezone !!", 404);
+//     }
+  
+//     const timeSlots = getSlots({
+//       inviteeDate: startTime,
+//       eventLength: calendarProduct.length,
+//       offsetStart: 0,
+//       dateRanges: userAvailability,
+//       minimumBookingNotice: calendarProduct.minimumBookingNotice,
+//       frequency: calendarProduct.length,
+//       organizerTimeZone: calendarProduct.timeZone || calendarProduct.schedule?.timeZone 
+//     });
+  
+//     let availableTimeSlots: typeof timeSlots = [];
+  
+//     availableTimeSlots = timeSlots;
+//     // fr-CA uses YYYY-MM-DD
+//     const formatter = new Intl.DateTimeFormat("fr-CA", {
+//       year: "numeric",
+//       month: "2-digit",
+//       day: "2-digit",
+//       timeZone: input.timeZone,
+//     });
+  
+//     const computedAvailableSlots = availableTimeSlots.reduce(
+//       (
+//         r: Record<string, { time: string; users: string[]; attendees?: number; bookingUid?: string }[]>,
+//         { time, ...passThroughProps }
+//       ) => {
+//         // TODO: Adds unit tests to prevent regressions in getSchedule (try multiple timezones)
+  
+//         // This used to be _time.tz(input.timeZone) but Dayjs tz() is slow.
+//         // toLocaleDateString slugish, using Intl.DateTimeFormat we get the desired speed results.
+//         const dateString = formatter.format(time.toDate());
+  
+//         r[dateString] = r[dateString] || [];
+//         r[dateString].push({
+//           ...passThroughProps,
+//           time: time.toISOString(),
+//           users: (eventType.hosts
+//             ? eventType.hosts.map((hostUserWithCredentials) => {
+//                 const { user } = hostUserWithCredentials;
+//                 return user;
+//               })
+//             : eventType.users
+//           ).map((user) => user.username || ""),
+//           // Conditionally add the attendees and booking id to slots object if there is already a booking during that time
+//           ...(currentSeats?.some((booking) => booking.startTime.toISOString() === time.toISOString()) && {
+//             attendees:
+//               currentSeats[
+//                 currentSeats.findIndex((booking) => booking.startTime.toISOString() === time.toISOString())
+//               ]._count.attendees,
+//             bookingUid:
+//               currentSeats[
+//                 currentSeats.findIndex((booking) => booking.startTime.toISOString() === time.toISOString())
+//               ].uid,
+//           }),
+//         });
+//         return r;
+//       },
+//       Object.create(null)
+//     );
+  
+//     return {
+//       slots: computedAvailableSlots,
+//     };
+//   }
+  
