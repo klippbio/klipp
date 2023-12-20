@@ -19,11 +19,11 @@ import {
 
 import { ArrowLeft, CalendarClock, FileDown } from "lucide-react";
 import DigitalDownloadContent from "../components/digitalDownloadContent";
-import CalendarContent from "../components/calendarContent";
+import CalendarContent from "../components/calendarComponents/calendarContent";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import AxiosApi from "@/app/services/axios";
 import ProductNotFound from "../components/ProductNotFound";
-import { storeItem } from "../..";
+import { CalendarDetails, DigitalProductDetails, storeItem } from "../..";
 
 function PublicDigitalProduct() {
   const username = usePathname().split("/")[1];
@@ -107,11 +107,15 @@ function PublicDigitalProduct() {
               )}
             </div>
           </div>
-          <CardContent className="pt-3 pb-36 md:pb-12">
+          <CardContent className="pt-3 pb-36 md:pb-12 p-3">
             {data && data.itemType === "DIGITALPRODUCT" ? (
-              <DigitalDownloadContent itemDetails={data.itemDetails} />
+              <DigitalDownloadContent
+                itemDetails={data.itemDetails as DigitalProductDetails}
+              />
             ) : data && data.itemType === "CALENDAR" ? (
-              <CalendarContent itemDetails={data.itemDetails} />
+              <CalendarContent
+                itemDetails={data.itemDetails as CalendarDetails}
+              />
             ) : (
               ""
             )}

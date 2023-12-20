@@ -7,15 +7,17 @@ export const slotController = express.Router();
 slotController.get("/get", async (req: Request, res: Response) => {
   try {
     // Destructure required parameters from req.query
-    const { calendarProductId, startTime, endTime, timeZone } = req.query;
+    const { storeItemId, startTime, endTime, timeZone } = req.query;
 
     // Construct the input object for the service function
     const serviceInput = {
-      calendarProductId: Number(calendarProductId), // Convert to number if it's expected to be a number
+      storeItemId: Number(storeItemId), // Convert to number if it's expected to be a number
       startTime: startTime as string, // Typecast to string
       endTime: endTime as string, // Typecast to string
       timeZone: timeZone as string, // Typecast to string
     };
+
+    console.log(serviceInput, "serviceInput");
 
     // Call the service function with the extracted parameters
     const slots = await getAvailableSlotsService(serviceInput);

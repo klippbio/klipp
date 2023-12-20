@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { CalendarDetails } from "@/app/(client)";
+import CalendarSlot from "./CalendarSlot";
 
 const bookingFormSchema = z.object({
   name: z.string(),
@@ -21,8 +23,10 @@ const bookingFormSchema = z.object({
 export default function CalendarContent({
   itemDetails,
 }: {
-  itemDetails: any; //eslint-disable-line
+  itemDetails: CalendarDetails;
 }) {
+  console.log(itemDetails, "itemDetails");
+
   const initialBlocksData = JSON.parse(itemDetails.description)?.blocks;
 
   const form = useForm<z.infer<typeof bookingFormSchema>>({
@@ -42,6 +46,9 @@ export default function CalendarContent({
           isReadonly={true}
         ></Editor>
       </div>
+      <div>
+        <CalendarSlot storeItemId={itemDetails.storeItemId} />
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-row gap-4 md:flex-nowrap flex-wrap">
@@ -60,7 +67,6 @@ export default function CalendarContent({
                 )}
               />
             </div>
-
             <div className=" md:w-1/2 w-full">
               <FormField
                 control={form.control}

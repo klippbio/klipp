@@ -13,7 +13,7 @@ export const ZGetAvailableSlotSchema = z.object({
   startTime: z.string(),
   endTime: z.string(),
   // Event type slug
-  calendarProductId: z.number(),
+  storeItemId: z.number(),
   // invitee timezone
   timeZone: z.string(),
 });
@@ -21,17 +21,23 @@ export const ZGetAvailableSlotSchema = z.object({
 export const getAvailableSlotsService = async (
   input: z.infer<typeof ZGetAvailableSlotSchema>
 ) => {
-  const {
-    startTime,
-    endTime,
-    calendarProductId,
-    timeZone: inputTimezone,
-  } = input;
+  const { startTime, endTime, storeItemId, timeZone: inputTimezone } = input;
+
+  console.log(input, "input");
+
+  const storeItem = await db.storeItem.findUnique({
+    where: {
+      id: storeItemId,
+    },
+    include: {
+      calendarProduct: true,
+    },
+  });
 
   // Retrieve the Calendar Product
   const calendarProduct = await db.calendarProduct.findUnique({
     where: {
-      id: calendarProductId,
+      id: storeItem?.calendarProduct?.id,
     },
     include: {
       bookings: true,
@@ -224,6 +230,8 @@ export const getAvailableSlotsService = async (
     timeZone: inputTimezone,
   });
 
+  console.log(formatter, "formatter");
+
   const computedAvailableSlots = slots.reduce(
     (
       r: Record<
@@ -252,13 +260,5 @@ export const getAvailableSlotsService = async (
     Object.create(null)
   );
 
-  return {
-    result: {
-      data: {
-        json: {
-          slots: computedAvailableSlots,
-        },
-      },
-    },
-  };
+  return { slots: computedAvailableSlots };
 };
