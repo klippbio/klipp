@@ -37,7 +37,7 @@ model Store {
 model Payment {
   id           Int   @id @default(autoincrement()) @unique
   storeId        String
-  accountId       String
+  accountId       String @unique
   onboardingComplete Boolean @default(false)
   store          Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }
