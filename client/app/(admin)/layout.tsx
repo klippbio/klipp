@@ -2,7 +2,7 @@
 import "../globals.css";
 import { SideNav } from "../components/sideNav";
 import { BottomBar } from "../components/bottomBar";
-import { FileCheck2 } from "lucide-react/";
+import { DollarSignIcon, FileCheck2 } from "lucide-react/";
 import { HomeIcon } from "lucide-react/";
 import { Calendar } from "lucide-react/";
 import { Server } from "lucide-react/";
@@ -33,6 +33,12 @@ const navItems = [
     href: "/digital-products",
     baseHref: "/digital-products",
     icon: <FileCheck2 size={20} />,
+  },
+  {
+    title: "Payments",
+    href: "/payments",
+    baseHref: "/payments",
+    icon: <DollarSignIcon size={20} />,
   },
 ];
 
