@@ -178,19 +178,23 @@ calendarController.get(
   }
 );
 
-calendarController.get("/settings", async (req: Request, res: Response) => {
-  try {
-    const params = await ZGetOrDeleteCalendarSettingSchema.parseAsync({
-      storeId: req.query.storeId as string,
-    });
-    const calendarSettings = await getCalendarSettings(params);
-    res.status(200).json(calendarSettings);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+calendarController.get(
+  "/settings",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      const params = await ZGetOrDeleteCalendarSettingSchema.parseAsync({
+        storeId: req.query.storeId as string,
+      });
+      const calendarSettings = await getCalendarSettings(params);
+      res.status(200).json(calendarSettings);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 calendarController.post(
   "/settings",

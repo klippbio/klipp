@@ -5,11 +5,14 @@ import { useEffect, useRef, useState } from "react";
 import EditorJS from "@editorjs/editorjs";
 import "./editor.css";
 import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
+import { read } from "fs";
 
-export default function Editor({ initialBlocks, updateEditorData }) {
+export default function Editor({
+  initialBlocks,
+  updateEditorData,
+  isReadonly,
+}) {
   const [isMounted, setIsMounted] = useState(false);
-  const editorRef = useRef();
-  const [saved, setSaved] = useState(false);
   const [deleteUrls, setDeleteUrls] = useState<string[]>([]);
 
   const ref = useRef<EditorJS>();
@@ -20,14 +23,12 @@ export default function Editor({ initialBlocks, updateEditorData }) {
 
   async function uploadFileFromEditor(file: File, url: string) {
     const awsUrl = await uploadFile(url, file);
-    setSaved(false);
+
     return awsUrl;
   }
 
   const initializeEditor = async () => {
     const EditorJS = (await import("@editorjs/editorjs")).default;
-    const Table = require("@editorjs/table");
-    const Quote = require("@editorjs/quote");
     const ImageTool = require("@editorjs/image");
     const Delimiter = require("@editorjs/delimiter");
     const Header = require("@editorjs/header");
@@ -41,6 +42,8 @@ export default function Editor({ initialBlocks, updateEditorData }) {
     if (!ref.current) {
       const editor = new EditorJS({
         holder: "editorjs",
+        minHeight: 0,
+        readOnly: isReadonly,
         data: {
           blocks: initialBlocks,
         },
@@ -81,18 +84,23 @@ export default function Editor({ initialBlocks, updateEditorData }) {
               }
             }
           }
-          save();
+          if (!isReadonly) {
+            editor.save().then((outputData) => {
+              console.log("Article data: ", outputData);
+              updateEditorData(outputData);
+            });
+          }
+          // setSaved(false);
         },
         tools: {
-          table: Table,
-          quote: Quote,
           header: Header,
           paragraph: {
             class: Paragraph,
             inlineToolbar: true,
             config: {
-              placeholder:
-                "Type your product description here. Press TAB to get started...",
+              placeholder: isReadonly
+                ? ""
+                : "Type your product description here. Press TAB to get started...",
               preserveBlank: true,
             },
           },
@@ -169,29 +177,39 @@ export default function Editor({ initialBlocks, updateEditorData }) {
     if (isMounted) {
       init();
 
-      return () => {
+      return async () => {
+        console.log("Unmounting editor");
         if (ref.current) {
+          if (!isReadonly) {
+            await ref.current.save().then((outputData) => {
+              console.log("Article data final: ", outputData);
+              updateEditorData(outputData);
+            });
+          }
+          console.log("Destroying editor");
           ref.current.destroy();
         }
       };
     }
   }, [isMounted]);
 
-  const save = () => {
-    if (ref.current) {
-      ref.current.save().then((outputData) => {
-        updateEditorData(outputData);
-      });
-    }
-  };
+  // const save = () => {
+  //   console.log("sac e called");
+  //   if (ref.current && !isReadonly) {
+  //     ref.current.save().then((outputData) => {
+  //       console.log("Article data: ", outputData);
+  //       updateEditorData(outputData);
+  //     });
+  //   }
+  // };
 
   useEffect(() => {
     console.log("Delete urls: ", deleteUrls);
   }, [deleteUrls]);
 
   return (
-    <div className="border-2 rounded-md p-7 flex flex-colv w-full">
-      <div id="editorjs" className="min-h-[100px] w-full" />
+    <div className="rounded-md flex w-full">
+      <div id="editorjs" className=" w-full" />
     </div>
   );
 }

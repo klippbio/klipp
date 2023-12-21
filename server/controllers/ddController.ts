@@ -102,6 +102,7 @@ ddController.get(
       );
       res.status(201).json(product);
     } catch (error) {
+      console.log(error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
