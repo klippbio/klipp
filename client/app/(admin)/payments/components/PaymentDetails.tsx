@@ -18,7 +18,6 @@ function PaymentDetails() {
   });
 
   const accountId = data?.accountId;
-  console.log(accountId);
   const { data: balanceData, isLoading: isBalanceLoading } = useQuery(
     ["stripeBalance"],
     async () => {

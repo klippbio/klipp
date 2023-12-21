@@ -184,7 +184,6 @@ paymentController.get(
 
       res.status(200).json(balance);
     } catch (error) {
-      console.log(error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -194,12 +193,10 @@ paymentController.get(
 
 paymentController.post("/payout", async (req: Request, res: Response) => {
   try {
-    console.log("req.body ", req.body);
     const balance = await stripe.balance.retrieve({
       stripeAccount: req.body.accountId,
     });
     const { amount, currency } = balance.available[0];
-    console.log("amount ", amount);
     // Create a payout
     const payout = await stripe.payouts.create(
       {
@@ -211,7 +208,6 @@ paymentController.post("/payout", async (req: Request, res: Response) => {
     );
     res.status(200).json("success");
   } catch (error) {
-    // console.log(error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
