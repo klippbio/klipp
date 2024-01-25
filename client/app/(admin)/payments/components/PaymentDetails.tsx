@@ -3,9 +3,9 @@ import AxiosApi from "@/app/services/axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import getSymbolFromCurrency from "currency-symbol-map";
 
 function PaymentDetails() {
   const queryClient = useQueryClient();
@@ -35,7 +35,9 @@ function PaymentDetails() {
   const availableBalance = balanceData?.available[0].amount / 100;
   const pendingBalance = balanceData?.pending[0].amount / 100;
   const totalBalance = availableBalance + pendingBalance;
+
   const currency = balanceData?.available[0].currency.toUpperCase();
+  const currencySymbol = getSymbolFromCurrency(currency);
 
   const payOutMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -68,28 +70,51 @@ function PaymentDetails() {
     <div>
       {isLoading || isBalanceLoading ? (
         <div>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-foreground mb-4">
-                Payment Details
-              </CardTitle>
-              <CardContent className="flex flex-col gap-4">
-                <Skeleton className="h-4 " />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-4 " />
-                <Skeleton className="h-4" />
-                <Skeleton className="h-4" />
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-4 " />
-                <Skeleton className="h-4 " />
-              </CardContent>
-            </CardHeader>
+          <Card className="bg-secondary">
+            {!data ? (
+              <div>
+                {" "}
+                <CardHeader>
+                  <CardTitle className="text-foreground mb-8">
+                    Payment Details
+                  </CardTitle>
+                  <CardContent className="flex flex-col gap-4">
+                    <Card className="flex w-full border-dashed border-2 h-60 justify-center ">
+                      <div className="flex flex-col justify-center items-center">
+                        <div className="text-l font-semibold text-foreground  ">
+                          Stripe Account not Connected
+                        </div>
+                        <div className="mt-2 text-sm">
+                          Connect your stripe account to see payment details.
+                        </div>
+                      </div>
+                    </Card>
+                  </CardContent>
+                </CardHeader>
+              </div>
+            ) : (
+              <CardHeader>
+                <CardTitle className="text-foreground mb-4">
+                  Payment Details
+                </CardTitle>
+                <CardContent className="flex flex-col gap-4">
+                  <Skeleton className="h-4 " />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 " />
+                  <Skeleton className="h-4" />
+                  <Skeleton className="h-4" />
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-6 w-1/2" />
+                  <Skeleton className="h-4 " />
+                  <Skeleton className="h-4 " />
+                </CardContent>
+              </CardHeader>
+            )}
           </Card>
         </div>
       ) : (
         <div>
-          <Card>
+          <Card className="">
             <CardHeader>
               <CardTitle className="text-foreground">Payment Details</CardTitle>
               <CardContent>
@@ -97,24 +122,29 @@ function PaymentDetails() {
                   <div className="flex flex-col w-full md:w-2/3  mt-6">
                     <div>Account Balance</div>
                     <div className="text-foreground mt-4 font-bold text-5xl">
-                      {currency}
+                      {currencySymbol + "  "}
                       {totalBalance}
                     </div>
+                    <div className=" mt-6 text-sm">
+                      **Only available balance can be withdrawn.
+                    </div>
                   </div>
-                  <div className="w-full md:w-1/3">
-                    <div className="text-2xl font-semibold mb-2">
-                      <h1>Balances</h1>
+                  <Card className="p-4 w-full mt-4 md:w-1/3 gap-4 bg-overlay justify-center ">
+                    <div className="">
+                      <div className="text-xl text-foreground font-semibold mb-2">
+                        <h1>Balance Breakdown</h1>
+                      </div>
+                      <div className="text-foreground ">
+                        Available - {currencySymbol} {availableBalance}
+                      </div>
+                      <div className="text-foreground">
+                        Pending - {currencySymbol} {pendingBalance}
+                      </div>
+                      <Button className="mt-3" onClick={() => handlePayOut()}>
+                        Pay Out
+                      </Button>
                     </div>
-                    <div className="text-foreground ">
-                      Available - {currency} {availableBalance}
-                    </div>
-                    <div className="text-foreground">
-                      Pending - {currency} {pendingBalance}
-                    </div>
-                    <Button className="mt-2 " onClick={() => handlePayOut()}>
-                      Pay Out
-                    </Button>
-                  </div>
+                  </Card>
                 </div>
               </CardContent>
             </CardHeader>

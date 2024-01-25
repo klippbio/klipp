@@ -385,7 +385,7 @@ export function PaymentMethods() {
                       </Button>
                     )}
                     {accountStatus === "pending" && (
-                      <Badge className="h-8 w-1/3 ml-auto" variant="secondary">
+                      <Badge className="h-8 ml-auto" variant="secondary">
                         <span>Connection Incomplete</span>
                       </Badge>
                     )}
