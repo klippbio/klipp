@@ -7,7 +7,7 @@ import StripeComponent from "./components/StripeComponent";
 function Payments() {
   return (
     <div className="w-full">
-      <div className="flex md:flex-row flex-col gap-4 w-full">
+      <div className="flex md:flex-row gap-4 flex-col w-full">
         <div className="md:w-2/3 w-full">
           <PaymentDetails />
         </div>
@@ -15,7 +15,9 @@ function Payments() {
           <PaymentMethods />
         </div>
       </div>
-      <StripeComponent />
+      <div className="w-full mt-4">
+        <StripeComponent />
+      </div>
     </div>
   );
 }

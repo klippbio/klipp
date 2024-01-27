@@ -135,10 +135,10 @@ function PaymentDetails() {
                         <h1>Balance Breakdown</h1>
                       </div>
                       <div className="text-foreground ">
-                        Available - {currencySymbol} {availableBalance}
+                        Available = {currencySymbol} {availableBalance}
                       </div>
                       <div className="text-foreground">
-                        Pending - {currencySymbol} {pendingBalance}
+                        Held By Stripe = {currencySymbol} {pendingBalance}
                       </div>
                       <Button className="mt-3" onClick={() => handlePayOut()}>
                         Pay Out
