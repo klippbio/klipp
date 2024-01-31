@@ -12,6 +12,9 @@ export interface storeItem {
   id: number;
   itemOrder: number;
   storeId: string;
+  price: string;
+  currency: string[];
+  name: string;
   itemType: "DIGITALPRODUCT" | "CALENDAR";
   itemDetails: DigitalProductDetails | CalendarDetails;
 }
