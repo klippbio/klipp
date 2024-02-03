@@ -14,6 +14,10 @@ import { useRouter } from "next/navigation";
 import { Input, PrefixInputLeft } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  useAuthDetails,
+  useRefreshAuthDetails,
+} from "../components/AuthContext";
+import {
   deleteFile,
   uploadFile,
   generateUploadURL,
@@ -69,17 +73,15 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
   //consts
   const { userId, getToken } = useAuth();
   const { user } = useUser();
-  const email = user?.emailAddresses[0].emailAddress;
   const router = useRouter();
+  const email = user?.emailAddresses[0].emailAddress;
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const authDetails = useAuthDetails();
+  const [isLoading, setIsLoading] = useState(true);
+
   //validateing if user is onboarded
-  // useEffect(() => {
-  //   if (user?.unsafeMetadata.onboarded) {
-  //     router.push("/dashboard");
-  //   }
-  // }, [user]);
 
   //form prefix logic
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
@@ -102,6 +104,20 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
     setImageUrl("");
     return await deleteFile(imageUrl);
   }
+
+  //validateing if user is onboarded
+
+  useEffect(() => {
+    if (authDetails.storeUrl) {
+      toast({
+        title: "User already onboarded!",
+        duration: 3000,
+      });
+      router.push("/");
+    } else if (authDetails.userId && !authDetails.storeUrl) {
+      setIsLoading(false);
+    }
+  }, [isLoading, authDetails, router, toast]);
 
   async function getUploadURL() {
     return await generateUploadURL();
@@ -137,7 +153,7 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
         duration: 1000,
         description: "Your profile was created.",
       });
-      router.push("/dashboard");
+      onFormSubmitSuccess();
     },
     onError: (error: any) => {
       toast({
@@ -146,7 +162,6 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
         duration: 2000,
         description: error.response.data.error,
       });
-      onFormSubmitSuccess();
     },
   });
 

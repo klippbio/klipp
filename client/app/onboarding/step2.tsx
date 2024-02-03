@@ -1,14 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { useState, useEffect, use } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
@@ -20,8 +18,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Input, PrefixInputLeft } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { MoveRight } from "lucide-react";
 
 type OnboardingFormValues = {
   instagram: string;
@@ -31,19 +30,18 @@ type OnboardingFormValues = {
 };
 
 function Step2() {
+  const { userId, getToken } = useAuth();
+  const { user } = useUser();
+  const email = user?.emailAddresses[0].emailAddress;
+
+  const { toast } = useToast();
+  const router = useRouter();
+
   const onboardingFormSchema = z.object({
-    instagram: z.string().min(4, {
-      message: "Username must be at least 4 characters.",
-    }),
-    tiktok: z.string().min(4, {
-      message: "Username must be at least 4 characters.",
-    }),
-    twitter: z.string().min(4, {
-      message: "Username must be at least 4 characters.",
-    }),
-    youtube: z.string().min(4, {
-      message: "Username must be at least 4 characters.",
-    }),
+    instagram: z.string().optional(),
+    tiktok: z.string().optional(),
+    twitter: z.string().optional(),
+    youtube: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
@@ -56,33 +54,43 @@ function Step2() {
     resolver: zodResolver(onboardingFormSchema),
   });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let newValue = event.target.value;
-    let id = event.target.id;
-    let placeholder = event.target.placeholder;
-
-    if (!newValue.startsWith(placeholder)) {
-      newValue = placeholder;
-    } else {
-      newValue = placeholder + newValue;
-    }
-
-    form.setValue(
-      id,
-      newValue.replace(placeholder + placeholder, placeholder),
-      { shouldDirty: true }
-    );
-
-    // console.log(event.target.id);
-  };
-
   function onSubmit(data: z.infer<typeof onboardingFormSchema>) {
+    console.log(data);
     // data.username = data.username.replace(fixedPrefix, "");
-    // mutation.mutate(data);
+    mutation.mutate(data);
   }
 
+  const mutation = useMutation({
+    mutationFn: async (data: OnboardingFormValues) => {
+      const combinedData = { ...data, userId, email };
+      return axios.post("/api/user/onboarding/socials", combinedData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${await getToken()}`,
+          mode: "cors",
+        },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success!",
+        duration: 1000,
+        description: "Your profile was created.",
+      });
+      router.push("/dashboard");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        duration: 2000,
+        description: error.response.data.error,
+      });
+    },
+  });
+
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col w-full max-w-4xl">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
           <FormField
@@ -92,17 +100,19 @@ function Step2() {
               <FormItem>
                 <FormLabel htmlFor="username">Instagram</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    id="instagram"
-                    placeholder="instagram.com/"
-                    onChange={handleChange}
-                  />
+                  <div className="w-full">
+                    <PrefixInputLeft
+                      id="instagram"
+                      prefix="instagram.com/"
+                      {...field}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="twitter"
@@ -110,12 +120,13 @@ function Step2() {
               <FormItem>
                 <FormLabel htmlFor="twitter">Twitter</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    id="twitter"
-                    placeholder="twitter.com/"
-                    onChange={handleChange}
-                  />
+                  <div className="w-full">
+                    <PrefixInputLeft
+                      id="twitter"
+                      prefix="twitter.com/"
+                      {...field}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -128,12 +139,13 @@ function Step2() {
               <FormItem>
                 <FormLabel htmlFor="tiktok">Tiktok</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    id="tiktok"
-                    placeholder="tiktok.com/@"
-                    onChange={handleChange}
-                  />
+                  <div className="w-full">
+                    <PrefixInputLeft
+                      id="tiktok"
+                      prefix="tiktok.com/@"
+                      {...field}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -146,18 +158,22 @@ function Step2() {
               <FormItem>
                 <FormLabel htmlFor="youtube">Youtube</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    id="youtube"
-                    placeholder="youtube.com/"
-                    onChange={handleChange}
-                  />
+                  <div className="w-full">
+                    <PrefixInputLeft
+                      id="youtube"
+                      prefix="youtube.com/"
+                      {...field}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <div className="flex gap-4 items-center">
+            <Button type="submit">Submit</Button>
+            <a href="/dashboard">Skip</a>
+          </div>
         </form>
       </Form>
     </div>
