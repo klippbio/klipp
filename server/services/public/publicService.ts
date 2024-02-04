@@ -17,10 +17,30 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
       storeUrl: input.userName,
     },
     include: {
-      storeItems: true,
+      storeItems: {
+        include: {
+          DigitalProduct: true,
+          calendarProduct: true,
+        },
+      },
     },
   });
-  return publicUser;
+
+  //TODO: EDIT THIS TO MATCH YOUR NEEDS
+  const transformedUser = publicUser && {
+    ...publicUser,
+    storeItems: publicUser.storeItems.map((item) => ({
+      id: item.id,
+      itemType: item.itemType,
+      name: item.DigitalProduct?.name || item.calendarProduct?.title,
+      price: item.DigitalProduct?.price || item.calendarProduct?.price || "0",
+      flexPrice:
+        item.DigitalProduct?.flexPrice || item.calendarProduct?.price || "0",
+      currency: item.DigitalProduct?.currency || item.calendarProduct?.currency,
+      // Add any other fields you need
+    })),
+  };
+  return transformedUser;
 };
 
 export const getPublicProduct = async (input: z.infer<typeof ZProduct>) => {

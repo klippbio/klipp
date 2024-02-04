@@ -140,11 +140,10 @@ paymentController.post(
         },
       ],
       payment_intent_data: {
-        application_fee_amount: 123,
         transfer_data: {
-          destination: "acct_1OLvmx4EIvJZrDDi",
+          destination: "acct_1OczqoQOwKYUBAc5",
         },
-        on_behalf_of: "acct_1OLvmx4EIvJZrDDi",
+        on_behalf_of: "acct_1OczqoQOwKYUBAc5",
       },
       success_url: "https://example.com/success",
       cancel_url: "https://example.com/cancel",
@@ -224,3 +223,33 @@ paymentController.post("/dashboard", async (req: Request, res: Response) => {
     else res.status(500).json({ error: error });
   }
 });
+
+paymentController.get(
+  "/account_session",
+  async (req: Request, res: Response) => {
+    try {
+      const accId = req.query.stripeAccountId;
+      const accountSession = await stripe.accountSessions.create({
+        account: accId,
+        components: {
+          payments: {
+            enabled: true,
+            features: {
+              refund_management: true,
+              dispute_management: true,
+              capture_payments: true,
+            },
+          },
+        },
+      });
+
+      res.json({
+        client_secret: accountSession.client_secret,
+      });
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
+  }
+);
