@@ -25,7 +25,11 @@ model Store {
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   storeItems       StoreItem[]
   payments         Payment[]
-
+  thumbnailUrl     String?
+  instagram        String?
+  tiktok           String?
+  youtube          String?
+  twitter          String?
   schedules Schedule[]
   bookings Booking[]
   calendarSetting CalendarSetting?

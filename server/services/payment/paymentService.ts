@@ -6,7 +6,7 @@ export const ZAccountSchema = z.object({
 });
 
 export const createAccount = async (input: z.infer<typeof ZAccountSchema>) => {
-  const storeId = "e2444f66-3887-41de-b03f-aa807828879d";
+  const storeId = "fdc6cfdf-5511-4587-a6ed-a09eb451b45c";
   const account = await db.payment.create({
     data: {
       accountId: input.accountId,
@@ -47,8 +47,7 @@ export const handleDeleteAccountFromDB = async (input: any) => {
 };
 
 export const getAccountDetails = async () => {
-  const storeId = "e2444f66-3887-41de-b03f-aa807828879d";
-
+  const storeId = "fdc6cfdf-5511-4587-a6ed-a09eb451b45c";
   //this should be unique change it once testing is done
   const accountDetails = await db.payment.findMany({
     where: {
