@@ -1,7 +1,7 @@
 // app/layout.tsx
-import "../globals.css";
-import { SideNav } from "../components/sideNav";
-import { BottomBar } from "../components/bottomBar";
+import "../../globals.css";
+import { SideNav } from "../../components/sideNav";
+import { BottomBar } from "../../components/bottomBar";
 import { DollarSignIcon, FileCheck2 } from "lucide-react/";
 import { HomeIcon } from "lucide-react/";
 import { Calendar } from "lucide-react/";
@@ -13,31 +13,31 @@ const navItems = [
   {
     title: "Home",
     href: "/home",
-    baseHref: "/home",
+    baseHref: "/app/home",
     icon: <HomeIcon size={20} />,
   },
   {
     title: "Calendar",
     href: "/calendar/products",
-    baseHref: "/calendar",
+    baseHref: "/app/calendar",
     icon: <Calendar size={20} />,
   },
   {
     title: "Store",
     href: "/store",
-    baseHref: "/store",
+    baseHref: "/app/store",
     icon: <Server size={20} />,
   },
   {
     title: "Digital Products",
     href: "/digital-products",
-    baseHref: "/digital-products",
+    baseHref: "/app/digital-products",
     icon: <FileCheck2 size={20} />,
   },
   {
     title: "Payments",
     href: "/payments",
-    baseHref: "/payments",
+    baseHref: "/app/payments",
     icon: <DollarSignIcon size={20} />,
   },
 ];
