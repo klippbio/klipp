@@ -2,9 +2,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Disclosure } from "@headlessui/react";
-
+import LogoText from "../utils/logoText.png";
 const Navbar = () => {
-  const navigation = ["Product", "Features", "Pricing", "Company", "Blog"];
+  const navigation = [
+    "Product",
+    "Features",
+    "Pricing",
+    "FAQs",
+    "Earnings Calculator",
+  ];
 
   return (
     <div className="w-full">
@@ -17,15 +23,8 @@ const Navbar = () => {
                 <Link href="/">
                   <span className="flex items-center space-x-2 text-2xl font-medium text-indigo-500 dark:text-gray-100">
                     <span>
-                      <Image
-                        src="/img/logo.svg"
-                        alt="N"
-                        width="32"
-                        height="32"
-                        className="w-8"
-                      />
+                      <Image src={LogoText} alt="N" width="120" />
                     </span>
-                    <span>Nextly</span>
                   </span>
                 </Link>
 
@@ -65,12 +64,21 @@ const Navbar = () => {
                         {item}
                       </Link>
                     ))}
-                    <Link
-                      href="/"
-                      className="w-full px-6 py-2 mt-3 text-center text-white bg-indigo-600 rounded-md lg:ml-5"
-                    >
-                      Get Started
-                    </Link>
+                    <div className="flex w-full gap-4 items-center mt-4 text-center">
+                      <Link
+                        href="/app/login"
+                        className="px-6 w-1/2 py-2 text-primary border-2 rounded-md md:ml-5"
+                      >
+                        Login
+                      </Link>
+
+                      <Link
+                        href="/app/signup"
+                        className="px-6 w-1/2 py-2 text-white bg-primary rounded-md md:ml-5"
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
                   </>
                 </Disclosure.Panel>
               </div>
@@ -94,13 +102,23 @@ const Navbar = () => {
           </ul>
         </div>
 
-        <div className="hidden mr-3 space-x-4 lg:flex nav__item">
-          <Link
-            href="/"
-            className="px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5"
-          >
-            Get Started
-          </Link>
+        <div className="flex ">
+          <div className="hidden lg:flex nav__item">
+            <Link
+              href="/app/login"
+              className="px-6 py-2 text-primary border-2 rounded-md md:ml-5"
+            >
+              Login
+            </Link>
+          </div>
+          <div className="hidden lg:flex nav__item">
+            <Link
+              href="/app/signup"
+              className="px-6 py-2 text-white bg-primary rounded-md md:ml-5"
+            >
+              Sign Up
+            </Link>
+          </div>
         </div>
       </nav>
     </div>
