@@ -182,7 +182,7 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
                   <FormLabel htmlFor="thumbnail">Profile Picture</FormLabel>
                   <FormControl>
                     <div
-                      className={`h-24 w-24 md:h-32 md:w-32 border-2 rounded-s-full rounded-e-full flex flex-col items-center justify-center rounded-fu relative ${
+                      className={`h-24 w-24 md:h-32 md:w-32 border-2 rounded-s-full rounded-e-full flex flex-col items-center justify-center relative ${
                         selectedFile
                           ? "border-transparent"
                           : buttonVariants({ variant: "ghost" })
