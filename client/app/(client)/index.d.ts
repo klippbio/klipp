@@ -6,6 +6,12 @@ export interface store {
   storeTitle: string;
   storeUrl: string;
   storeItems: storeItem[];
+  thumbnailUrl: string;
+  instagram: string;
+  tiktok: string;
+  youtube: string;
+  twitter: string;
+  storeItems: StoreItem[];
 }
 
 export interface storeItem {
