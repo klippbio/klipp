@@ -1,5 +1,5 @@
 "use client";
-import { Instagram, Mail, Twitter, Youtube } from "lucide-react";
+import { Instagram, Mail, Twitter, User, Youtube } from "lucide-react";
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -26,11 +26,19 @@ export default function SidePanel() {
         <div className="flex items-center justify-center">
           <div>
             <div className="mt-10 flex items-center justify-center">
-              <img
-                src={data.thumbnailUrl || "/dove.png"}
-                alt="dove"
-                className="w-48 h-48 rounded-full object-cover"
-              />
+              {data.thumbnailUrl ? (
+                <div>
+                  <img
+                    src={data.thumbnailUrl}
+                    alt="dove"
+                    className="w-48 h-48 rounded-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <User color="white" />
+                </div>
+              )}
             </div>
             <div className="mt-6 flex justify-center">
               <span className="text-4xl font-semibold text-white">
@@ -38,19 +46,45 @@ export default function SidePanel() {
               </span>
             </div>
             <div className="mt-6 flex justify-center gap-8">
-              <Instagram color="white" />
-              <Twitter color="white" />
-              <Youtube color="white" />
-              <Mail color="white" />
-              <img src="/tiktok-24.png" alt="tiktok" />
+              {data.instagram && (
+                <a
+                  href={"https://instagram.com/" + data.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Instagram color="white" />
+                </a>
+              )}
+              {data.twitter && (
+                <a
+                  href={"https://twitter.com/" + data.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Twitter color="white" />
+                </a>
+              )}
+              {data.youtube && (
+                <a
+                  href={"https://youtube.com/@/" + data.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Youtube color="white" />
+                </a>
+              )}
+              {data.tiktok && (
+                <a
+                  href={"https://tiktok.com/@" + data.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src="/tiktok-24.png" alt="tiktok" />
+                </a>
+              )}
             </div>
             <div className="flex justify-center text-justified text-white mt-6 ml-10 mb-12 mr-10 text-md">
-              <span>
-                We make it easy to aggregate social profiles and personally
-                relevant content, which empowers users to showcase who they are
-                and what they care about. Ultimately, this allows creators to
-                understand, grow, and monetise their audience.
-              </span>
+              <span>{data.storeDescription}</span>
             </div>
           </div>
         </div>
