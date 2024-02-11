@@ -21,7 +21,9 @@ export interface storeItem {
   price: string;
   currency: string[];
   name: string;
-  itemType: "DIGITALPRODUCT" | "CALENDAR";
+  itemType: "DIGITALPRODUCT" | "CALENDAR" | "LINK";
+  thumbnailUrl: string;
+  linkUrl: string;
   itemDetails: DigitalProductDetails | CalendarDetails;
 }
 
