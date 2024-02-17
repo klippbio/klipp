@@ -11,6 +11,17 @@ export const ZProduct = z.object({
   userName: z.string(),
 });
 
+export const ZUpdatePublicUser = z.object({
+  storeUrl: z.string(),
+  displayName: z.string(),
+  description: z.string().optional(),
+  thumbnailUrl: z.string().optional(),
+  instagram: z.string().optional(),
+  twitter: z.string().optional(),
+  youtube: z.string().optional(),
+  tiktok: z.string().optional(),
+});
+
 export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
   const publicUser = await db.store.findUnique({
     where: {
@@ -47,6 +58,24 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
     })),
   };
   return transformedUser;
+};
+
+export const updatePublicUser = async (
+  input: z.infer<typeof ZUpdatePublicUser>
+) => {
+  const updatePublicUser = await db.store.update({
+    where: { storeUrl: input.storeUrl },
+    data: {
+      storeTitle: input.displayName,
+      storeDescription: input.description,
+      thumbnailUrl: input.thumbnailUrl,
+      instagram: input.instagram,
+      twitter: input.twitter,
+      youtube: input.youtube,
+      tiktok: input.tiktok,
+    },
+  });
+  return updatePublicUser;
 };
 
 export const getPublicProduct = async (input: z.infer<typeof ZProduct>) => {
