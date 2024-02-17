@@ -21,6 +21,7 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
         include: {
           DigitalProduct: true,
           calendarProduct: true,
+          Link: true,
         },
       },
     },
@@ -32,8 +33,13 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
     storeItems: publicUser.storeItems.map((item) => ({
       id: item.id,
       itemType: item.itemType,
-      name: item.DigitalProduct?.name || item.calendarProduct?.title,
+      name:
+        item.DigitalProduct?.name ||
+        item.calendarProduct?.title ||
+        item.Link?.title,
       price: item.DigitalProduct?.price || item.calendarProduct?.price || "0",
+      thumbnailUrl: item.Link?.thumbnailUrl || "",
+      linkUrl: item.Link?.url || "",
       flexPrice:
         item.DigitalProduct?.flexPrice || item.calendarProduct?.price || "0",
       currency: item.DigitalProduct?.currency || item.calendarProduct?.currency,
