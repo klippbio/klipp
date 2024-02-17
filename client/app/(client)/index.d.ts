@@ -6,6 +6,12 @@ export interface store {
   storeTitle: string;
   storeUrl: string;
   storeItems: storeItem[];
+  thumbnailUrl: string;
+  instagram: string;
+  tiktok: string;
+  youtube: string;
+  twitter: string;
+  storeItems: StoreItem[];
 }
 
 export interface storeItem {
@@ -15,7 +21,9 @@ export interface storeItem {
   price: string;
   currency: string[];
   name: string;
-  itemType: "DIGITALPRODUCT" | "CALENDAR";
+  itemType: "DIGITALPRODUCT" | "CALENDAR" | "LINK";
+  thumbnailUrl: string;
+  linkUrl: string;
   itemDetails: DigitalProductDetails | CalendarDetails;
 }
 

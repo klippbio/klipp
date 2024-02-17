@@ -161,7 +161,7 @@ function Step2() {
                   <div className="w-full">
                     <PrefixInputLeft
                       id="youtube"
-                      prefix="youtube.com/"
+                      prefix="youtube.com/@/"
                       {...field}
                     />
                   </div>
