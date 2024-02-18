@@ -79,7 +79,10 @@ function UserSettings(data: any) {
       setSelectedFile(data.data.thumbnailUrl);
       setImageUrl(data.data.thumbnailUrl);
     }
-  });
+    if (data.data.color) {
+      setBackground(data.data.color);
+    }
+  }, [data.data.thumbnailUrl, data.data.color]);
 
   function onSubmit(data: z.infer<typeof onboardingFormSchema>) {
     data.thumbnailUrl = selectedFile;
