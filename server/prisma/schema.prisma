@@ -30,6 +30,7 @@ model Store {
   tiktok           String?
   youtube          String?
   twitter          String?
+  color            String?
   schedules Schedule[]
   bookings Booking[]
   calendarSetting CalendarSetting?

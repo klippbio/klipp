@@ -11,6 +11,7 @@ export interface store {
   tiktok: string;
   youtube: string;
   twitter: string;
+  color: string;
   storeItems: StoreItem[];
 }
 
