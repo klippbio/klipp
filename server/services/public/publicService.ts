@@ -20,6 +20,7 @@ export const ZUpdatePublicUser = z.object({
   twitter: z.string().optional(),
   youtube: z.string().optional(),
   tiktok: z.string().optional(),
+  color: z.string().optional(),
 });
 
 export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
@@ -73,6 +74,7 @@ export const updatePublicUser = async (
       twitter: input.twitter,
       youtube: input.youtube,
       tiktok: input.tiktok,
+      color: input.color,
     },
   });
   return updatePublicUser;

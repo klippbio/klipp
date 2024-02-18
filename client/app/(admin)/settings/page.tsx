@@ -7,6 +7,7 @@ import { store } from "@/app/(client)";
 import axios, { AxiosError } from "axios";
 import loading from "../loading";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProductsList from "./components/ProductsList";
 
 function Settings() {
   const authDetails = useAuthDetails();
@@ -47,6 +48,7 @@ function Settings() {
           {" "}
           <div className="w-full">
             <UserSettings data={data} />
+            {/* <ProductsList /> */}
           </div>
         </div>
       )}

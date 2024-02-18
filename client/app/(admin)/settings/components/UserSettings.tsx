@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AxiosApi from "@/app/services/axios";
 import { useToast } from "@/components/ui/use-toast";
+import { GradientPicker, PickerExample } from "@/components/ui/GradientPicker";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
@@ -48,12 +49,13 @@ const onboardingFormSchema = z.object({
   twitter: z.string().optional(),
   youtube: z.string().optional(),
   storeUrl: z.string(),
+  color: z.string().optional(),
 });
 function UserSettings(data: any) {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-
+  const [background, setBackground] = useState("");
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
     defaultValues: {
       displayName: data.data.storeTitle || "",
@@ -69,6 +71,10 @@ function UserSettings(data: any) {
   });
 
   useEffect(() => {
+    form.setValue("color", background);
+  }, [background, form]);
+
+  useEffect(() => {
     if (data.data.thumbnailUrl) {
       setSelectedFile(data.data.thumbnailUrl);
       setImageUrl(data.data.thumbnailUrl);
@@ -77,7 +83,7 @@ function UserSettings(data: any) {
 
   function onSubmit(data: z.infer<typeof onboardingFormSchema>) {
     data.thumbnailUrl = selectedFile;
-
+    data.color = background;
     mutation.mutate(data);
   }
 
@@ -121,7 +127,6 @@ function UserSettings(data: any) {
     setSelectedFile(imageUrl);
     setImageUrl(imageUrl);
   }
-  ``;
   return (
     <div className="w-full">
       <Card className="text-foreground">
@@ -306,6 +311,25 @@ function UserSettings(data: any) {
                     </div>
                   </div>
                 </div>
+                <FormField
+                  control={form.control}
+                  name="color"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="youtube">Background Color</FormLabel>
+                      <FormControl>
+                        <div className="w-full mt-4">
+                          <GradientPicker
+                            className="w-full truncate"
+                            background={background}
+                            setBackground={setBackground}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex justify-end">
                   <Button type="submit">Save</Button>
                 </div>
