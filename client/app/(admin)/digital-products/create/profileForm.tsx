@@ -299,7 +299,6 @@ export function ProfileForm({
         description: "File uploaded successfully.",
       });
       setUploadedFiles([...uploadedFiles, data]);
-      console.log("uploaded", uploadedFiles);
       setUploadingFile(false);
     },
     onError: () => {

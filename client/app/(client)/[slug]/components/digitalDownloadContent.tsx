@@ -9,19 +9,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { SaleFormData } from "../[productId]/page";
 
 const bookingFormSchema = z.object({
   name: z.string(),
-  price: z.string(),
+  email: z.string().email(),
 });
 
 export default function DigitalDownloadContent({
   itemDetails,
+  handleSaleFormDataChange,
 }: {
   itemDetails: any; //eslint-disable-line
+  handleSaleFormDataChange: (saleFormData: SaleFormData) => void;
 }) {
   const initialBlocksData = JSON.parse(itemDetails.description)?.blocks;
 
@@ -33,6 +36,15 @@ export default function DigitalDownloadContent({
   function onSubmit(data: z.infer<typeof bookingFormSchema>) {
     console.log(data);
   }
+
+  // Watch form fields
+  const watchedFields = form.watch();
+
+  // Update parent component whenever form fields or slot change
+  useEffect(() => {
+    handleSaleFormDataChange(watchedFields);
+  }, [watchedFields, handleSaleFormDataChange, form]);
+
   return (
     <div>
       <div className="text-secondary-foreground">
@@ -60,16 +72,15 @@ export default function DigitalDownloadContent({
                 )}
               />
             </div>
-
             <div className=" md:w-1/2 w-full">
               <FormField
                 control={form.control}
-                name="price"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="name">email</FormLabel>
+                    <FormLabel htmlFor="email">email</FormLabel>
                     <FormControl>
-                      <Input {...field} name="name" type="number" id="name" />
+                      <Input {...field} name="email" type="email" id="emal" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

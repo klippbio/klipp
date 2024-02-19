@@ -1,3 +1,5 @@
+import { booking, sale, store } from "@/app/(client)";
+import { BookingApiResponse } from "./apiResponse.d";
 export interface ScheduleApiResponse {
   id: number;
   storeId: string;
@@ -77,23 +79,13 @@ export interface GoogleCalendarApiResponse {
   calendarSetting: CalendarSettingApiResponse;
 }
 
-export interface BookingApiResponse {
-  id: number;
-  createdAt: string; // ISO 8601 string format
-  updatedAt: string; // ISO 8601 string format
-  storeId: string;
-  store: Store;
-  calendarProductId: number;
-  calendarProduct?: CalendarProductApiResponse;
-  title: string;
-  description?: string;
-  attendees?: Attendee[];
-  startTime: string; // ISO 8601 string format
-  endTime: string; // ISO 8601 string format
-  googleCalendarId?: number;
-  googleCalendar?: GoogleCalendarApiResponse;
-  meetingUrl?: string;
-  meetingPassword?: string;
-  meetingId?: string;
-  rescheduled?: boolean;
+export interface BookingApiResponse extends booking {
+  sale: Omit<sale, "storeItem"> & {
+    storeItem: storeItem;
+  };
+  store: store;
+}
+
+export interface ErrorResponse {
+  error: string;
 }
