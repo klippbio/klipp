@@ -24,6 +24,7 @@ model Store {
   socialSet        SocialSet?
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   storeItems       StoreItem[]
+  sale           Sale[]
 
 
   schedules Schedule[]
@@ -43,6 +44,7 @@ model StoreItem {
   calendarProduct CalendarProduct?
   Link           Link?
   store          Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  sale           Sale[]
 }
 
 model Link {
@@ -240,6 +242,7 @@ model Booking{
   startTime DateTime
   endTime DateTime
   googleCalendarId Int?
+  bookingStatus BookingStatus
   googleCalendar GoogleCalendar? @relation(fields: [googleCalendarId], references: [id])
 
   meetingUrl String?
@@ -247,14 +250,50 @@ model Booking{
   meetingId String?
   rescheduled           Boolean?                @default(false)
 
+  saleId Int? @unique
+  sale Sale? @relation(fields: [saleId], references: [id])
+  cancelledSaleId Int? 
+
   @@index([calendarProductId])
   @@index([googleCalendarId])
   @@index([storeId])
 }
 
+model Sale {
+  id             Int         @id @default(autoincrement())
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  storeId        String
+  store          Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeItemId    Int
+  storeItem      StoreItem   @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
+  salePrice      String
+  buyerEmail     String
+  buyerName      String?
+  status         SaleStatus
+  booking        Booking?
+  //add something for payment details like transaction id something of stripe
+  additionalInfo Json?       // Any additional information relevant to the sale
+
+  @@index([storeId])
+}
+
+enum SaleStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  REFUNDPENDING
+}
+
+enum BookingStatus {
+  SCHEDULED
+  CANCELLED
+}
+
 model Attendee {
   id          Int          @id @default(autoincrement())
-  email       String
+  email       String       @unique
   name        String
   timeZone    String
   booking     Booking?     @relation(fields: [bookingId], references: [id], onDelete: Cascade)

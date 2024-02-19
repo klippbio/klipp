@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import AxiosApi from "@/app/services/axios";
 import { SlotCalendar } from "@/components/ui/slotCalendar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Define the type for the slot object
 type Slot = {
@@ -19,34 +20,34 @@ type MonthlySlots = {
 type SlotQueryResult = {
   slots: MonthlySlots; // As defined earlier
   disabledDates: Date[]; // Array of disabled dates
-  firstAvailableDate: Date | null; // Array of available dates
+  firstAvailableDate: string | null; // Array of available dates
 };
 
 function getDisabledAndAvailableDates(
   slotsData: MonthlySlots,
-  currentDate: Date | null
+  currentDate: string | null,
+  timezone: string
 ) {
   if (!currentDate) {
     return { disabledDates: [], firstAvailableDate: null };
   }
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const startOfMonth = new Date(year, month, 1);
-  const endOfMonth = new Date(year, month + 1, 0); // Last day of the month
+
+  const startOfMonth = dayjs(currentDate).tz(timezone).startOf("month");
+  const endOfMonth = dayjs(currentDate).tz(timezone).endOf("month");
 
   const disabledDates = [];
-  let firstAvailableDate: Date | null = null;
+  let firstAvailableDate: string | null = null;
 
   for (
     let day = startOfMonth;
-    day <= endOfMonth;
-    day.setDate(day.getDate() + 1)
+    day.isBefore(endOfMonth) || day.isSame(endOfMonth, "day");
+    day = day.add(1, "day")
   ) {
-    const dayStr = day.toISOString().split("T")[0];
+    const dayStr = day.format("YYYY-MM-DD");
     if (!slotsData[dayStr]) {
-      disabledDates.push(new Date(day)); // Add a copy of the date to the array
+      disabledDates.push(day.toDate()); // Add a copy of the date to the array
     } else if (!firstAvailableDate) {
-      firstAvailableDate = new Date(day); // Set the first available date
+      firstAvailableDate = day.toISOString(); // Set the first available date
     }
   }
 
@@ -56,14 +57,24 @@ function getDisabledAndAvailableDates(
 function SelectSlot({
   timezone,
   storeItemId,
+  onSlotSelect,
+  selectedSlot,
 }: {
   timezone: string;
   storeItemId: number;
+  onSlotSelect: (utcSlot: string) => void;
+  selectedSlot: string | undefined;
 }) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [selectedDate, setSelectedDate] = useState<string>(
+    dayjs().tz(timezone).toISOString()
+  );
+  useEffect(() => {
+    setSelectedDate(dayjs(selectedDate).tz(timezone).toISOString());
+  }, [timezone, selectedDate]);
+
+  console.log(selectedDate, "selectedDate", timezone, "timezone");
   const handleMonthChange = (monthDate: Date) => {
-    console.log(monthDate, "monthDate");
-    setSelectedDate(monthDate);
+    setSelectedDate(dayjs(monthDate).tz(timezone).toISOString());
   };
   const { data: slotQueryData, isLoading } = useQuery<SlotQueryResult>(
     [
@@ -73,24 +84,32 @@ function SelectSlot({
       timezone,
     ],
     async () => {
-      const startDate = dayjs(selectedDate)
-        .tz(timezone)
-        .startOf("month")
-        .toISOString();
-      const endDate = dayjs(selectedDate)
-        .tz(timezone)
-        .endOf("month")
-        .toISOString();
+      const startDate = dayjs(selectedDate).startOf("month").toISOString();
+      const endDate = dayjs(selectedDate).endOf("month").toISOString();
+
+      console.log(
+        "Making request with",
+        startDate,
+        endDate,
+        timezone,
+        selectedDate
+      );
 
       const response = await AxiosApi(
         "GET",
         `/api/slots/get/?storeItemId=${storeItemId}&startTime=${startDate}&endTime=${endDate}&timeZone=${timezone}`
       );
       const slotsData = response.data.slots;
+      console.log("slotsData", slotsData);
+
+      if (Object.keys(slotsData).length === 0) {
+        return { slots: {}, disabledDates: [], firstAvailableDate: null };
+      }
 
       const monthAvailability = getDisabledAndAvailableDates(
         slotsData,
-        selectedDate
+        selectedDate,
+        timezone
       );
       const disabledDates = monthAvailability.disabledDates;
       const firstAvailableDate = monthAvailability.firstAvailableDate;
@@ -101,13 +120,12 @@ function SelectSlot({
             dayjs(disabledDate).format("YYYY-MM-DD") === selectedDateString
         )
       ) {
-        console.log("selectedDate is disabled");
         // Update selectedDate to the first available date
         const availableDates = Object.keys(slotsData).filter(
           (date) => !disabledDates.includes(new Date(date))
         );
         if (availableDates.length > 0) {
-          setSelectedDate(new Date(availableDates[0]));
+          setSelectedDate(dayjs(availableDates[0]).tz(timezone).toISOString());
         }
       }
 
@@ -130,11 +148,12 @@ function SelectSlot({
     if (firstAvailableDate) {
       setSelectedDate(firstAvailableDate);
     } else {
-      setSelectedDate(null);
+      setSelectedDate("");
     }
   }
 
-  const formattedDate = dayjs(selectedDate).tz(timezone).format("YYYY-MM-DD");
+  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
+
   const slotsForSelectedDate =
     monthlySlots && (monthlySlots as MonthlySlots)[formattedDate]
       ? (monthlySlots as MonthlySlots)[formattedDate]
@@ -142,35 +161,42 @@ function SelectSlot({
 
   const slots = slotsForSelectedDate.map((slot) => ({
     ...slot,
-    time: dayjs(slot.time).tz(timezone).format("HH:mm"),
+    displayTime: dayjs(slot.time).tz(timezone).format("HH:mm"), // This is the formatted time
   }));
+
+  console.log("monthlySlots", monthlySlots, formattedDate, selectedDate);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      setSelectedDate(date);
+      setSelectedDate(dayjs(date).tz(timezone).toISOString());
     }
   };
-  console.log("sele2", selectedDate);
 
   return (
-    <div className="flex flex-col justify-between md:flex-row gap-4  w-full h-full ">
-      <div className="flex flex-col rounded-md border p-2">
+    <div className="flex flex-col justify-between md:flex-row gap-4 w-full h-full ">
+      <div className="flex flex-col rounded-md border p-2 md:w-2/3">
         <h1 className="text-l font-medium">Pick a date</h1>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center h-[360px] md:h-[400px]">
           {isLoading ? (
-            <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-            </div>
-          ) : !selectedDate ? (
-            <div className="flex items-center justify-center">
-              <div className="text-l font-medium">No slots available</div>
+            <div className="w-full flex flex-col gap-4">
+              {/* <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div> */}
+              <Skeleton className="h-6 w-full " />
+              <Skeleton className="h-6 w-full " />
+              <Skeleton className="h-6 w-full " />
+              <Skeleton className="h-6 w-full " />
+              <Skeleton className="h-6 w-full " />
+              <Skeleton className="h-6 w-full " />
+              <Skeleton className="h-6 w-full " />
+              <Skeleton className="h-6 w-full " />
+              <Skeleton className="h-6 w-full " />
             </div>
           ) : (
             <SlotCalendar
-              month={selectedDate}
+              month={dayjs(selectedDate).toDate()}
               mode="single"
-              selected={selectedDate}
+              selected={dayjs(selectedDate).toDate()}
               onSelect={handleDateSelect}
+              fromDate={dayjs().toDate()}
               className="h-full"
               onMonthChange={handleMonthChange}
               disabled={disabledDates}
@@ -179,17 +205,42 @@ function SelectSlot({
           )}
         </div>
       </div>
-      <div className="flex flex-col gap-4 w-full md:w-1/2 rounded-md border p-2">
+      <div className="flex flex-col gap-4 w-full md:w-1/3 rounded-md border p-2">
         <h1 className="text-l font-medium">Available Slots</h1>
-        <ScrollArea className="h-[450px]">
-          <div className="flex flex-col gap-2 w-full">
-            {!isLoading &&
-              slots &&
-              slots.map((slot: { time: string }, index) => (
-                <Button key={index} className="text-left" variant="outline">
-                  {slot.time}
-                </Button>
-              ))}
+        <ScrollArea className="h-[400px]">
+          <div className="flex flex-col gap-2 w-full h-full">
+            {isLoading ? (
+              <div className="w-full flex flex-col gap-4">
+                {/* <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div> */}
+                <Skeleton className="h-6 w-full " />
+                <Skeleton className="h-6 w-full " />
+                <Skeleton className="h-6 w-full " />
+                <Skeleton className="h-6 w-full " />
+                <Skeleton className="h-6 w-full " />
+                <Skeleton className="h-6 w-full " />
+                <Skeleton className="h-6 w-full " />
+                <Skeleton className="h-6 w-full " />
+                <Skeleton className="h-6 w-full " />
+              </div>
+            ) : !slots || slots.length === 0 ? (
+              <div className="flex items-center justify-center">
+                <div className="text-l font-medium">No slots available</div>
+              </div>
+            ) : (
+              slots.map(
+                (slot: { time: string; displayTime: string }, index) => (
+                  <Button
+                    key={index}
+                    className="text-left"
+                    variant={selectedSlot === slot.time ? "default" : "outline"}
+                    onClick={() => onSlotSelect(slot.time)}
+                    type="button"
+                  >
+                    {slot.displayTime}
+                  </Button>
+                )
+              )
+            )}
           </div>
         </ScrollArea>
       </div>

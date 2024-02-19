@@ -27,7 +27,7 @@ export function BottomBar({ className, items, ...props }: NavProps) {
   return (
     // Bottom Navigation Panel Code
     <div
-      className={`block fixed bottom-0 left-0 right-0 z-1 bg-background overflow-hidden ${className}`}
+      className={`block fixed bottom-0 left-0 right-0 z-1 bg-background  ${className}`}
     >
       <Separator orientation="horizontal" />
       <div className="flex justify-between p-4">

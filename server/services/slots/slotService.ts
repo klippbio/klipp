@@ -23,8 +23,6 @@ export const getAvailableSlotsService = async (
 ) => {
   const { startTime, endTime, storeItemId, timeZone: inputTimezone } = input;
 
-  console.log(input, "input");
-
   const storeItem = await db.storeItem.findUnique({
     where: {
       id: storeItemId,
@@ -142,16 +140,18 @@ export const getAvailableSlotsService = async (
   }
 
   // Step 2: Exclude Booked Times
-  const busyTimes: TimeRange[] = calendarProduct.bookings.map((booking) => {
-    // Parse booking times in UTC
-    const bookingStartTimeParsed = dayjs.utc(booking.startTime);
-    const bookingEndTimeParsed = dayjs.utc(booking.endTime);
+  const busyTimes: TimeRange[] = calendarProduct.bookings
+    .filter((booking) => booking.bookingStatus !== "CANCELLED")
+    .map((booking) => {
+      // Parse booking times in UTC
+      const bookingStartTimeParsed = dayjs.utc(booking.startTime);
+      const bookingEndTimeParsed = dayjs.utc(booking.endTime);
 
-    return {
-      start: bookingStartTimeParsed,
-      end: bookingEndTimeParsed,
-    };
-  });
+      return {
+        start: bookingStartTimeParsed,
+        end: bookingEndTimeParsed,
+      };
+    });
 
   // This function checks if two time ranges overlap
   const doTimesOverlap = (range1: TimeRange, range2: TimeRange) => {
@@ -229,8 +229,6 @@ export const getAvailableSlotsService = async (
     day: "2-digit",
     timeZone: inputTimezone,
   });
-
-  console.log(formatter, "formatter");
 
   const computedAvailableSlots = slots.reduce(
     (

@@ -17,8 +17,6 @@ slotController.get("/get", async (req: Request, res: Response) => {
       timeZone: timeZone as string, // Typecast to string
     };
 
-    console.log(serviceInput, "serviceInput");
-
     // Call the service function with the extracted parameters
     const slots = await getAvailableSlotsService(serviceInput);
 

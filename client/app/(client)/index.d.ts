@@ -1,3 +1,5 @@
+import { booking } from "./index.d";
+import { storeItem } from "..";
 export interface store {
   id: string;
   createdAt: string;
@@ -6,6 +8,13 @@ export interface store {
   storeTitle: string;
   storeUrl: string;
   storeItems: storeItem[];
+  user?: user;
+}
+
+export interface user {
+  id: string;
+  createdAt: string;
+  email: string;
 }
 
 export interface storeItem {
@@ -14,6 +23,42 @@ export interface storeItem {
   storeId: string;
   itemType: "DIGITALPRODUCT" | "CALENDAR";
   itemDetails: DigitalProductDetails | CalendarDetails;
+}
+
+export interface booking {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  storeId: string;
+  calendarProductId: number;
+  title: string;
+  description: null | string;
+  startTime: string;
+  endTime: string;
+  googleCalendarId: number;
+  meetingUrl: string;
+  meetingPassword: null | string;
+  meetingId: string;
+  rescheduled: boolean;
+  cancelSaleId: null | number;
+  bookingStatus: "SCHEDULED" | "CANCELLED";
+  saleId: number;
+}
+
+export interface sale {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  storeId: string;
+  storeItemId: number;
+  salePrice: string;
+  buyerEmail: string;
+  buyerName: string;
+  status: "COMPLETED" | "PENDING" | "FAILED" | "REFUNDED" | "REFUNDPENDING";
+  additionalInfo: null | string;
+  storeItem: storeItem;
+  booking?: booking;
+  store?: store;
 }
 
 //productTypings:
