@@ -11,16 +11,73 @@ export const ZProduct = z.object({
   userName: z.string(),
 });
 
+export const ZUpdatePublicUser = z.object({
+  storeUrl: z.string(),
+  displayName: z.string(),
+  description: z.string().optional(),
+  thumbnailUrl: z.string().optional(),
+  instagram: z.string().optional(),
+  twitter: z.string().optional(),
+  youtube: z.string().optional(),
+  tiktok: z.string().optional(),
+  color: z.string().optional(),
+});
+
 export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
   const publicUser = await db.store.findUnique({
     where: {
       storeUrl: input.userName,
     },
     include: {
-      storeItems: true,
+      storeItems: {
+        include: {
+          DigitalProduct: true,
+          calendarProduct: true,
+          Link: true,
+        },
+      },
     },
   });
-  return publicUser;
+
+  //TODO: EDIT THIS TO MATCH YOUR NEEDS
+  const transformedUser = publicUser && {
+    ...publicUser,
+    storeItems: publicUser.storeItems.map((item) => ({
+      id: item.id,
+      itemType: item.itemType,
+      name:
+        item.DigitalProduct?.name ||
+        item.calendarProduct?.title ||
+        item.Link?.title,
+      price: item.DigitalProduct?.price || item.calendarProduct?.price || "0",
+      thumbnailUrl: item.Link?.thumbnailUrl || "",
+      linkUrl: item.Link?.url || "",
+      flexPrice:
+        item.DigitalProduct?.flexPrice || item.calendarProduct?.price || "0",
+      currency: item.DigitalProduct?.currency || item.calendarProduct?.currency,
+      // Add any other fields you need
+    })),
+  };
+  return transformedUser;
+};
+
+export const updatePublicUser = async (
+  input: z.infer<typeof ZUpdatePublicUser>
+) => {
+  const updatePublicUser = await db.store.update({
+    where: { storeUrl: input.storeUrl },
+    data: {
+      storeTitle: input.displayName,
+      storeDescription: input.description,
+      thumbnailUrl: input.thumbnailUrl,
+      instagram: input.instagram,
+      twitter: input.twitter,
+      youtube: input.youtube,
+      tiktok: input.tiktok,
+      color: input.color,
+    },
+  });
+  return updatePublicUser;
 };
 
 export const getPublicProduct = async (input: z.infer<typeof ZProduct>) => {

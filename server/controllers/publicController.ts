@@ -21,6 +21,21 @@ publicController.get("/publicUser", async (req: Request, res: Response) => {
   }
 });
 
+publicController.post("/publicUser", async (req: Request, res: Response) => {
+  try {
+    const parsedData = await publicService.ZUpdatePublicUser.parseAsync(
+      req.body
+    );
+    const publicUser = await publicService.updatePublicUser(parsedData);
+    if (!publicUser) throw new CustomError("User not found", 404);
+    res.status(200).json(publicUser);
+  } catch (error) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
+  }
+});
+
 publicController.get("/product", async (req: Request, res: Response) => {
   try {
     const id = req.query.id;

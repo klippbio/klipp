@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_KEVAL")
 }
 
 model User {
@@ -27,12 +27,27 @@ model Store {
   sale           Sale[]
 
 
+  payments         Payment[]
+  thumbnailUrl     String?
+  instagram        String?
+  tiktok           String?
+  youtube          String?
+  twitter          String?
+  color            String?
   schedules Schedule[]
   bookings Booking[]
   calendarSetting CalendarSetting?
 
   @@index([userId], map: "userId")
   @@index([storeUrl], map: "storeUrl")
+}
+
+model Payment {
+  id           Int   @id @default(autoincrement()) @unique
+  storeId        String
+  accountId       String @unique
+  onboardingComplete Boolean @default(false)
+  store          Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }
 
 model StoreItem {
@@ -51,8 +66,10 @@ model Link {
   id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  name        String
+  title        String
   url         String
+  description  String?
+  thumbnailUrl String?
   storeItemId Int    @unique
   storeItem   StoreItem @relation(fields: [storeItemId], references: [id], onDelete: Cascade)
 }

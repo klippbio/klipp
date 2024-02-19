@@ -15,13 +15,25 @@ export interface user {
   id: string;
   createdAt: string;
   email: string;
+  thumbnailUrl: string;
+  instagram: string;
+  tiktok: string;
+  youtube: string;
+  twitter: string;
+  color: string;
+  storeItems: StoreItem[];
 }
 
 export interface storeItem {
   id: number;
   itemOrder: number;
   storeId: string;
-  itemType: "DIGITALPRODUCT" | "CALENDAR";
+  price: string;
+  currency: string[];
+  name: string;
+  itemType: "DIGITALPRODUCT" | "CALENDAR" | "LINK";
+  thumbnailUrl: string;
+  linkUrl: string;
   itemDetails: DigitalProductDetails | CalendarDetails;
 }
 
