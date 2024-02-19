@@ -11,7 +11,6 @@ export const bookingController = express.Router();
 bookingController.get("/upcoming", async (req, res) => {
   const storeId = req.query.storeId as string;
   const upcomingBookings = await getUpcomingBookings(storeId);
-  console.log(upcomingBookings, "upcomingBookings");
   res.json(upcomingBookings);
 });
 

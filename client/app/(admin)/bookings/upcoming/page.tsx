@@ -29,7 +29,6 @@ function Page() {
   const authDetails = useAuthDetails();
   const router = useRouter();
   const timezone = dayjs.tz.guess();
-  console.log(timezone, "timezone upcoming");
   const {
     data: upcomingBookings,
     isLoading: upcomingBookingsLoading,

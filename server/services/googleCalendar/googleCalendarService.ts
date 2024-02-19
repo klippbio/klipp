@@ -64,8 +64,6 @@ export const createGoogleCalendarBooking = async (
       conferenceDataVersion: 1,
     });
 
-    console.log(response.data.hangoutLink);
-
     return {
       googleCalendarID: calendarSetting.googleCalendar.id,
       meetingUrl: response.data.hangoutLink,
@@ -85,7 +83,6 @@ export const cancelGoogleCalendarEvent = async (
   storeId: string,
   eventId: string
 ) => {
-  console.log("cancelGoogleCalendarEvent", storeId, eventId);
   const oauth2Client = new google.auth.OAuth2({
     clientId: process.env.GOOGLE_AUTH_CLIENT_ID,
     clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET,
@@ -115,12 +112,11 @@ export const cancelGoogleCalendarEvent = async (
   });
 
   try {
-    const Response = await calendar.events.delete({
+    await calendar.events.delete({
       auth: oauth2Client,
       calendarId: "primary",
       eventId: eventId,
     });
-    console.log(Response, "check response");
 
     return true;
   } catch (error) {

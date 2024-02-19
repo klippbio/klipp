@@ -77,7 +77,6 @@ export function DataTable<TData, TValue>({
           value={globalFilter ?? ""}
           placeholder="Search Sales..."
           onChange={(e) => {
-            console.log(e.target.value, "woho");
             setGlobalFilter(String(e.target.value));
           }}
           className="max-w-sm"

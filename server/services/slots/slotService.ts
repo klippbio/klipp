@@ -190,29 +190,6 @@ export const getAvailableSlotsService = async (
     []
   );
 
-  // if (availableDateRanges.length > 0 && availableDateRanges[0].start) {
-  //   console.log(availableDateRanges[0].start.format("YYYY-MM-DD HH:mm:ss Z"));
-  // }
-
-  // console.log(availableDateRanges.at(0)?.start, "availableDateRanges");
-
-  // // Step 3: Use the Adapted Date Ranges with getSlots
-
-  // console.log("Invitee Date:", startDate.format("YYYY-MM-DD HH:mm:ss Z"));
-  // console.log("Frequency:", calendarProduct.length);
-  // console.log("Event Length:", calendarProduct.length);
-  // // Logging the result
-  // availableDateRanges.forEach((range, index) => {
-  //   console.log(
-  //     `Date Range ${index + 1}: Start - ${range.start.format(
-  //       "YYYY-MM-DD HH:mm:ss Z"
-  //     )}, End - ${range.end.format("YYYY-MM-DD HH:mm:ss Z")}`
-  //   );
-  // });
-  // console.log("Minimum Booking Notice:", calendarProduct.minimumBookingNotice);
-  // console.log("Organizer Time Zone:", organizerTimeZone);
-  // console.log(availableDateRanges.at(0)?.start, "availableDateRanges");
-
   const slots = getSlots({
     inviteeDate: startDate,
     frequency: calendarProduct.length,

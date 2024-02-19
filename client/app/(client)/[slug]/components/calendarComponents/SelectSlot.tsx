@@ -72,7 +72,6 @@ function SelectSlot({
     setSelectedDate(dayjs(selectedDate).tz(timezone).toISOString());
   }, [timezone, selectedDate]);
 
-  console.log(selectedDate, "selectedDate", timezone, "timezone");
   const handleMonthChange = (monthDate: Date) => {
     setSelectedDate(dayjs(monthDate).tz(timezone).toISOString());
   };
@@ -86,21 +85,11 @@ function SelectSlot({
     async () => {
       const startDate = dayjs(selectedDate).startOf("month").toISOString();
       const endDate = dayjs(selectedDate).endOf("month").toISOString();
-
-      console.log(
-        "Making request with",
-        startDate,
-        endDate,
-        timezone,
-        selectedDate
-      );
-
       const response = await AxiosApi(
         "GET",
         `/api/slots/get/?storeItemId=${storeItemId}&startTime=${startDate}&endTime=${endDate}&timeZone=${timezone}`
       );
       const slotsData = response.data.slots;
-      console.log("slotsData", slotsData);
 
       if (Object.keys(slotsData).length === 0) {
         return { slots: {}, disabledDates: [], firstAvailableDate: null };
@@ -163,8 +152,6 @@ function SelectSlot({
     ...slot,
     displayTime: dayjs(slot.time).tz(timezone).format("HH:mm"), // This is the formatted time
   }));
-
-  console.log("monthlySlots", monthlySlots, formattedDate, selectedDate);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {

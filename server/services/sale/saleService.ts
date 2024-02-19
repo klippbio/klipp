@@ -49,7 +49,6 @@ export const createNewSale = async (
   input: z.infer<typeof ZCreateNewSaleSchema>
 ) => {
   const { saleFormData, itemId, itemType } = input;
-  console.log("Reached in service", input);
   const storeItem = await db.storeItem.findFirst({
     where: {
       id: itemId,
@@ -148,8 +147,6 @@ export const createNewSale = async (
         },
       },
     });
-    console.log(googleCalendarResponse, "nope");
-
     await db.booking.update({
       where: {
         id: booking.id,
@@ -215,7 +212,6 @@ export const getSale = async (id: number) => {
       },
     },
   });
-  console.log(sale);
   return sale;
 };
 
@@ -223,7 +219,6 @@ export const rescheduleSale = async (
   input: z.infer<typeof ZRescheduleSaleSchema>
 ) => {
   const { saleFormData, itemId, itemType, saleId } = input;
-  console.log("Reached in service of reschedule", input);
   const storeItem = await db.storeItem.findFirst({
     where: {
       id: itemId,
@@ -242,8 +237,6 @@ export const rescheduleSale = async (
     slot,
   } = saleFormData;
 
-  console.log(saleFormData, "bhenchod");
-
   if (itemType === "CALENDAR" && slot && customerTimezone && Number(saleId)) {
     const calendarProduct = storeItem?.calendarProduct;
     const meetingLength = calendarProduct?.length as number;
@@ -252,8 +245,6 @@ export const rescheduleSale = async (
 
     const meetingName =
       "Meeting " + calendarProduct?.title + " with " + customerName;
-
-    console.log("bhenchod 2", saleId);
 
     const deleteBookingId = await db.sale.findFirst({
       where: {
@@ -331,15 +322,12 @@ export const rescheduleSale = async (
       },
     });
 
-    console.log(updatedSale, "updatedSale");
-
     const googleCalendarResponse = await createGoogleCalendarBooking(
       storeItem?.store.id as string,
       meetingName,
       slot,
       endTime
     );
-    console.log(googleCalendarResponse, "nope");
 
     await db.booking.update({
       where: {
@@ -360,7 +348,6 @@ export const rescheduleSale = async (
 };
 
 export const cancelGoogleCalendarSale = async (saleId: number | undefined) => {
-  console.log("cancelGoogleCalendarSale", saleId);
   if (!saleId) return false;
   const sale = await db.sale.findFirst({
     where: {
@@ -370,16 +357,13 @@ export const cancelGoogleCalendarSale = async (saleId: number | undefined) => {
       booking: true,
     },
   });
-  console.log(sale, "saleINcancelGoogleCalendarSale");
 
   if (sale?.booking?.meetingId) {
-    console.log(sale.booking.meetingId, "sale.booking.meetingId");
     const googleCalendarID = sale.booking.meetingId;
     const googleCalendarResponse = await cancelGoogleCalendarEvent(
       sale.storeId,
       googleCalendarID
     );
-    console.log(googleCalendarResponse, "googleCalendarResponse");
     await db.booking.update({
       where: {
         id: sale.booking.id,

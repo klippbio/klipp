@@ -32,8 +32,6 @@ function Mypage() {
       enabled: true,
     }
   );
-  console.log(data, "sale data");
-
   return (
     // <div>
     //   {isLoading ? <div>Loading...</div> : <div></div>}
