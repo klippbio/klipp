@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 
 import * as publicService from "../services/public/publicService";
 import CustomError from "../utils/CustomError";
+import cityTimezones from "../services/calendar/cityTimezones";
 
 export const publicController = express.Router();
 
@@ -45,6 +46,17 @@ publicController.get("/product", async (req: Request, res: Response) => {
     );
     if (!product) throw new CustomError("Product not found", 404);
     res.status(200).json(product);
+  } catch (error) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
+  }
+});
+
+publicController.get("/cityTimezones", async (req: Request, res: Response) => {
+  try {
+    const cities = await cityTimezones();
+    res.status(200).json(cities);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });

@@ -32,7 +32,7 @@ function Page() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/digital-products/getproduct/?id=${productId}`,
+        `/api/digital-products/getproduct/?id=${productId}&storeId=${authDetails?.storeId}`,
         authDetails
       );
       return response.data;

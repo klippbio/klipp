@@ -21,7 +21,6 @@ import {
   unlinkGoogleCalendar,
   updateCalendarSettings,
 } from "../services/calendar/calendarSettingService";
-import cityTimezones from "../services/calendar/cityTimezones";
 import { isUsersStore } from "../middlewares/isUsersStore";
 
 export const calendarController = express.Router();
@@ -161,20 +160,6 @@ calendarController.post(
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500);
-    }
-  }
-);
-
-calendarController.get(
-  "/cityTimezones",
-  async (req: Request, res: Response) => {
-    try {
-      const cities = await cityTimezones();
-      res.status(200).json(cities);
-    } catch (error) {
-      if (error instanceof CustomError)
-        res.status(error.statusCode).json({ error: error.message });
-      else res.status(500).json({ error: error });
     }
   }
 );

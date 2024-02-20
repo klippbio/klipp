@@ -50,7 +50,7 @@ function Page() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/calendar-products/getCalendarProduct/?id=${productId}`,
+        `/api/calendar-products/getCalendarProduct/?id=${productId}&storeId=${authDetails?.storeId}`,
         authDetails
       );
       return response.data;

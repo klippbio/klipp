@@ -150,13 +150,11 @@ export const getProduct = async (input: z.infer<typeof ZGetOrDeleteFile>) => {
   return product;
 };
 
-export const getAllDigitalProducts = async (
-  input: z.infer<typeof ZGetOrDeleteFile>
-) => {
+export const getAllDigitalProducts = async (storeId: string) => {
   const digitalProducts = await db.digitalProduct.findMany({
     where: {
       storeItem: {
-        storeId: input.id,
+        storeId: storeId,
       },
     },
     select: {

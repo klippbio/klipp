@@ -9,7 +9,8 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://klipp-backend-production.up.railway.app/:path*",
+        // destination: "https://klipp-backend-production.up.railway.app/:path*",
+        destination: "http://localhost:4000/:path*",
       },
     ];
   },
