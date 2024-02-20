@@ -42,9 +42,9 @@ export default function Cards() {
 
   const currency =
     Array.isArray(data?.storeItems) &&
-    data?.storeItems.length > 0 &&
+    (data?.storeItems?.length ?? 0) > 0 &&
     Array.isArray(data?.storeItems[0].currency) &&
-    data?.storeItems[0].currency.length > 0
+    (data?.storeItems[0].currency.length ?? 0) > 0
       ? data?.storeItems[0].currency[0].toUpperCase()
       : "";
 
