@@ -7,9 +7,10 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "scripts": {
+    "build": "tsc",
+    "start": "node build/server.js",
+    "dev": "nodemon --exec ts-node server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.ts",
-    "dev": "nodemon server.ts",
     "lint": "eslint . --ext .ts",
     "lint --fix": "eslint . --ext .ts --fix"
   },
