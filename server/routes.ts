@@ -12,8 +12,8 @@ import { linkController } from "./controllers/linkController";
 import { isUsersStore } from "./middlewares/isUsersStore";
 
 export const routes = express.Router();
-
-routes.use("/user", isUsersStore, userController);
+asdf;
+routes.use("/user", userController);
 
 routes.use("/calendar", isUsersStore, calendarController);
 routes.use("/", publicController);

@@ -6,16 +6,23 @@ import { AxiosError } from "axios";
 import AxiosApi from "@/app/services/axios";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "./data-table";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 export default function Page() {
+  const authDetails = useAuthDetails();
   const { data } = useQuery<Sale[], AxiosError>(
-    ["sale"],
+    ["sale", authDetails.storeId],
     async () => {
-      const response = await AxiosApi("GET", `/api/sale/all`);
+      const response = await AxiosApi(
+        "GET",
+        `/api/sale/all?storeId=${authDetails.storeId}`,
+        {},
+        authDetails
+      );
       return response.data;
     },
     {
-      enabled: true,
+      enabled: !!authDetails.storeId,
     }
   );
 

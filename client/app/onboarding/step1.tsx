@@ -8,7 +8,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { Input, PrefixInputLeft } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,16 +30,11 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Upload } from "lucide-react";
 import { ErrorResponse } from "@/types/apiResponse";
+import AxiosApi from "../services/axios";
 
 //types
 type Step1Props = {
   onFormSubmitSuccess: () => void;
-};
-
-type OnboardingFormValues = {
-  username: string;
-  displayName: string;
-  description: string;
 };
 
 //consts
@@ -68,7 +63,7 @@ const onboardingFormSchema = z.object({
 
 export function Step1({ onFormSubmitSuccess }: Step1Props) {
   //consts
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
   const { user } = useUser();
   const router = useRouter();
   const email = user?.emailAddresses[0].emailAddress;
@@ -131,15 +126,14 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
 
   //save user data
   const mutation = useMutation({
-    mutationFn: async (data: OnboardingFormValues) => {
+    mutationFn: async (data: z.infer<typeof onboardingFormSchema>) => {
       const combinedData = { ...data, userId, email };
-      return axios.post("/api/user/onboarding", combinedData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await getToken()}`,
-          mode: "cors",
-        },
-      });
+      return AxiosApi(
+        "POST",
+        "/api/user/onboarding",
+        combinedData,
+        authDetails
+      );
     },
     onSuccess: () => {
       user?.update({

@@ -42,7 +42,7 @@ linkController.post("/create", async (req: Request, res: Response) => {
 
 linkController.get("/getAllLinks", async (req: Request, res: Response) => {
   try {
-    const id = req.query.id;
+    const id = req.query.storeId;
     const product = await getAllLinks(
       await ZGetOrDeleteFile.parseAsync({ id: id })
     );

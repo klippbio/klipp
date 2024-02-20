@@ -12,18 +12,9 @@ export const isUsersStore = async (
   }
   const clerkUser = await clerkClient.users.getUser(req.auth.userId);
 
-  console.log("clerkUser", clerkUser);
-
   const dbUser = await getUserById(clerkUser.id);
 
-  console.log("dbUser", dbUser);
-
-  console.log("req.body", req.body);
-  console.log("req.query", req.query);
-
   const storeId = req.body.storeId || req.query.storeId;
-
-  console.log("storeId", storeId);
 
   const hasMatchingStore =
     dbUser && dbUser.stores.some((store) => store.id === storeId);
