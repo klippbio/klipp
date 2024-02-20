@@ -10,7 +10,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Paintbrush } from "lucide-react";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 
 export function PickerExample() {

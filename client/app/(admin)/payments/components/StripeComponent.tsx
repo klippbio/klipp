@@ -11,12 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import AxiosApi from "@/app/services/axios";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function StripeComponent() {
-  const queryClient = useQueryClient();
   const { data: accountDetails, isLoading: isAccountDetailsLoading } = useQuery(
     ["stripeAccountDetails"],
     async () => {

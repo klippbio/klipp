@@ -1,10 +1,9 @@
 "use client";
-import { Instagram, Mail, Music2, Twitter, User, Youtube } from "lucide-react";
+import { Instagram, Music2, Twitter, User, Youtube } from "lucide-react";
 import React, { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { GradientPicker, PickerExample } from "@/components/ui/GradientPicker";
 import { store } from "../..";
 
 export default function SidePanel() {
@@ -13,6 +12,7 @@ export default function SidePanel() {
   const [textColor, setTextColor] = useState("text-white"); // Default text color
 
   // Function to determine if the background color is light or dark
+  //eslint-disable-next-line
   const isColorDark = (color: any) => {
     if (!color) return true; // Default to dark if no color provided
 
@@ -25,7 +25,7 @@ export default function SidePanel() {
     return brightness < 155; // Threshold of brightness, below which color is considered dark
   };
 
-  const { data, isLoading, error } = useQuery<store, AxiosError>(
+  const { data } = useQuery<store, AxiosError>(
     ["userDetails", username],
     async () => {
       const response = await axios.get(`/api/publicuser/?username=${username}`);

@@ -9,6 +9,12 @@ export interface store {
   storeUrl: string;
   storeItems: storeItem[];
   user?: user;
+  color: string;
+  thumbnailUrl: string;
+  instagram: string;
+  tiktok: string;
+  youtube: string;
+  twitter: string;
 }
 
 export interface user {

@@ -5,16 +5,14 @@ import { useAuthDetails } from "@/app/components/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { store } from "@/app/(client)";
 import axios, { AxiosError } from "axios";
-import loading from "../loading";
 import { Skeleton } from "@/components/ui/skeleton";
-import ProductsList from "./components/ProductsList";
 
 function Settings() {
   const authDetails = useAuthDetails();
   const username = authDetails?.storeUrl;
 
-  const { data, isLoading, error } = useQuery<store, AxiosError>(
-    ["allProducts", username],
+  const { data, isLoading } = useQuery<store, AxiosError>(
+    ["settings", username],
     async () => {
       const response = await axios.get(`/api/publicuser/?username=${username}`);
       return response.data;
@@ -46,10 +44,7 @@ function Settings() {
       ) : (
         <div>
           {" "}
-          <div className="w-full">
-            <UserSettings data={data} />
-            {/* <ProductsList /> */}
-          </div>
+          <div className="w-full">{data && <UserSettings data={data} />}</div>
         </div>
       )}
     </div>

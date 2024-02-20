@@ -15,14 +15,13 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Masonry from "react-masonry-css";
 
 export default function Cards() {
   const router = useRouter();
 
   const username = usePathname().substring(1);
 
-  const { data, isLoading, error } = useQuery<store, AxiosError>(
+  const { data, error } = useQuery<store, AxiosError>(
     ["allProducts", username],
     async () => {
       const response = await axios.get(`/api/publicuser/?username=${username}`);
@@ -57,7 +56,7 @@ export default function Cards() {
         data.storeItems.map((item: storeItem) =>
           item.itemType === "LINK" ? (
             // Custom UI for LINK itemType
-            <div className="md:w-1/2 w-full p-4">
+            <div className="md:w-1/2 w-full p-4" key={item.id}>
               <Card
                 className="w-full h-44 cursor-pointer rounded-lg hover:bg-primary-background overflow-hidden hover:shadow-md"
                 key={item.name}
@@ -96,7 +95,7 @@ export default function Cards() {
               </Card>
             </div>
           ) : (
-            <div className="md:w-1/2 w-full p-4">
+            <div className="md:w-1/2 w-full p-4" key={item.id}>
               <Card
                 onClick={() => {
                   router.push(`/${username}/${item.id}`);

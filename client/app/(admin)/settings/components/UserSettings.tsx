@@ -1,14 +1,9 @@
 "use client";
-import { store } from "@/app/(client)";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-import { useAuthDetails } from "@/app/components/AuthContext";
+import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -29,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AxiosApi from "@/app/services/axios";
 import { useToast } from "@/components/ui/use-toast";
-import { GradientPicker, PickerExample } from "@/components/ui/GradientPicker";
+import { GradientPicker } from "@/components/ui/GradientPicker";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
@@ -51,6 +46,7 @@ const onboardingFormSchema = z.object({
   storeUrl: z.string(),
   color: z.string().optional(),
 });
+//eslint-disable-next-line
 function UserSettings(data: any) {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState("");
@@ -317,7 +313,7 @@ function UserSettings(data: any) {
                 <FormField
                   control={form.control}
                   name="color"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel htmlFor="youtube">Background Color</FormLabel>
                       <FormControl>

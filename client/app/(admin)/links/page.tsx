@@ -10,15 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import {
-  Link,
-  Loader2,
-  MoreVertical,
-  Pencil,
-  Trash,
-  Trash2,
-  Upload,
-} from "lucide-react";
+import { Link, Loader2, Trash2, Upload } from "lucide-react";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +35,7 @@ import {
   generateUploadURL,
   uploadFile,
 } from "@/app/services/getS3url";
+import { AxiosError } from "axios";
 
 type linkType = {
   title: string;
@@ -149,7 +142,7 @@ function Page() {
       );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Success!",
         duration: 1000,
@@ -178,7 +171,7 @@ function Page() {
       );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries(["allLinks"]);
       toast({
         title: "Success!",

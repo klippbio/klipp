@@ -40,12 +40,12 @@ function PaymentDetails() {
   const currencySymbol = getSymbolFromCurrency(currency);
 
   const payOutMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data) => {
       const response = await AxiosApi("POST", `/api/stripe/payout`, data);
       await queryClient.invalidateQueries(["stripeBalance"]);
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       toast({
         title: "Success",
         duration: 2000,

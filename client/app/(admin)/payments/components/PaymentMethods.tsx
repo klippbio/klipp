@@ -23,7 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { any, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Select,
@@ -94,7 +94,7 @@ export function PaymentMethods() {
       const response = await AxiosApi("POST", `/api/stripe/connect/`, data);
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       router.push(data.url);
     },
     onError: () => {
@@ -116,7 +116,7 @@ export function PaymentMethods() {
       );
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       router.push(data.url);
     },
     onError: () => {
@@ -134,7 +134,7 @@ export function PaymentMethods() {
       await AxiosApi("POST", `/api/stripe/disconnect/`, data);
       await queryClient.invalidateQueries(["stripeAccountDetails"]);
     },
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       toast({
         title: "Success",
         duration: 2000,
@@ -156,7 +156,7 @@ export function PaymentMethods() {
       const response = await AxiosApi("POST", `/api/stripe/dashboard/`, data);
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       router.push(data.url);
     },
     onError: () => {
@@ -169,7 +169,7 @@ export function PaymentMethods() {
     },
   });
 
-  function onSubmit(data: any) {
+  function onSubmit(data: z.infer<typeof FormSchema>) {
     mutation.mutate(data);
   }
 
