@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { loadConnectAndInitialize } from "@stripe/connect-js/pure";
+import {
+  StripeConnectInstance,
+  loadConnectAndInitialize,
+} from "@stripe/connect-js/pure";
 import {
   ConnectPayments,
   ConnectComponentsProvider,
@@ -29,7 +32,8 @@ export default function StripeComponent() {
 
   const accountId = accountDetails?.accountId;
 
-  const [stripeConnectInstance, setStripeConnectInstance] = useState(null);
+  const [stripeConnectInstance, setStripeConnectInstance] =
+    useState<StripeConnectInstance | null>(null);
   const [clientSecret, setClientSecret] = useState(null);
 
   useEffect(() => {
