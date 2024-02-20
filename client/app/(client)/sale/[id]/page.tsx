@@ -9,16 +9,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import CalendarSaleContent from "./calendarSuccessContent";
 
-export const formatDateSuccessPage = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 function Mypage() {
   const id = usePathname().split("/")[2];
 

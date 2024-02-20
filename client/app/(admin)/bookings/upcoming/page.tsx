@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Trash } from "lucide-react";
-import { formatDateSuccessPage } from "@/app/(client)/sale/[id]/page";
 import { BookingApiResponse, ErrorResponse } from "@/types/apiResponse";
+import { formatDateSuccessPage } from "@/utils/formatDate";
 
 function Page() {
   const authDetails = useAuthDetails();

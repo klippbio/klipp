@@ -1,5 +1,4 @@
 import React from "react";
-import { formatDateSuccessPage } from "./page"; // Ensure you have this utility function
 import { sale } from "../..";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -20,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ErrorResponse } from "@/types/apiResponse";
+import { formatDateSuccessPage } from "@/utils/formatDate";
 
 export default function CalendarSaleContent({ data }: { data: sale }) {
   const id = usePathname().split("/")[2];
