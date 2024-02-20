@@ -62,6 +62,7 @@ export const createProduct = async (
   return storeItemDigitalDownload;
 };
 
+//eslint-disable-next-line
 export const updateProduct = async (id: string, input: any) => {
   const refinedData = {
     name: input.name,

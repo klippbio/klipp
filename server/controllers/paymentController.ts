@@ -12,6 +12,7 @@ import { env } from "process";
 export const paymentController = express.Router();
 
 const STRIPE_TEST_KEY = env.STRIPE_TEST_KEY;
+//eslint-disable-next-line
 const stripe = require("stripe")(STRIPE_TEST_KEY);
 
 paymentController.post("/connect", async (req: Request, res: Response) => {
@@ -120,6 +121,7 @@ paymentController.post("/disconnect", async (req: Request, res: Response) => {
 paymentController.post(
   "/create-checkout-session",
   async (req: Request, res: Response) => {
+    //eslint-disable-next-line
     const stripe = require("stripe")(
       "sk_test_51ODeaHKiQFEEPGdjBvEPJUUSO6mstnNQFzy03aRDJxTVfgXriuthpcZ6j2ppMJjR1vVXtQqOUBxekyCKUl4cYOAR003xGDEGAI"
     );
@@ -197,7 +199,7 @@ paymentController.post("/payout", async (req: Request, res: Response) => {
     });
     const { amount, currency } = balance.available[0];
     // Create a payout
-    const payout = await stripe.payouts.create(
+    await stripe.payouts.create(
       {
         amount: amount,
         currency: currency,

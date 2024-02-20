@@ -20,6 +20,7 @@ export const createAccount = async (input: z.infer<typeof ZAccountSchema>) => {
   return account;
 };
 
+//eslint-disable-next-line
 export const handleUpdateAccount = async (input: any) => {
   //get account from db based on id from event
   //update charges enabled, transfers enabled, payouts enabled and onboarding complete details
@@ -35,6 +36,7 @@ export const handleUpdateAccount = async (input: any) => {
   return account;
 };
 
+//eslint-disable-next-line
 export const handleDeleteAccountFromDB = async (input: any) => {
   //get account from db based on id from event
   //update charges enabled, transfers enabled, payouts enabled and onboarding complete details
@@ -61,6 +63,7 @@ export const getAccountDetails = async () => {
   return accountDetails;
 };
 
+//eslint-disable-next-line
 export const getAccountById = async (id: any) => {
   //this should be unique change it once testing is done
   const account = await db.payment.findMany({
