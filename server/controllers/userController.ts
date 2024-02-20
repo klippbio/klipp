@@ -4,7 +4,6 @@ import clerkClient, { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
 import * as userService from "../services/userService";
 import * as storeService from "../services/storeService";
-import { c } from "vitest/dist/reporters-5f784f42";
 
 export const userController = express.Router();
 
@@ -55,7 +54,7 @@ userController.post(
         req.body
       );
 
-      const socials = await userService.onboardingSocials(parsedData);
+      await userService.onboardingSocials(parsedData);
 
       return res.status(201).json("newUser");
     } catch (error) {
