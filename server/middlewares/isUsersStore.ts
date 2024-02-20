@@ -7,6 +7,7 @@ export const isUsersStore = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(req);
   if (!req.auth) {
     res.status(401).json({ error: "AuthInfo not available" });
   }
