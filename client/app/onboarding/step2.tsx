@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import {
   Form,
@@ -20,6 +20,8 @@ import {
 import { PrefixInputLeft } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { ErrorResponse } from "@/types/apiResponse";
+import AxiosApi from "../services/axios";
+import { useAuthDetails } from "../components/AuthContext";
 
 type OnboardingFormValues = {
   instagram: string;
@@ -29,7 +31,8 @@ type OnboardingFormValues = {
 };
 
 function Step2() {
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
+  const authDetails = useAuthDetails();
   const { user } = useUser();
   const email = user?.emailAddresses[0].emailAddress;
 
@@ -62,13 +65,12 @@ function Step2() {
   const mutation = useMutation({
     mutationFn: async (data: OnboardingFormValues) => {
       const combinedData = { ...data, userId, email };
-      return axios.post("/api/user/onboarding/socials", combinedData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await getToken()}`,
-          mode: "cors",
-        },
-      });
+      return AxiosApi(
+        "POST",
+        "/api/user/onboarding/socials",
+        combinedData,
+        authDetails
+      );
     },
     onSuccess: () => {
       toast({

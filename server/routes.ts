@@ -9,17 +9,18 @@ import { slotController } from "./controllers/slotController";
 import { saleController } from "./controllers/saleController";
 import { bookingController } from "./controllers/bookingController";
 import { linkController } from "./controllers/linkController";
+import { isUsersStore } from "./middlewares/isUsersStore";
 
 export const routes = express.Router();
 
 routes.use("/user", userController);
 
-routes.use("/calendar", calendarController);
+routes.use("/calendar", isUsersStore, calendarController);
 routes.use("/", publicController);
-routes.use("/digital-products", ddController);
-routes.use("/stripe", paymentController);
-routes.use("/calendar-products", calendarProductController);
-routes.use("/slots", slotController);
-routes.use("/sale", saleController);
-routes.use("/bookings", bookingController);
-routes.use("/link", linkController);
+routes.use("/digital-products", isUsersStore, ddController);
+routes.use("/stripe", isUsersStore, paymentController);
+routes.use("/calendar-products", isUsersStore, calendarProductController);
+routes.use("/slots", isUsersStore, slotController);
+routes.use("/sale", isUsersStore, saleController);
+routes.use("/bookings", isUsersStore, bookingController);
+routes.use("/link", isUsersStore, linkController);

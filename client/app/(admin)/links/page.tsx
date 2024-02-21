@@ -82,7 +82,7 @@ function Page() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/link/getAllLinks/?id=${storeId}`,
+        `/api/link/getAllLinks/?storeId=${storeId}`,
         {},
         authDetails
       );

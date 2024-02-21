@@ -96,10 +96,9 @@ ddController.get(
   "/getAllDigitalProducts",
   async (req: Request, res: Response) => {
     try {
-      const id = req.query.id;
-      const product = await getAllDigitalProducts(
-        await ZGetOrDeleteFile.parseAsync({ id: id })
-      );
+      const storeId = req.query.storeId;
+      if (!storeId) throw new CustomError("StoreId is required", 400);
+      const product = await getAllDigitalProducts(storeId as string);
       res.status(201).json(product);
     } catch (error) {
       console.log(error);

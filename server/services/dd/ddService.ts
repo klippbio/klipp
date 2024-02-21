@@ -62,6 +62,7 @@ export const createProduct = async (
   return storeItemDigitalDownload;
 };
 
+//eslint-disable-next-line
 export const updateProduct = async (id: string, input: any) => {
   const refinedData = {
     name: input.name,
@@ -149,13 +150,11 @@ export const getProduct = async (input: z.infer<typeof ZGetOrDeleteFile>) => {
   return product;
 };
 
-export const getAllDigitalProducts = async (
-  input: z.infer<typeof ZGetOrDeleteFile>
-) => {
+export const getAllDigitalProducts = async (storeId: string) => {
   const digitalProducts = await db.digitalProduct.findMany({
     where: {
       storeItem: {
-        storeId: input.id,
+        storeId: storeId,
       },
     },
     select: {

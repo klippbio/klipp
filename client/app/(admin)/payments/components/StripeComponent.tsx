@@ -17,16 +17,21 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import AxiosApi from "@/app/services/axios";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 export default function StripeComponent() {
+  const authDetails = useAuthDetails();
   const { data: accountDetails, isLoading: isAccountDetailsLoading } = useQuery(
-    ["stripeAccountDetails"],
+    ["stripeAccountDetails", authDetails?.storeId],
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/stripe/stripeAccountDetails`
+        `/api/stripe/stripeAccountDetails?storeId=${authDetails?.storeId}`
       );
       return response.data;
+    },
+    {
+      enabled: !!authDetails?.storeId,
     }
   );
 
