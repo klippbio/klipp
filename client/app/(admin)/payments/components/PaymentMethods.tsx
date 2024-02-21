@@ -70,7 +70,7 @@ export function PaymentMethods() {
   const { toast } = useToast();
 
   const { data, isLoading } = useQuery(
-    ["stripeAccountDetails"],
+    ["stripeAccountDetails", authDetails?.storeId],
     async () => {
       const response = await AxiosApi(
         "GET",

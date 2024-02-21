@@ -12,9 +12,8 @@ function PaymentDetails() {
   const queryClient = useQueryClient();
   const authDetails = useAuthDetails();
   const { data, isLoading } = useQuery(
-    ["stripeAccountDetails"],
+    ["stripeAccountDetails", authDetails?.storeId],
     async () => {
-      console.log(authDetails?.storeId);
       const accountDetails = await AxiosApi(
         "GET",
         `/api/stripe/stripeAccountDetails?storeId=${authDetails?.storeId}`
@@ -28,7 +27,7 @@ function PaymentDetails() {
 
   const accountId = data?.accountId;
   const { data: balanceData, isLoading: isBalanceLoading } = useQuery(
-    ["stripeBalance"],
+    ["stripeBalance", authDetails?.storeId],
     async () => {
       const response = await AxiosApi(
         "GET",
@@ -56,7 +55,10 @@ function PaymentDetails() {
         data,
         authDetails
       );
-      await queryClient.invalidateQueries(["stripeBalance"]);
+      await queryClient.invalidateQueries([
+        "stripeBalance",
+        authDetails?.storeId,
+      ]);
       return response.data;
     },
     onSuccess: () => {

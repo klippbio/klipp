@@ -22,7 +22,7 @@ import { useAuthDetails } from "@/app/components/AuthContext";
 export default function StripeComponent() {
   const authDetails = useAuthDetails();
   const { data: accountDetails, isLoading: isAccountDetailsLoading } = useQuery(
-    ["stripeAccountDetails"],
+    ["stripeAccountDetails", authDetails?.storeId],
     async () => {
       const response = await AxiosApi(
         "GET",
