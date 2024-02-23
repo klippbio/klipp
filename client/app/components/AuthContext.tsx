@@ -1,4 +1,3 @@
-// AuthContext.tsx
 "use client";
 import React, {
   ReactNode,
@@ -20,7 +19,7 @@ export interface AuthDetails {
 
 type RefreshAuthDetails = (storeUrl: string, storeId: string) => void;
 
-const AuthContext = createContext<{
+export const AuthContext = createContext<{
   authDetails: AuthDetails;
   refreshAuthDetails: RefreshAuthDetails;
 }>({
