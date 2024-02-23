@@ -7,7 +7,8 @@ import axios, { AxiosError } from "axios";
 import { store } from "../..";
 
 export default function SidePanel() {
-  const username = usePathname().substring(1);
+  const usernameSegments = usePathname().split("/");
+  const username = usernameSegments[1];
   const [backgroundColor, setBackgroundColor] = useState("");
   const [textColor, setTextColor] = useState("text-white"); // Default text color
 
@@ -49,7 +50,7 @@ export default function SidePanel() {
 
   return (
     <div
-      className={`md:h-screen h-auto w-full bg-secondary-foreground ${textColor}`}
+      className={`md:h-screen h-auto w-full ${textColor}`}
       style={dynamicStyle}
     >
       {data && (
@@ -100,13 +101,15 @@ export default function SidePanel() {
                   <Youtube className={textColor} />
                 </a>
               )}
-              <a
-                href={"https://tiktok.com/@" + data.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Music2 className={textColor} />
-              </a>
+              {data.tiktok && (
+                <a
+                  href={"https://tiktok.com/@" + data.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Music2 className={textColor} />
+                </a>
+              )}
               {/* Include other social icons similarly */}
             </div>
             <div className="flex justify-center text-justified mt-6 ml-10 mb-12 mr-10 text-md">

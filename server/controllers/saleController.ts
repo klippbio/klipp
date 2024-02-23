@@ -22,7 +22,11 @@ saleController.post("/create", async (req: Request, res: Response) => {
       res.status(200).json(booking);
     }
     if (itemType === "DIGITALPRODUCT") {
-      console.log("digital download"); // add the payment and a new service to save the digital product!
+      //TODO
+      //parse data
+      //Get stripe link
+      console.log("Digital Product Data", req.body);
+      //update sale table
     }
   } catch (error) {
     console.log(error);

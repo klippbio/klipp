@@ -37,6 +37,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import DigitalDownloadContent from "../components/digitalDownloadContent";
 import { ErrorResponse } from "@/types/apiResponse";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 interface CalendarSaleFormData {
   name: string;
@@ -48,12 +50,14 @@ interface CalendarSaleFormData {
 interface DigitalProductSaleFormData {
   name: string;
   email: string;
+  // flexPrice: string;
 }
 
 export type SaleFormData = CalendarSaleFormData | DigitalProductSaleFormData;
 
 function ProductPage() {
-  const username = usePathname().split("/")[1];
+  const usernameSegments = usePathname().split("/");
+  const username = usernameSegments[1];
   const { toast } = useToast();
   const id = usePathname().split("/").pop();
   const searchParams = useSearchParams();
@@ -62,6 +66,8 @@ function ProductPage() {
   const saleId = searchParams.get("saleId");
   const router = useRouter();
   const [saleFormData, setSaleFormData] = useState<SaleFormData>();
+  const authDetails = useAuthDetails();
+  const storeId = authDetails?.storeId;
 
   const handleSaleFormDataChange = (saleFormData: SaleFormData) => {
     setSaleFormData(saleFormData);
@@ -87,6 +93,11 @@ function ProductPage() {
         itemId: data?.id,
         saleId: saleId,
         reschedule: reschedule,
+        storeId: storeId,
+        currency: data?.itemDetails.currency[0],
+        price: data?.itemDetails.price,
+        productName: data?.itemDetails.name,
+        thumbnailUrl: data?.itemDetails.thumbnailUrl,
       };
       let response;
       if (reschedule === "true" && saleId) {
@@ -161,14 +172,27 @@ function ProductPage() {
 
   return (
     <div className="md:flex md:justify-center md:mt-8 md:mx-8 ">
-      {isLoading ? <div>Loading...</div> : null}
+      {isLoading ? (
+        <div>
+          <Card className="flex flex-col gap-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-2 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-6 w-1/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-8 w-full" />
+          </Card>
+        </div>
+      ) : null}
       {data && (
         <Card className="border-hidden md:border-solid md:w-9/12">
-          <div className="bg-secondary pt-3 rounded-t-xl">
-            <Button
-              variant={"ghost"}
-              onClick={() => router.push("/" + username)}
-            >
+          <div className="bg-secondary p-3 rounded-t-xl">
+            <Button variant={"ghost"} onClick={() => router.back()}>
               <ArrowLeft />
               Back
             </Button>
@@ -200,7 +224,7 @@ function ProductPage() {
               </div>
             </div>
           </CardHeader>
-          <div className="w-full flex gap-4 pl-6 p-3 bg-secondary border-b">
+          <div className="w-full flex gap-4 pl-6 p-3 pb-6 bg-secondary border-b">
             <div>
               {data.itemType === "DIGITALPRODUCT" ? (
                 <div className="flex gap-4">
@@ -241,68 +265,86 @@ function ProductPage() {
                 <div> {data.itemDetails.currency} </div>
                 <div>{data.itemDetails.price}</div>
               </div>
-              <div>
-                {saleFormData &&
-                reschedule === "true" &&
-                (saleFormData as CalendarSaleFormData).slot ? (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button>
-                        {saleFormData &&
-                        data.itemType === "CALENDAR" &&
-                        (saleFormData as CalendarSaleFormData).slot
-                          ? `Reschedule to ${dayjs(
-                              (saleFormData as CalendarSaleFormData).slot
-                            )
+              {data && data.itemType === "CALENDAR" ? (
+                <div>
+                  {saleFormData &&
+                  reschedule === "true" &&
+                  (saleFormData as CalendarSaleFormData).slot ? (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button>
+                          {saleFormData &&
+                          data.itemType === "CALENDAR" &&
+                          (saleFormData as CalendarSaleFormData).slot
+                            ? `Reschedule to ${dayjs(
+                                (saleFormData as CalendarSaleFormData).slot
+                              )
+                                .tz(
+                                  (saleFormData as CalendarSaleFormData)
+                                    .timezone
+                                )
+                                .format("MMMM DD HH:mm")}`
+                            : "Buy Now"}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. Your booking will be
+                            rescheduled from{" "}
+                            {dayjs(date)
                               .tz(
                                 (saleFormData as CalendarSaleFormData).timezone
                               )
-                              .format("MMMM DD HH:mm")}`
-                          : "Buy Now"}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. Your booking will be
-                          rescheduled from{" "}
-                          {dayjs(date)
+                              .format("MMMM DD HH:mm")}{" "}
+                            to{" "}
+                            {dayjs((saleFormData as CalendarSaleFormData).slot)
+                              .tz(
+                                (saleFormData as CalendarSaleFormData).timezone
+                              )
+                              .format("MMMM DD HH:mm")}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleBuyNowClick()}
+                          >
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  ) : (
+                    <Button
+                      className="bg-primary  text-primary-foreground"
+                      onClick={() => handleBuyNowClick()}
+                    >
+                      {saleFormData &&
+                      data.itemType === "CALENDAR" &&
+                      (saleFormData as CalendarSaleFormData).slot
+                        ? `Book ${dayjs(
+                            (saleFormData as CalendarSaleFormData).slot
+                          )
                             .tz((saleFormData as CalendarSaleFormData).timezone)
-                            .format("MMMM DD HH:mm")}{" "}
-                          to{" "}
-                          {dayjs((saleFormData as CalendarSaleFormData).slot)
-                            .tz((saleFormData as CalendarSaleFormData).timezone)
-                            .format("MMMM DD HH:mm")}
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleBuyNowClick()}>
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                ) : (
+                            .format("MMMM DD HH:mm")}`
+                        : "Buy Now"}
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div>
                   <Button
                     className="bg-primary  text-primary-foreground"
                     onClick={() => handleBuyNowClick()}
                   >
-                    {saleFormData &&
-                    data.itemType === "CALENDAR" &&
-                    (saleFormData as CalendarSaleFormData).slot
-                      ? `Book ${dayjs(
-                          (saleFormData as CalendarSaleFormData).slot
-                        )
-                          .tz((saleFormData as CalendarSaleFormData).timezone)
-                          .format("MMMM DD HH:mm")}`
-                      : "Buy Now"}
+                    Buy Now
                   </Button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </CardFooter>
         </Card>

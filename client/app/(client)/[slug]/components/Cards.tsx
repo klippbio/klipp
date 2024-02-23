@@ -25,6 +25,7 @@ export default function Cards() {
     ["allProducts", username],
     async () => {
       const response = await axios.get(`/api/publicuser/?username=${username}`);
+      console.log("response.data", response.data);
       return response.data;
     },
     {

@@ -51,6 +51,7 @@ const FormSchema = z.object({
   country: z.string({
     required_error: "Please select your country to get started.",
   }),
+  storeId: z.string().optional(),
 });
 
 type dataType = {
@@ -123,8 +124,7 @@ export function PaymentMethods() {
       const response = await AxiosApi(
         "POST",
         `/api/stripe/pendingAccount/`,
-        data,
-        authDetails
+        data
       );
       return response.data;
     },
@@ -187,19 +187,23 @@ export function PaymentMethods() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    mutation.mutate(data);
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    mutation.mutate(combinedData);
   }
 
   function pendingSubmit() {
-    pendingMutation.mutate(data);
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    pendingMutation.mutate(combinedData);
   }
 
   function disconnectSubmit() {
-    disconnectMutation.mutate(data);
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    disconnectMutation.mutate(combinedData);
   }
 
   function handleDashboardRedirect() {
-    redirectMutation.mutate(data);
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    redirectMutation.mutate(combinedData);
   }
 
   return (

@@ -5,8 +5,20 @@ export const ZAccountSchema = z.object({
   accountId: z.string(),
 });
 
-export const createAccount = async (input: z.infer<typeof ZAccountSchema>) => {
-  const storeId = "fdc6cfdf-5511-4587-a6ed-a09eb451b45c";
+export const ZStoreIdSchema = z.object({
+  storeId: z.string(),
+});
+
+export const ZAccountDetailsSchema = z.object({
+  accountId: z.string(),
+  storeId: z.string(),
+});
+
+export const createAccount = async (
+  input: z.infer<typeof ZAccountDetailsSchema>
+) => {
+  //auth
+  const storeId = input.storeId;
   const account = await db.payment.create({
     data: {
       accountId: input.accountId,
@@ -24,7 +36,6 @@ export const createAccount = async (input: z.infer<typeof ZAccountSchema>) => {
 export const handleUpdateAccount = async (input: any) => {
   //get account from db based on id from event
   //update charges enabled, transfers enabled, payouts enabled and onboarding complete details
-
   const account = await db.payment.update({
     where: {
       accountId: input.id,
@@ -37,7 +48,9 @@ export const handleUpdateAccount = async (input: any) => {
 };
 
 //eslint-disable-next-line
-export const handleDeleteAccountFromDB = async (input: any) => {
+export const handleDeleteAccountFromDB = async (
+  input: z.infer<typeof ZAccountDetailsSchema>
+) => {
   //get account from db based on id from event
   //update charges enabled, transfers enabled, payouts enabled and onboarding complete details
   const account = await db.payment.delete({
@@ -48,18 +61,16 @@ export const handleDeleteAccountFromDB = async (input: any) => {
   return account;
 };
 
-export const getAccountDetails = async () => {
-  const storeId = "fdc6cfdf-5511-4587-a6ed-a09eb451b45c";
-  //this should be unique change it once testing is done
-  const accountDetails = await db.payment.findMany({
+export const getAccountDetails = async (
+  input: z.infer<typeof ZStoreIdSchema>
+) => {
+  const storeId = input.storeId;
+  const accountDetails = await db.payment.findFirst({
     where: {
       storeId: storeId,
     },
   });
 
-  if (accountDetails.length === 0) {
-    return null;
-  }
   return accountDetails;
 };
 

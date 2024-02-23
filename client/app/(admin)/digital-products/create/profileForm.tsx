@@ -63,6 +63,7 @@ const digitalDownloadsSchema = z
     currency: z.string().array().default(["USD"]),
     price: z.string().default("0"),
     recPrice: z.string().optional(),
+    storeId: z.number().optional(),
     minPrice: z.string().optional(),
     flexPrice: z.boolean().optional(),
     visibility: z.boolean().optional().default(false),
@@ -217,7 +218,7 @@ export function ProfileForm({
   function onSubmit(data: z.infer<typeof digitalDownloadsSchema>) {
     data.thumbnailUrl = imageUrl;
     data.description = editorData;
-
+    data.storeId = authDetails?.storeId;
     mutation.mutate(data);
   }
 
