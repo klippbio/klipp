@@ -79,7 +79,7 @@ export default function CalendarProductSelect({
         description: "Schedule Updated !",
       });
       router.push(
-        "/calendar/products/edit?id=" + productId + "&tab=availability"
+        "/app/calendar/products/edit?id=" + productId + "&tab=availability"
       );
     },
     onError: () => {

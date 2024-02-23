@@ -57,7 +57,6 @@ function Step2() {
   });
 
   function onSubmit(data: z.infer<typeof onboardingFormSchema>) {
-    console.log(data);
     // data.username = data.username.replace(fixedPrefix, "");
     mutation.mutate(data);
   }

@@ -4,11 +4,11 @@ import { Separator } from "@/components/ui/separator";
 const navItems = [
   {
     title: "Upcoming",
-    href: "/bookings/upcoming",
+    href: "/app/bookings/upcoming",
   },
   {
     title: "Completed",
-    href: "/bookings/completed",
+    href: "/app/bookings/completed",
   },
 ];
 

@@ -11,6 +11,13 @@ export const ZProduct = z.object({
   userName: z.string(),
 });
 
+export const ZChangeOrder = z.array(
+  z.object({
+    id: z.number(),
+    itemOrder: z.number(),
+  })
+);
+
 export const ZUpdatePublicUser = z.object({
   storeUrl: z.string(),
   displayName: z.string(),
@@ -55,7 +62,8 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
       flexPrice:
         item.DigitalProduct?.flexPrice || item.calendarProduct?.price || "0",
       currency: item.DigitalProduct?.currency || item.calendarProduct?.currency,
-      // Add any other fields you need
+      itemOrder: item.itemOrder,
+      itemTypeId: item.DigitalProduct?.id || item.calendarProduct?.id || "",
     })),
   };
   return transformedUser;
@@ -116,4 +124,21 @@ export const getPublicProduct = async (input: z.infer<typeof ZProduct>) => {
   }
 
   return product;
+};
+
+export const changeOrder = async (input: z.infer<typeof ZChangeOrder>) => {
+  const transaction = input.map((item) =>
+    db.storeItem.update({
+      where: { id: item.id },
+      data: { itemOrder: item.itemOrder },
+    })
+  );
+
+  try {
+    const result = await db.$transaction(transaction);
+    return result; // This will return an array of all the updated records
+  } catch (error) {
+    console.log(error);
+    throw new CustomError("Failed to update item order", 500);
+  }
 };
