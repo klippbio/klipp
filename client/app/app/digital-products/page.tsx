@@ -109,6 +109,9 @@ function Page() {
   });
 
   function onSubmit(data: z.infer<typeof ddCreateSchema>) {
+    if (!storeId) {
+      return;
+    }
     data.storeId = storeId;
     createProductMutation.mutate(data);
   }

@@ -13,10 +13,10 @@ const AxiosApi = async <T>(
   url: string,
   data: T = {} as T,
   authDetails: AuthDetails = {
-    token: undefined,
-    userId: undefined,
-    storeId: undefined,
-    storeUrl: undefined,
+    token: null,
+    userId: null,
+    storeId: null,
+    storeUrl: null,
   }
 ) => {
   const { token } = authDetails;

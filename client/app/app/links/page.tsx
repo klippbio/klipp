@@ -105,6 +105,9 @@ function Page() {
   });
 
   function onSubmit(data: z.infer<typeof linkCreateSchema>) {
+    if (!storeId) {
+      return;
+    }
     data.storeId = storeId;
     const formData = {
       ...data,
