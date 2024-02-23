@@ -80,7 +80,7 @@ export default function AddCalendarProduct({
         description: "Calendar Product Created.",
       });
       const calendarProductId = data.calendarProduct.id;
-      router.push(`/app/calendar/products/edit/?id=${calendarProductId}`);
+      router.push(`/dashboard/calendar/products/edit/?id=${calendarProductId}`);
     },
     onError: async (data: AxiosError<ErrorResponse>) => {
       toast({

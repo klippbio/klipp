@@ -24,7 +24,7 @@ function Page() {
 
   const updateUrl = useCallback(
     (tab: string) => {
-      const url = "/app/calendar/products/edit?id=" + id + "&tab=" + tab;
+      const url = "/dashboard/calendar/products/edit?id=" + id + "&tab=" + tab;
       router.push(url);
     },
     [router, id]
@@ -68,7 +68,7 @@ function Page() {
         description: error.response?.data.error,
         duration: 3000,
       });
-      router.push("/app/calendar/products");
+      router.push("/dashboard/calendar/products");
     }
   }, [status, error, toast, router]);
   return (

@@ -63,7 +63,7 @@ export default function CalendarProductDropdown({
         duration: 1000,
         description: "Schedule Deleted.",
       });
-      router.push("/app/calendar/products");
+      router.push("/dashboard/calendar/products");
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       toast({
@@ -90,7 +90,7 @@ export default function CalendarProductDropdown({
         <AlertDialog>
           <DropdownMenuItem
             onClick={() =>
-              router.push(`/app/calendar/products/edit?id=${item.id}`)
+              router.push(`/dashboard/calendar/products/edit?id=${item.id}`)
             }
             onSelect={(e) => e.preventDefault()}
           >

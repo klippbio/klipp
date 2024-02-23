@@ -157,7 +157,7 @@ function Page() {
       });
 
       const productId = data.DigitalProduct.id;
-      router.push(`/app/digital-products/create/?id=${productId}`);
+      router.push(`/dashboard/digital-products/create/?id=${productId}`);
     },
     onError: () => {
       toast({
@@ -282,7 +282,7 @@ function Page() {
                               <DropdownMenuItem
                                 onClick={() =>
                                   router.push(
-                                    `/app/digital-products/create/?id=${item.id}`
+                                    `/dashboard/digital-products/create/?id=${item.id}`
                                   )
                                 }
                                 onSelect={(e) => e.preventDefault()}

@@ -89,7 +89,9 @@ export default function CalendarProductAvailabilityCard({
             <Button
               variant="outline"
               onClick={() =>
-                router.push("/app/calendar/schedule?scheduleId=" + scheduleId)
+                router.push(
+                  "/dashboard/calendar/schedule?scheduleId=" + scheduleId
+                )
               }
             >
               <ExternalLink className="h-4 w-4 mr-2" />

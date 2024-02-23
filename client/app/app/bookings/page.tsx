@@ -4,7 +4,7 @@ import React from "react";
 
 function Page() {
   const router = useRouter();
-  router.push("/app/bookings/upcoming");
+  router.push("/dashboard/bookings/upcoming");
   return <div></div>;
 }
 
