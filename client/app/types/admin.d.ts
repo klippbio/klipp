@@ -6,5 +6,6 @@ declare module "admin" {
       title: string;
       icon: React.ReactNode;
     }[];
+    storeUrl: string | undefined | null;
   }
 }

@@ -83,14 +83,14 @@ export default function RootLayout({
   return (
     <div className="h-screen w-screen flex flex-col md:flex-row">
       <div className="hidden md:flex md:w-64 fixed top-0 h-full z-50">
-        <SideNav items={navItems} />
+        <SideNav items={navItems} storeUrl={authDetails.storeUrl} />
         <Separator orientation="vertical" />
       </div>
       <div className="flex flex-col md:pl-64 h-screen pb-20 md:pb-0 w-full">
         {children}
       </div>
       <div className="md:hidden w-full">
-        <BottomBar items={navItems} />
+        <BottomBar items={navItems} storeUrl={authDetails.storeUrl} />
       </div>
     </div>
   );

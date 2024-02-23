@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sheet";
 import Image from "next/image";
 
-export function BottomBar({ className, items, ...props }: NavProps) {
+export function BottomBar({ className, items, storeUrl, ...props }: NavProps) {
   const pathname = usePathname();
 
   return (
@@ -32,8 +32,8 @@ export function BottomBar({ className, items, ...props }: NavProps) {
       <Separator orientation="horizontal" />
       <div className="flex justify-between p-4">
         <Link
-          key={"/mypage"}
-          href="/mypage"
+          key={`/${storeUrl}`}
+          href={`/${storeUrl}`}
           className={cn(
             buttonVariants({ variant: "ghost" }),
             "flex flex-col items-center "
