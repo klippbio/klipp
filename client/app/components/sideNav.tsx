@@ -20,7 +20,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
   const { userId } = useAuth();
 
   return (
-    <>
+    authDetails && (
       <div className="flex flex-col h-full w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
         <div className="flex justify-start py-5 px-4 ">
           <Image
@@ -92,6 +92,6 @@ export function SideNav({ className, items, ...props }: NavProps) {
           )}
         </div>
       </div>
-    </>
+    )
   );
 }
