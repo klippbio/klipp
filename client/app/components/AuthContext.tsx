@@ -11,10 +11,10 @@ import { useAuth, useUser } from "@clerk/nextjs";
 
 // Define a type for authDetails
 export interface AuthDetails {
-  token: string | undefined;
-  userId: string | undefined;
-  storeUrl?: string | undefined;
-  storeId?: string | undefined;
+  token: string | null;
+  userId: string | null;
+  storeUrl?: string | null;
+  storeId?: string | null;
 }
 
 type RefreshAuthDetails = (storeUrl: string, storeId: string) => void;
@@ -24,10 +24,10 @@ export const AuthContext = createContext<{
   refreshAuthDetails: RefreshAuthDetails;
 }>({
   authDetails: {
-    token: undefined,
-    userId: undefined,
-    storeUrl: undefined,
-    storeId: undefined,
+    token: null,
+    userId: null,
+    storeUrl: null,
+    storeId: null,
   },
   refreshAuthDetails: (_: string, __: string) => {},
 });
@@ -39,10 +39,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const { user } = useUser();
 
   const [authDetails, setAuthDetails] = useState<AuthDetails>({
-    userId: undefined,
-    storeUrl: undefined,
-    token: undefined,
-    storeId: undefined,
+    userId: null,
+    storeUrl: null,
+    token: null,
+    storeId: null,
   });
 
   // Function to refresh the token at a regular interval
@@ -74,10 +74,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     (async () => {
       const token = await getToken({ template: "klipp" });
       setAuthDetails({
-        token: token ?? undefined,
-        userId: user?.id ?? undefined,
-        storeUrl: (user?.publicMetadata?.storeUrl as string) ?? undefined,
-        storeId: (user?.publicMetadata?.storeId as string) ?? undefined,
+        token: token ?? null,
+        userId: user?.id ?? null,
+        storeUrl: (user?.publicMetadata?.storeUrl as string) ?? null,
+        storeId: (user?.publicMetadata?.storeId as string) ?? null,
       });
     })();
   }, [getToken, user]);
