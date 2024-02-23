@@ -30,11 +30,11 @@ export default function ProductCard({
 
   const editUrl =
     item.itemType === "DIGITALPRODUCT"
-      ? "/app/digital-products/create?id=" + item.itemTypeId
+      ? "/dashboard/digital-products/create?id=" + item.itemTypeId
       : item.itemType === "CALENDAR"
-      ? `/app/calendar/products/edit?id=${item.itemTypeId}&tab=setup`
+      ? `/dashboard/calendar/products/edit?id=${item.itemTypeId}&tab=setup`
       : item.itemType === "LINK"
-      ? "/app/links"
+      ? "/dashboard/links"
       : "";
 
   return (

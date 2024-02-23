@@ -32,6 +32,7 @@ import AxiosApi from "@/app/services/axios";
 import { useToast } from "@/components/ui/use-toast";
 import { GradientPicker } from "@/components/ui/GradientPicker";
 import { store } from "../..";
+import { AuthDetails } from "@/app/components/AuthContext";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
@@ -56,9 +57,11 @@ const onboardingFormSchema = z.object({
 export function SidePanelEdit({
   data,
   username,
+  authDetails,
 }: {
   data: store;
   username: string;
+  authDetails: AuthDetails;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -112,7 +115,16 @@ export function SidePanelEdit({
 
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof onboardingFormSchema>) => {
-      const response = await AxiosApi("POST", `/api/publicuser/`, data);
+      const combinedData = {
+        ...data,
+        storeId: authDetails.storeId,
+      };
+      const response = await AxiosApi(
+        "POST",
+        `/api/publicuser/`,
+        combinedData,
+        authDetails
+      );
       return response.data;
     },
     onSuccess: () => {

@@ -182,8 +182,11 @@ export const createNewSale = async (
   return updatedSale;
 };
 
-export const getAllSales = async () => {
+export const getAllSales = async (storeId: string) => {
   const sales = await db.sale.findMany({
+    where: {
+      storeId: storeId,
+    },
     include: {
       storeItem: true,
       booking: true,

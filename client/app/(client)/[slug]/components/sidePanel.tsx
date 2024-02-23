@@ -139,24 +139,29 @@ export default function SidePanel() {
               <span>{data.storeDescription}</span>
             </div>
           </div>
-          {authDetails.token !== undefined && (
-            <div className="mt-auto mb-8 w-3/4 text-sm lg:w-1/2 border rounded-2xl flex justify-between items-center space-x-2 px-2 h-16 bg-input text-foreground">
+          {authDetails.token !== undefined &&
+            authDetails.storeUrl === username && (
+              <div className="mt-auto mb-8 w-3/4 text-sm lg:w-1/2 border rounded-2xl flex justify-between items-center space-x-2 px-2 h-16 bg-input text-foreground">
+                <Button
+                  onClick={() => {
+                    router.push("/dashboard/home");
+                  }}
+                  variant={"ghost"}
+                  className="h-14 bg-input text-accent-foreground rounded-3xl border border-primary space-x-2 w-2/3 hover:text-foreground"
+                >
+                  <Undo2 className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <span className="text-sm lg:text-base">Home</span>
+                  <HomeIcon className="w-5 h-5 lg:w-6 lg:h-6" />
+                </Button>
+                <SidePanelEdit
+                  data={data}
+                  username={username}
+                  authDetails={authDetails}
+                />
+                {/* This is button for add feature if we want in future!
               <Button
                 onClick={() => {
-                  router.push("/app/home");
-                }}
-                variant={"ghost"}
-                className="h-14 bg-input text-accent-foreground rounded-3xl border border-primary space-x-2 w-2/3 hover:text-foreground"
-              >
-                <Undo2 className="w-5 h-5 lg:w-6 lg:h-6" />
-                <span className="text-sm lg:text-base">Home</span>
-                <HomeIcon className="w-5 h-5 lg:w-6 lg:h-6" />
-              </Button>
-              <SidePanelEdit data={data} username={username} />
-              {/* This is button for add feature if we want in future!
-              <Button
-                onClick={() => {
-                  router.push("/app/home");
+                  router.push("/dashboard/home");
                 }}
                 variant={"ghost"}
                 className="h-14 rounded-2xl w-1/4 space-x-2 hover:bg-input hover:text-accent-foreground"
@@ -164,8 +169,8 @@ export default function SidePanel() {
                 <Plus className="h-4 w-4 " />
                 <span>Add</span>
               </Button> */}
-            </div>
-          )}
+              </div>
+            )}
         </div>
       </div>
     )

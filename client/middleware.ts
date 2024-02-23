@@ -13,7 +13,7 @@ export default authMiddleware({
     }
   },
   // Assuming all routes are protected except explicitly mentioned as public
-  publicRoutes: ["((?!^/app/).*)"],
+  publicRoutes: ["((?!^/dashboard/).*)"],
   ignoredRoutes: ["/"],
 });
 
