@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AxiosApi from "@/app/services/axios";
 import { useToast } from "@/components/ui/use-toast";
 import { GradientPicker } from "@/components/ui/GradientPicker";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
@@ -52,6 +53,7 @@ function UserSettings(data: any) {
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [background, setBackground] = useState("");
+  const authDetails = useAuthDetails();
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
     defaultValues: {
       displayName: data.data.storeTitle || "",
@@ -98,7 +100,16 @@ function UserSettings(data: any) {
 
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof onboardingFormSchema>) => {
-      const response = await AxiosApi("POST", `/api/publicuser/`, data);
+      const combinedData = {
+        ...data,
+        storeId: authDetails.storeId,
+      };
+      const response = await AxiosApi(
+        "POST",
+        `/api/publicuser/`,
+        combinedData,
+        authDetails
+      );
       return response.data;
     },
     onSuccess: () => {

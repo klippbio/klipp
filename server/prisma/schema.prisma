@@ -33,7 +33,7 @@ model Store {
   tiktok           String?
   youtube          String?
   twitter          String?
-  color            String?
+  color            String?   @default("#000000")
   schedules Schedule[]
   bookings Booking[]
   calendarSetting CalendarSetting?

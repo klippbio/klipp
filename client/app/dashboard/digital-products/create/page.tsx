@@ -49,7 +49,7 @@ function Page() {
         description: error.response?.data.error,
         duration: 3000,
       });
-      router.push("/digital-products");
+      router.push("/dashboard/digital-products");
     }
   }, [status, error, toast, router]);
 

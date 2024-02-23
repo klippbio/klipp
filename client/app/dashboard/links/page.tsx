@@ -134,10 +134,14 @@ function Page() {
 
   const createProductMutation = useMutation({
     mutationFn: async (data: linkType) => {
+      const combinedData = {
+        ...data,
+        storeId: authDetails.storeId,
+      };
       const response = await AxiosApi(
         "POST",
         "/api/link/create",
-        data,
+        combinedData,
         authDetails
       );
       return response.data;
@@ -166,7 +170,7 @@ function Page() {
     mutationFn: async (id: string) => {
       const response = await AxiosApi(
         "DELETE",
-        `/api/link/deleteLink/?id=${id}`,
+        `/api/link/deleteLink/?id=${id}&storeId=${storeId}`,
         authDetails
       );
       return response.data;

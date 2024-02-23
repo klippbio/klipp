@@ -15,7 +15,7 @@ export default function Page() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/sale/all?storeId=${authDetails.storeId}`,
+        `/api/sale/getAllSales?storeId=${authDetails.storeId}`,
         {},
         authDetails
       );

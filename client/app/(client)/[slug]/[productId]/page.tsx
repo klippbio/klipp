@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import DigitalDownloadContent from "../components/digitalDownloadContent";
 import { ErrorResponse } from "@/types/apiResponse";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 interface CalendarSaleFormData {
   name: string;
@@ -57,6 +58,7 @@ function ProductPage() {
   const { toast } = useToast();
   const id = usePathname().split("/").pop();
   const searchParams = useSearchParams();
+  const authDetails = useAuthDetails();
   const reschedule = searchParams.get("reschedule");
   const date = searchParams.get("date");
   const saleId = searchParams.get("saleId");
@@ -87,6 +89,7 @@ function ProductPage() {
         itemId: data?.id,
         saleId: saleId,
         reschedule: reschedule,
+        storeId: authDetails.storeId,
       };
       let response;
       if (reschedule === "true" && saleId) {

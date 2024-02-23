@@ -141,10 +141,14 @@ function Page() {
 
   const createProductMutation = useMutation({
     mutationFn: async (data: ddType) => {
+      const combinedData = {
+        ...data,
+        storeId: authDetails.storeId,
+      };
       const response = await AxiosApi(
         "POST",
         "/api/digital-products/create",
-        data,
+        combinedData,
         authDetails
       );
       return response.data;

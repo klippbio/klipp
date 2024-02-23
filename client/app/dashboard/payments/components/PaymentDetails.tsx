@@ -49,6 +49,7 @@ function PaymentDetails() {
 
   const payOutMutation = useMutation({
     mutationFn: async (data) => {
+      //TODO: Add the correct type for data and authDetails as this will fail as of now!
       const response = await AxiosApi(
         "POST",
         `/api/stripe/payout`,

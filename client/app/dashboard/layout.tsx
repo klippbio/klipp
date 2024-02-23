@@ -13,16 +13,13 @@ import {
   SettingsIcon,
 } from "lucide-react/";
 import { HomeIcon } from "lucide-react/";
-import { Server } from "lucide-react/";
 import { Separator } from "@/components/ui/separator";
-import { useAuthDetails } from "../components/AuthContext";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const authDetails = useAuthDetails();
   const navItems = [
     {
       title: "Home",
@@ -35,12 +32,6 @@ export default function RootLayout({
       href: "/dashboard/calendar/products",
       baseHref: "/dashboard/calendar",
       icon: <CalendarClock size={20} />,
-    },
-    {
-      title: "Store",
-      href: "/" + authDetails?.storeUrl,
-      baseHref: "/" + authDetails?.storeUrl,
-      icon: <Server size={20} />,
     },
     {
       title: "Digital Products",

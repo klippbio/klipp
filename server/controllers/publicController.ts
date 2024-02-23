@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import * as publicService from "../services/public/publicService";
 import CustomError from "../utils/CustomError";
 import cityTimezones from "../services/calendar/cityTimezones";
+import { isUsersStore } from "../middlewares/isUsersStore";
 
 export const publicController = express.Router();
 
@@ -22,20 +23,24 @@ publicController.get("/publicUser", async (req: Request, res: Response) => {
   }
 });
 
-publicController.post("/publicUser", async (req: Request, res: Response) => {
-  try {
-    const parsedData = await publicService.ZUpdatePublicUser.parseAsync(
-      req.body
-    );
-    const publicUser = await publicService.updatePublicUser(parsedData);
-    if (!publicUser) throw new CustomError("User not found", 404);
-    res.status(200).json(publicUser);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+publicController.post(
+  "/publicUser",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      const parsedData = await publicService.ZUpdatePublicUser.parseAsync(
+        req.body
+      );
+      const publicUser = await publicService.updatePublicUser(parsedData);
+      if (!publicUser) throw new CustomError("User not found", 404);
+      res.status(200).json(publicUser);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 publicController.post("/changeOrder", async (req: Request, res: Response) => {
   try {
