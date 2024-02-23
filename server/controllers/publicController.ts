@@ -37,6 +37,20 @@ publicController.post("/publicUser", async (req: Request, res: Response) => {
   }
 });
 
+publicController.post("/changeOrder", async (req: Request, res: Response) => {
+  try {
+    const parsedData = await publicService.ZChangeOrder.parseAsync(req.body);
+    const updatedOrder = await publicService.changeOrder(parsedData);
+    if (!updatedOrder)
+      throw new CustomError("Failed to update item order", 500);
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
+  }
+});
+
 publicController.get("/product", async (req: Request, res: Response) => {
   try {
     const id = req.query.id;

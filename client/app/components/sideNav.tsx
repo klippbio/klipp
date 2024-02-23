@@ -2,17 +2,20 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import { SignOutButton, useAuth } from "@clerk/nextjs";
 import { NavProps } from "admin";
 import Image from "next/image";
 import logoText from "./../../utils/logoText.png";
-import { SettingsIcon } from "lucide-react";
+import { LogOut, MoveUpRight, Server } from "lucide-react";
+import { useAuthDetails } from "./AuthContext";
 
 export function SideNav({ className, items, ...props }: NavProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const authDetails = useAuthDetails();
 
   const { userId } = useAuth();
 
@@ -49,31 +52,44 @@ export function SideNav({ className, items, ...props }: NavProps) {
             </Link>
           ))}
         </nav>
+
         {/* Example for bottom settings */}
-        <div className="mt-auto flex flex-col space-y-4 align-center">
-          <Link
-            href={"/settings"}
-            className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "justify-start"
-            )}
-          >
-            <div className="flex flex-wrap items-center">
-              <SettingsIcon />
-              <span className="pl-2">Settings</span>
+        <div className="mt-auto flex flex-col space-y-4 align-center items-center w-full">
+          {userId && (
+            <div className="mt-auto text-sm md:w-5/6  rounded-3xl flex justify-between items-center space-x-2 px-2 h-16">
+              <Button
+                onClick={() => {
+                  router.push("/" + authDetails?.storeUrl);
+                }}
+                variant={"outline"}
+                className="h-14 w-full bg-input text-l text-accent-foreground rounded-full border border-primary space-x-2 hover:text-foreground"
+              >
+                <Server className="h-5 w-5 " />
+                <span>Edit Profile </span>
+                <MoveUpRight className="h-5 w-5 " />
+              </Button>
             </div>
-          </Link>
-          {!userId && (
+          )}
+          {!userId ? (
             <>
-              <Button variant="outline">
+              <Button variant="outline" className="w-full">
                 <Link href="/sign-in">Sign In</Link>
               </Button>
-              <Button>
+              <Button className="w-full">
                 <Link href="/sign-up">Sign Up</Link>
               </Button>
             </>
+          ) : (
+            <div className="w-full">
+              <SignOutButton>
+                <Button variant="destructive" className="w-full space-x-2">
+                  <LogOut className="h-5 w-5" />
+                  <span>Sign Out</span>
+                </Button>
+              </SignOutButton>
+              {/* <UserButton /> */}
+            </div>
           )}
-          <UserButton />
         </div>
       </div>
     </>

@@ -52,7 +52,7 @@ model Payment {
 
 model StoreItem {
   id           Int   @id @default(autoincrement()) @unique
-  itemOrder      Int             @unique @default(autoincrement())
+  itemOrder      Int    @default(autoincrement())
   storeId        String
   itemType       StoreItemType
   DigitalProduct DigitalProduct?

@@ -10,6 +10,7 @@ import {
   CalendarClock,
   FileCheck2,
   Link,
+  SettingsIcon,
 } from "lucide-react/";
 import { HomeIcon } from "lucide-react/";
 import { Server } from "lucide-react/";
@@ -25,14 +26,14 @@ export default function RootLayout({
   const navItems = [
     {
       title: "Home",
-      href: "/home",
-      baseHref: "/home",
+      href: "/app/home",
+      baseHref: "/app/home",
       icon: <HomeIcon size={20} />,
     },
     {
       title: "Calendar",
-      href: "/calendar/products",
-      baseHref: "/calendar",
+      href: "/app/calendar/products",
+      baseHref: "/app/calendar",
       icon: <CalendarClock size={20} />,
     },
     {
@@ -43,14 +44,14 @@ export default function RootLayout({
     },
     {
       title: "Digital Products",
-      href: "/digital-products",
-      baseHref: "/digital-products",
+      href: "/app/digital-products",
+      baseHref: "/app/digital-products",
       icon: <FileCheck2 size={20} />,
     },
     {
       title: "My Bookings",
-      href: "/bookings",
-      baseHref: "/bookings",
+      href: "/app/bookings",
+      baseHref: "/app/bookings",
       icon: <CalendarCheck size={20} />,
     },
     {
@@ -61,15 +62,21 @@ export default function RootLayout({
     },
     {
       title: "Payments",
-      href: "/payments",
-      baseHref: "/payments",
+      href: "/app/payments",
+      baseHref: "/app/payments",
       icon: <DollarSignIcon size={20} />,
     },
     {
       title: "Links",
-      href: "/links",
-      baseHref: "/links",
+      href: "/app/links",
+      baseHref: "/app/links",
       icon: <Link size={20} />,
+    },
+    {
+      title: "Settings",
+      href: "/app/settings",
+      baseHref: "/app/settings",
+      icon: <SettingsIcon size={20} />,
     },
   ];
 

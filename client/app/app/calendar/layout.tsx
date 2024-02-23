@@ -7,15 +7,15 @@ interface CalendarLayoutProps {
 const navItems = [
   {
     title: "Products",
-    href: "/calendar/products",
+    href: "/app/calendar/products",
   },
   {
     title: "Schedule",
-    href: "/calendar/schedule",
+    href: "/app/calendar/schedule",
   },
   {
     title: "Settings",
-    href: "/calendar/settings",
+    href: "/app/calendar/settings",
   },
 ];
 
