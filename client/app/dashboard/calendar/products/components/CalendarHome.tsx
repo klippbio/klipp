@@ -25,7 +25,7 @@ function CalendarHome() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/calendar-products/getAllCalendarProducts?id=${storeId}`,
+        `/api/calendar-products/getAllCalendarProducts?storeId=${storeId}`,
         {},
         authDetails
       );

@@ -42,9 +42,7 @@ export function TimezoneSelect({
   const { data, isLoading } = useQuery({
     queryKey: ["cityTimezones"],
     queryFn: async () =>
-      await AxiosApi("GET", `/api/calendar/cityTimezones`).then(
-        (res) => res.data
-      ),
+      await AxiosApi("GET", `/api/cityTimezones`).then((res) => res.data),
   });
 
   useEffect(() => {

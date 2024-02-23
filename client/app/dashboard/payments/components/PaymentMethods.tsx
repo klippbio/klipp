@@ -23,7 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { any, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Select,
@@ -45,6 +45,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 const FormSchema = z.object({
   country: z.string({
@@ -60,6 +61,7 @@ export function PaymentMethods() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+  const authDetails = useAuthDetails();
 
   const queryClient = useQueryClient();
 
@@ -67,10 +69,19 @@ export function PaymentMethods() {
 
   const { toast } = useToast();
 
-  const { data, isLoading } = useQuery(["stripeAccountDetails"], async () => {
-    const response = await AxiosApi("GET", `/api/stripe/stripeAccountDetails`);
-    return response.data;
-  });
+  const { data, isLoading } = useQuery(
+    ["stripeAccountDetails", authDetails?.storeId],
+    async () => {
+      const response = await AxiosApi(
+        "GET",
+        `/api/stripe/stripeAccountDetails?storeId=${authDetails.storeId}`
+      );
+      return response.data;
+    },
+    {
+      enabled: !!authDetails.storeId,
+    }
+  );
 
   const accountStatus = useMemo(() => {
     if (isLoading) {
@@ -94,7 +105,7 @@ export function PaymentMethods() {
       const response = await AxiosApi("POST", `/api/stripe/connect/`, data);
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       router.push(data.url);
     },
     onError: () => {
@@ -112,11 +123,12 @@ export function PaymentMethods() {
       const response = await AxiosApi(
         "POST",
         `/api/stripe/pendingAccount/`,
-        data
+        data,
+        authDetails
       );
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       router.push(data.url);
     },
     onError: () => {
@@ -131,10 +143,10 @@ export function PaymentMethods() {
 
   const disconnectMutation = useMutation({
     mutationFn: async (data: dataType) => {
-      await AxiosApi("POST", `/api/stripe/disconnect/`, data);
+      await AxiosApi("POST", `/api/stripe/disconnect/`, data, authDetails);
       await queryClient.invalidateQueries(["stripeAccountDetails"]);
     },
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       toast({
         title: "Success",
         duration: 2000,
@@ -153,10 +165,15 @@ export function PaymentMethods() {
 
   const redirectMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await AxiosApi("POST", `/api/stripe/dashboard/`, data);
+      const response = await AxiosApi(
+        "POST",
+        `/api/stripe/dashboard/`,
+        data,
+        authDetails
+      );
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       router.push(data.url);
     },
     onError: () => {
@@ -169,7 +186,7 @@ export function PaymentMethods() {
     },
   });
 
-  function onSubmit(data: any) {
+  function onSubmit(data: z.infer<typeof FormSchema>) {
     mutation.mutate(data);
   }
 

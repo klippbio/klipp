@@ -25,7 +25,7 @@ export default function TopBar({
 }) {
   const pathname = usePathname();
   const authDetails = useAuthDetails();
-  const url = "klipp.bio/" + authDetails?.storeUrl;
+  const url = "klipp.io/" + authDetails?.storeUrl;
   const { toast } = useToast();
 
   return (

@@ -24,7 +24,7 @@ function Page() {
 
   const updateUrl = useCallback(
     (tab: string) => {
-      const url = "/calendar/products/edit?id=" + id + "&tab=" + tab;
+      const url = "/dashboard/calendar/products/edit?id=" + id + "&tab=" + tab;
       router.push(url);
     },
     [router, id]
@@ -50,13 +50,14 @@ function Page() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/calendar-products/getCalendarProduct/?id=${productId}`,
+        `/api/calendar-products/getCalendarProduct/?id=${productId}&storeId=${authDetails?.storeId}`,
         authDetails
       );
       return response.data;
     },
     {
       cacheTime: 0,
+      enabled: !!authDetails?.storeId,
     }
   );
 
@@ -67,7 +68,7 @@ function Page() {
         description: error.response?.data.error,
         duration: 3000,
       });
-      router.push("/calendar/products");
+      router.push("/dashboard/calendar/products");
     }
   }, [status, error, toast, router]);
   return (

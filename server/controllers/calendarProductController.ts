@@ -1,7 +1,6 @@
 import express from "express";
 import { Request, Response } from "express";
 import {
-  ZUpdateCalendarProductSchema,
   createCalendarProduct,
   deleteCalendarProduct,
   getAllCalendarProducts,
@@ -32,10 +31,10 @@ calendarProductController.get(
   "/getAllCalendarProducts",
   async (req: Request, res: Response) => {
     try {
-      const storeId = req.query.id;
-      const product = await getAllCalendarProducts(
-        await ZUpdateCalendarProductSchema.parseAsync({ storeId: storeId })
-      );
+      const storeId = req.query.storeId;
+      if (!storeId && typeof storeId === "string")
+        throw new CustomError("Missing storeId", 400);
+      const product = await getAllCalendarProducts(storeId as string);
       res.status(200).json(product);
     } catch (error) {
       if (error instanceof CustomError)

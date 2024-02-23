@@ -255,10 +255,14 @@ export function ProfileForm({
   //mutations
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
+      const combinedData = {
+        ...data,
+        storeId: authDetails.storeId,
+      };
       const response = await AxiosApi(
         "POST",
         `/api/digital-products/update/?id=${productId}`,
-        data,
+        combinedData,
         authDetails
       );
       return response.data;
@@ -269,7 +273,7 @@ export function ProfileForm({
         duration: 1000,
         description: "Product Created.",
       });
-      router.push("/digital-products");
+      router.push("/dashboard/digital-products");
     },
     onError: () => {
       toast({
@@ -284,10 +288,14 @@ export function ProfileForm({
   const mutateUploadFile = useMutation({
     mutationFn: async (data: { url: string; name: string }) => {
       setUploadingFile(true);
+      const combinedData = {
+        ...data,
+        storeId: authDetails.storeId,
+      };
       const response = await AxiosApi(
         "post",
         `/api/digital-products/file/?id=${productId}`,
-        data,
+        combinedData,
         authDetails
       );
       return response.data;
@@ -299,7 +307,6 @@ export function ProfileForm({
         description: "File uploaded successfully.",
       });
       setUploadedFiles([...uploadedFiles, data]);
-      console.log("uploaded", uploadedFiles);
       setUploadingFile(false);
     },
     onError: () => {
@@ -324,7 +331,9 @@ export function ProfileForm({
       const response = await AxiosApi(
         "delete",
         `/api/digital-products/file/?id=${fileId}`,
-        {},
+        {
+          storeId: authDetails.storeId,
+        },
         authDetails
       );
       return response.data;

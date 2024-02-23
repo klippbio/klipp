@@ -6,29 +6,37 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import getSymbolFromCurrency from "currency-symbol-map";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 function PaymentDetails() {
   const queryClient = useQueryClient();
-  const { data, isLoading } = useQuery(["stripeAccountDetails"], async () => {
-    const accountDetails = await AxiosApi(
-      "GET",
-      `/api/stripe/stripeAccountDetails`
-    );
-    return accountDetails.data;
-  });
+  const authDetails = useAuthDetails();
+  const { data, isLoading } = useQuery(
+    ["stripeAccountDetails", authDetails?.storeId],
+    async () => {
+      const accountDetails = await AxiosApi(
+        "GET",
+        `/api/stripe/stripeAccountDetails?storeId=${authDetails?.storeId}`
+      );
+      return accountDetails.data;
+    },
+    {
+      enabled: !!authDetails?.storeId,
+    }
+  );
 
   const accountId = data?.accountId;
   const { data: balanceData, isLoading: isBalanceLoading } = useQuery(
-    ["stripeBalance"],
+    ["stripeBalance", authDetails?.storeId],
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/stripe/stripeaccountbalance?stripeAccountId=${accountId}`
+        `/api/stripe/stripeaccountbalance?stripeAccountId=${accountId}&storeId=${authDetails?.storeId}`
       );
       return response.data;
     },
     {
-      enabled: !!accountId,
+      enabled: !!accountId && !!authDetails?.storeId,
     }
   );
 
@@ -40,12 +48,21 @@ function PaymentDetails() {
   const currencySymbol = getSymbolFromCurrency(currency);
 
   const payOutMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await AxiosApi("POST", `/api/stripe/payout`, data);
-      await queryClient.invalidateQueries(["stripeBalance"]);
+    mutationFn: async (data) => {
+      //TODO: Add the correct type for data and authDetails as this will fail as of now!
+      const response = await AxiosApi(
+        "POST",
+        `/api/stripe/payout`,
+        data,
+        authDetails
+      );
+      await queryClient.invalidateQueries([
+        "stripeBalance",
+        authDetails?.storeId,
+      ]);
       return response.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       toast({
         title: "Success",
         duration: 2000,

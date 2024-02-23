@@ -1,22 +1,18 @@
 "use client";
 
-import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { useState, useEffect, use } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { Input, PrefixInputLeft } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  useAuthDetails,
-  useRefreshAuthDetails,
-} from "../components/AuthContext";
+import { useAuthDetails } from "../components/AuthContext";
 import {
   deleteFile,
   uploadFile,
@@ -33,16 +29,12 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { Upload } from "lucide-react";
+import { ErrorResponse } from "@/types/apiResponse";
+import AxiosApi from "../services/axios";
 
 //types
 type Step1Props = {
   onFormSubmitSuccess: () => void;
-};
-
-type OnboardingFormValues = {
-  username: string;
-  displayName: string;
-  description: string;
 };
 
 //consts
@@ -71,7 +63,7 @@ const onboardingFormSchema = z.object({
 
 export function Step1({ onFormSubmitSuccess }: Step1Props) {
   //consts
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
   const { user } = useUser();
   const router = useRouter();
   const email = user?.emailAddresses[0].emailAddress;
@@ -134,15 +126,14 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
 
   //save user data
   const mutation = useMutation({
-    mutationFn: async (data: OnboardingFormValues) => {
+    mutationFn: async (data: z.infer<typeof onboardingFormSchema>) => {
       const combinedData = { ...data, userId, email };
-      return axios.post("/api/user/onboarding", combinedData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await getToken()}`,
-          mode: "cors",
-        },
-      });
+      return AxiosApi(
+        "POST",
+        "/api/user/onboarding",
+        combinedData,
+        authDetails
+      );
     },
     onSuccess: () => {
       user?.update({
@@ -155,12 +146,12 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
       });
       onFormSubmitSuccess();
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ErrorResponse>) => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: error.response.data.error,
+        description: error.response?.data?.error,
       });
     },
   });
@@ -182,7 +173,7 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
                   <FormLabel htmlFor="thumbnail">Profile Picture</FormLabel>
                   <FormControl>
                     <div
-                      className={`h-24 w-24 md:h-32 md:w-32 border-2 rounded-s-full rounded-e-full flex flex-col items-center justify-center rounded-fu relative ${
+                      className={`h-24 w-24 md:h-32 md:w-32 border-2 rounded-s-full rounded-e-full flex flex-col items-center justify-center relative ${
                         selectedFile
                           ? "border-transparent"
                           : buttonVariants({ variant: "ghost" })

@@ -86,7 +86,7 @@ function Page() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/digital-products/getAllDigitalProducts/?id=${storeId}`,
+        `/api/digital-products/getAllDigitalProducts/?storeId=${storeId}`,
         {},
         authDetails
       );
@@ -115,14 +115,14 @@ function Page() {
 
   //TODO: Add delete mutation
   async function deleteProduct(id: string) {
-    const response = await fetch(
-      `/api/digital-products/deleteDigitalProduct/?id=${id}`,
-      {
-        method: "DELETE",
-      }
+    const response = await AxiosApi(
+      "DELETE",
+      `/api/digital-products/deleteDigitalProduct/?id=${id}&storeId=${storeId}`,
+      {},
+      authDetails
     );
     await queryClient.invalidateQueries(["allProducts", storeId]);
-    if (!response?.ok) {
+    if (response.status !== 200) {
       toast({
         title: "Something went wrong.",
         duration: 2000,
@@ -141,10 +141,14 @@ function Page() {
 
   const createProductMutation = useMutation({
     mutationFn: async (data: ddType) => {
+      const combinedData = {
+        ...data,
+        storeId: authDetails.storeId,
+      };
       const response = await AxiosApi(
         "POST",
         "/api/digital-products/create",
-        data,
+        combinedData,
         authDetails
       );
       return response.data;
@@ -157,7 +161,7 @@ function Page() {
       });
 
       const productId = data.DigitalProduct.id;
-      router.push(`/digital-products/create/?id=${productId}`);
+      router.push(`/dashboard/digital-products/create/?id=${productId}`);
     },
     onError: () => {
       toast({
@@ -282,7 +286,7 @@ function Page() {
                               <DropdownMenuItem
                                 onClick={() =>
                                   router.push(
-                                    `/digital-products/create/?id=${item.id}`
+                                    `/dashboard/digital-products/create/?id=${item.id}`
                                   )
                                 }
                                 onSelect={(e) => e.preventDefault()}

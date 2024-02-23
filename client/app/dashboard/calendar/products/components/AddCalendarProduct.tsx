@@ -29,6 +29,8 @@ import { AuthDetails } from "@/app/components/AuthContext";
 import AxiosApi from "@/app/services/axios";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
+import { ErrorResponse } from "@/types/apiResponse";
 
 const calendarProductCreateSchema = z.object({
   title: z.string().min(1, { message: "Please enter product name" }),
@@ -78,14 +80,14 @@ export default function AddCalendarProduct({
         description: "Calendar Product Created.",
       });
       const calendarProductId = data.calendarProduct.id;
-      router.push(`/calendar/products/edit/?id=${calendarProductId}`);
+      router.push(`/dashboard/calendar/products/edit/?id=${calendarProductId}`);
     },
-    onError: () => {
+    onError: async (data: AxiosError<ErrorResponse>) => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: "Something went wrong",
+        description: data.response?.data?.error,
       });
     },
   });

@@ -1,12 +1,4 @@
-export interface store {
-  id: string;
-  createdAt: string;
-  userId: string;
-  storeDescription: string;
-  storeTitle: string;
-  storeUrl: string;
-  storeItems: storeItem[];
-}
+import { booking } from "./index.d";
 
 export interface storeItem {
   id: number;
@@ -15,8 +7,77 @@ export interface storeItem {
   price: string;
   currency: string[];
   name: string;
-  itemType: "DIGITALPRODUCT" | "CALENDAR";
+  itemType: "DIGITALPRODUCT" | "CALENDAR" | "LINK";
+  thumbnailUrl: string;
+  linkUrl: string;
   itemDetails: DigitalProductDetails | CalendarDetails;
+  itemTypeId?: number;
+}
+
+export interface store {
+  id: string;
+  createdAt: string;
+  userId: string;
+  storeDescription: string;
+  storeTitle: string;
+  storeUrl: string;
+  storeItems: storeItem[];
+  user?: user;
+  color: string;
+  thumbnailUrl: string;
+  instagram: string;
+  tiktok: string;
+  youtube: string;
+  twitter: string;
+}
+
+export interface user {
+  id: string;
+  createdAt: string;
+  email: string;
+  thumbnailUrl: string;
+  instagram: string;
+  tiktok: string;
+  youtube: string;
+  twitter: string;
+  color: string;
+  storeItems: StoreItem[];
+}
+
+export interface booking {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  storeId: string;
+  calendarProductId: number;
+  title: string;
+  description: null | string;
+  startTime: string;
+  endTime: string;
+  googleCalendarId: number;
+  meetingUrl: string;
+  meetingPassword: null | string;
+  meetingId: string;
+  rescheduled: boolean;
+  cancelSaleId: null | number;
+  bookingStatus: "SCHEDULED" | "CANCELLED";
+  saleId: number;
+}
+
+export interface sale {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  storeId: string;
+  storeItemId: number;
+  salePrice: string;
+  buyerEmail: string;
+  buyerName: string;
+  status: "COMPLETED" | "PENDING" | "FAILED" | "REFUNDED" | "REFUNDPENDING";
+  additionalInfo: null | string;
+  storeItem: storeItem;
+  booking?: booking;
+  store?: store;
 }
 
 //productTypings:

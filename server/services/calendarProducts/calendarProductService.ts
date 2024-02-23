@@ -76,6 +76,13 @@ export const createCalendarProduct = async (
     },
   });
 
+  if (!store?.calendarSetting?.timeZone) {
+    throw new CustomError(
+      "Configure and set timezone in Calendar Setting first !",
+      400
+    );
+  }
+
   const calendarProduct = await db.storeItem.create({
     data: {
       itemType: "CALENDAR",
@@ -87,6 +94,7 @@ export const createCalendarProduct = async (
       calendarProduct: {
         create: {
           ...restOfInput,
+          timeZone: store?.calendarSetting?.timeZone,
           description: restOfInput.description
             ? JSON.parse(restOfInput.description)
             : null,
@@ -205,13 +213,11 @@ export const getCalendarProduct = async (id: number) => {
 };
 
 // Function to list all CalendarProducts
-export const getAllCalendarProducts = async (
-  input: z.infer<typeof ZUpdateCalendarProductSchema>
-) => {
+export const getAllCalendarProducts = async (storeId: string) => {
   return db.calendarProduct.findMany({
     where: {
       storeItem: {
-        storeId: input.storeId,
+        storeId: storeId,
       },
     },
     include: {

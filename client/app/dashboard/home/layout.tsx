@@ -12,7 +12,9 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
         <TopBar pageTitle="Home" className="mx-4 md:mx-8" />
         <Separator className="mt-4" orientation="horizontal" />
       </div>
-      <div className="mx-4 md:mx-8 mt-4">{children}</div>
+      <div className="mx-4 md:mx-8 mt-4 overflow-auto pb-20 md:pb-0">
+        {children}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 export type TimeRange = {
-  storeId?: string;
+  userId?: number;
   start: Date;
   end: Date;
 };

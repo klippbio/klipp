@@ -74,7 +74,7 @@ export default function ScheduleForm({
     async () =>
       await AxiosApi(
         "GET",
-        `/api/calendar/get?scheduleId=${currentScheduleId}`
+        `/api/calendar/get?scheduleId=${currentScheduleId}&storeId=${authDetails?.storeId}`
       ).then((res) => res.data),
     {
       enabled: !!currentScheduleId,

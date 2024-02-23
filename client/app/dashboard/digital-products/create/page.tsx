@@ -32,7 +32,7 @@ function Page() {
     async () => {
       const response = await AxiosApi(
         "GET",
-        `/api/digital-products/getproduct/?id=${productId}`,
+        `/api/digital-products/getproduct/?id=${productId}&storeId=${authDetails?.storeId}`,
         authDetails
       );
       return response.data;
@@ -49,7 +49,7 @@ function Page() {
         description: error.response?.data.error,
         duration: 3000,
       });
-      router.push("/digital-products");
+      router.push("/dashboard/digital-products");
     }
   }, [status, error, toast, router]);
 

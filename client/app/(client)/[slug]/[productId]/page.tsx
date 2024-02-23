@@ -3,10 +3,10 @@
 //Skeletons
 //img invisible on smaller screens
 "use client";
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -18,18 +18,56 @@ import {
 } from "@/components/ui/card";
 
 import { ArrowLeft, CalendarClock, FileDown } from "lucide-react";
-import DigitalDownloadContent from "../components/digitalDownloadContent";
-import CalendarContent from "../components/calendarContent";
-import { useAuthDetails } from "@/app/components/AuthContext";
+import CalendarContent from "../components/calendarComponents/calendarContent";
 import AxiosApi from "@/app/services/axios";
 import ProductNotFound from "../components/ProductNotFound";
-import { storeItem } from "../..";
+import { CalendarDetails, DigitalProductDetails, storeItem } from "../..";
+import { useToast } from "@/components/ui/use-toast";
+import dayjs from "../../../../utils/dayjs.index";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import DigitalDownloadContent from "../components/digitalDownloadContent";
+import { ErrorResponse } from "@/types/apiResponse";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
-function PublicDigitalProduct() {
+interface CalendarSaleFormData {
+  name: string;
+  email: string;
+  slot: string;
+  timezone: string;
+}
+
+interface DigitalProductSaleFormData {
+  name: string;
+  email: string;
+}
+
+export type SaleFormData = CalendarSaleFormData | DigitalProductSaleFormData;
+
+function ProductPage() {
   const username = usePathname().split("/")[1];
+  const { toast } = useToast();
   const id = usePathname().split("/").pop();
-  const router = useRouter();
+  const searchParams = useSearchParams();
   const authDetails = useAuthDetails();
+  const reschedule = searchParams.get("reschedule");
+  const date = searchParams.get("date");
+  const saleId = searchParams.get("saleId");
+  const router = useRouter();
+  const [saleFormData, setSaleFormData] = useState<SaleFormData>();
+
+  const handleSaleFormDataChange = (saleFormData: SaleFormData) => {
+    setSaleFormData(saleFormData);
+  };
 
   const { data, isLoading, error } = useQuery<storeItem, AxiosError>(
     ["productId", id],
@@ -41,6 +79,81 @@ function PublicDigitalProduct() {
       return response.data;
     }
   );
+
+  const createNewSaleMutation = useMutation({
+    mutationFn: async () => {
+      const combinedData = {
+        saleFormData: saleFormData,
+        storeUrl: username,
+        itemType: data?.itemType,
+        itemId: data?.id,
+        saleId: saleId,
+        reschedule: reschedule,
+        storeId: authDetails.storeId,
+      };
+      let response;
+      if (reschedule === "true" && saleId) {
+        response = await AxiosApi("POST", `/api/sale/reschedule`, combinedData);
+      } else {
+        response = await AxiosApi("POST", "/api/sale/create", combinedData);
+      }
+      return response.data;
+    },
+    onSuccess: async (data) => {
+      //redirect to the stripe checkout page if it is a paid product otherwise redirect to the success page
+      toast({
+        title: "Booking successful",
+        duration: 2000,
+        description:
+          "Booked session for " + dayjs(data.startTime).format("MMMM D HH:mm"),
+      });
+      router.push("/" + username);
+    },
+    onError: async (data: AxiosError<ErrorResponse>) => {
+      console.log(data, "error");
+      toast({
+        title: "Error",
+        variant: "destructive",
+        duration: 2000,
+        description: data.response?.data?.error,
+      });
+    },
+  });
+
+  const handleBuyNowClick = () => {
+    // Validation for Calendar type
+    if (
+      data?.itemType === "CALENDAR" &&
+      saleFormData &&
+      "slot" in saleFormData
+    ) {
+      if (!saleFormData?.name || !saleFormData?.email || !saleFormData?.slot) {
+        toast({
+          title: "Missing Information",
+          description: "Please provide name, email, and select a slot.",
+          variant: "destructive",
+          duration: 2000,
+        });
+        return;
+      }
+    }
+
+    // Validation for Digital Product type
+    if (data?.itemType === "DIGITALPRODUCT") {
+      if (!saleFormData?.name || !saleFormData?.email) {
+        toast({
+          title: "Missing Information",
+          description: "Please provide name and email.",
+          variant: "destructive",
+          duration: 2000,
+        });
+        return;
+      }
+    }
+
+    // If all validations pass, proceed with the mutation
+    createNewSaleMutation.mutate();
+  };
 
   if (error?.response?.status === 404) {
     return <ProductNotFound />;
@@ -57,7 +170,7 @@ function PublicDigitalProduct() {
           <div className="bg-secondary pt-3 rounded-t-xl">
             <Button
               variant={"ghost"}
-              onClick={() => router.push("/" + authDetails?.storeUrl)}
+              onClick={() => router.push("/" + username)}
             >
               <ArrowLeft />
               Back
@@ -100,18 +213,27 @@ function PublicDigitalProduct() {
               ) : data.itemType === "CALENDAR" ? (
                 <div className="flex gap-4">
                   <CalendarClock />
-                  <div>Book a Session</div>
+                  <div>
+                    Book a {(data.itemDetails as CalendarDetails).length} minute
+                    meeting
+                  </div>
                 </div>
               ) : (
                 ""
               )}
             </div>
           </div>
-          <CardContent className="pt-3 pb-36 md:pb-12">
+          <CardContent className="pt-3 pb-36 md:pb-12 p-3">
             {data && data.itemType === "DIGITALPRODUCT" ? (
-              <DigitalDownloadContent itemDetails={data.itemDetails} />
+              <DigitalDownloadContent
+                itemDetails={data.itemDetails as DigitalProductDetails}
+                handleSaleFormDataChange={handleSaleFormDataChange}
+              />
             ) : data && data.itemType === "CALENDAR" ? (
-              <CalendarContent itemDetails={data.itemDetails} />
+              <CalendarContent
+                itemDetails={data.itemDetails as CalendarDetails}
+                handleSaleFormDataChange={handleSaleFormDataChange}
+              />
             ) : (
               ""
             )}
@@ -123,17 +245,73 @@ function PublicDigitalProduct() {
                 <div>{data.itemDetails.price}</div>
               </div>
               <div>
-                <Button className="bg-primary w-28 text-primary-foreground">
-                  Buy Now
-                </Button>
+                {saleFormData &&
+                reschedule === "true" &&
+                (saleFormData as CalendarSaleFormData).slot ? (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button>
+                        {saleFormData &&
+                        data.itemType === "CALENDAR" &&
+                        (saleFormData as CalendarSaleFormData).slot
+                          ? `Reschedule to ${dayjs(
+                              (saleFormData as CalendarSaleFormData).slot
+                            )
+                              .tz(
+                                (saleFormData as CalendarSaleFormData).timezone
+                              )
+                              .format("MMMM DD HH:mm")}`
+                          : "Buy Now"}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. Your booking will be
+                          rescheduled from{" "}
+                          {dayjs(date)
+                            .tz((saleFormData as CalendarSaleFormData).timezone)
+                            .format("MMMM DD HH:mm")}{" "}
+                          to{" "}
+                          {dayjs((saleFormData as CalendarSaleFormData).slot)
+                            .tz((saleFormData as CalendarSaleFormData).timezone)
+                            .format("MMMM DD HH:mm")}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleBuyNowClick()}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                ) : (
+                  <Button
+                    className="bg-primary  text-primary-foreground"
+                    onClick={() => handleBuyNowClick()}
+                  >
+                    {saleFormData &&
+                    data.itemType === "CALENDAR" &&
+                    (saleFormData as CalendarSaleFormData).slot
+                      ? `Book ${dayjs(
+                          (saleFormData as CalendarSaleFormData).slot
+                        )
+                          .tz((saleFormData as CalendarSaleFormData).timezone)
+                          .format("MMMM DD HH:mm")}`
+                      : "Buy Now"}
+                  </Button>
+                )}
               </div>
             </div>
           </CardFooter>
         </Card>
       )}
-      {/* </Card> */}
     </div>
   );
 }
 
-export default PublicDigitalProduct;
+export default ProductPage;

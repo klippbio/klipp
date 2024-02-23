@@ -7,20 +7,21 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import axios from "axios";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input, PrefixInputLeft } from "@/components/ui/input";
+import { PrefixInputLeft } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { MoveRight } from "lucide-react";
+import { ErrorResponse } from "@/types/apiResponse";
+import AxiosApi from "../services/axios";
+import { useAuthDetails } from "../components/AuthContext";
 
 type OnboardingFormValues = {
   instagram: string;
@@ -30,7 +31,8 @@ type OnboardingFormValues = {
 };
 
 function Step2() {
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
+  const authDetails = useAuthDetails();
   const { user } = useUser();
   const email = user?.emailAddresses[0].emailAddress;
 
@@ -38,10 +40,10 @@ function Step2() {
   const router = useRouter();
 
   const onboardingFormSchema = z.object({
-    instagram: z.string().optional(),
-    tiktok: z.string().optional(),
-    twitter: z.string().optional(),
-    youtube: z.string().optional(),
+    instagram: z.string().optional().default(""),
+    tiktok: z.string().optional().default(""),
+    twitter: z.string().optional().default(""),
+    youtube: z.string().optional().default(""),
   });
 
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
@@ -55,7 +57,6 @@ function Step2() {
   });
 
   function onSubmit(data: z.infer<typeof onboardingFormSchema>) {
-    console.log(data);
     // data.username = data.username.replace(fixedPrefix, "");
     mutation.mutate(data);
   }
@@ -63,13 +64,12 @@ function Step2() {
   const mutation = useMutation({
     mutationFn: async (data: OnboardingFormValues) => {
       const combinedData = { ...data, userId, email };
-      return axios.post("/api/user/onboarding/socials", combinedData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await getToken()}`,
-          mode: "cors",
-        },
-      });
+      return AxiosApi(
+        "POST",
+        "/api/user/onboarding/socials",
+        combinedData,
+        authDetails
+      );
     },
     onSuccess: () => {
       toast({
@@ -79,12 +79,12 @@ function Step2() {
       });
       router.push("/dashboard");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ErrorResponse>) => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: error.response.data.error,
+        description: error.response?.data?.error,
       });
     },
   });
@@ -161,7 +161,7 @@ function Step2() {
                   <div className="w-full">
                     <PrefixInputLeft
                       id="youtube"
-                      prefix="youtube.com/"
+                      prefix="youtube.com/@/"
                       {...field}
                     />
                   </div>

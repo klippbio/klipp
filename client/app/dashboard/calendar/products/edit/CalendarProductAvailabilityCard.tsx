@@ -7,6 +7,7 @@ import { ExternalLink, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import CalendarSkeleton from "../components/CalendarSkeleton";
+import { useAuthDetails } from "@/app/components/AuthContext";
 
 const daysOfWeek = [
   "Sunday",
@@ -24,13 +25,14 @@ export default function CalendarProductAvailabilityCard({
   scheduleId: string;
 }) {
   const router = useRouter();
+  const authDetails = useAuthDetails();
   const { data: schedule, isLoading: scheduleCardLoading } =
     useQuery<ScheduleAvailabilityType>(
       ["schedule", scheduleId],
       async () =>
         await AxiosApi(
           "GET",
-          `/api/calendar/get?scheduleId=${scheduleId}`
+          `/api/calendar/get?scheduleId=${scheduleId}&storeId=${authDetails?.storeId}`
         ).then((res) => res.data),
       { enabled: !!scheduleId }
     );
@@ -87,7 +89,9 @@ export default function CalendarProductAvailabilityCard({
             <Button
               variant="outline"
               onClick={() =>
-                router.push("/calendar/schedule?scheduleId=" + scheduleId)
+                router.push(
+                  "/dashboard/calendar/schedule?scheduleId=" + scheduleId
+                )
               }
             >
               <ExternalLink className="h-4 w-4 mr-2" />
