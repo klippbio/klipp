@@ -1,5 +1,19 @@
 import { booking } from "./index.d";
-import { storeItem } from "..";
+
+export interface storeItem {
+  id: number;
+  itemOrder: number;
+  storeId: string;
+  price: string;
+  currency: string[];
+  name: string;
+  itemType: "DIGITALPRODUCT" | "CALENDAR" | "LINK";
+  thumbnailUrl: string;
+  linkUrl: string;
+  itemDetails: DigitalProductDetails | CalendarDetails;
+  itemTypeId?: number;
+}
+
 export interface store {
   id: string;
   createdAt: string;
@@ -28,19 +42,6 @@ export interface user {
   twitter: string;
   color: string;
   storeItems: StoreItem[];
-}
-
-export interface storeItem {
-  id: number;
-  itemOrder: number;
-  storeId: string;
-  price: string;
-  currency: string[];
-  name: string;
-  itemType: "DIGITALPRODUCT" | "CALENDAR" | "LINK";
-  thumbnailUrl: string;
-  linkUrl: string;
-  itemDetails: DigitalProductDetails | CalendarDetails;
 }
 
 export interface booking {

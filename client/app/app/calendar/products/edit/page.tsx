@@ -24,7 +24,7 @@ function Page() {
 
   const updateUrl = useCallback(
     (tab: string) => {
-      const url = "/calendar/products/edit?id=" + id + "&tab=" + tab;
+      const url = "/app/calendar/products/edit?id=" + id + "&tab=" + tab;
       router.push(url);
     },
     [router, id]
@@ -57,6 +57,7 @@ function Page() {
     },
     {
       cacheTime: 0,
+      enabled: !!authDetails?.storeId,
     }
   );
 
@@ -67,7 +68,7 @@ function Page() {
         description: error.response?.data.error,
         duration: 3000,
       });
-      router.push("/calendar/products");
+      router.push("/app/calendar/products");
     }
   }, [status, error, toast, router]);
   return (
