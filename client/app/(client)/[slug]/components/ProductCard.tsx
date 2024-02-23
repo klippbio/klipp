@@ -27,9 +27,7 @@ export default function ProductCard({
 }) {
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
-  if (isHovered) {
-    console.log("product card details", item);
-  }
+
   const editUrl =
     item.itemType === "DIGITALPRODUCT"
       ? "/app/digital-products/create?id=" + item.itemTypeId
@@ -43,7 +41,6 @@ export default function ProductCard({
     <Card
       onClick={() => {
         if (!isDragging) {
-          console.log(item.linkUrl, "item.linkUrl");
           router.push(`/${username}/${item.id}`);
         }
       }}
@@ -63,9 +60,8 @@ export default function ProductCard({
               className="flex items-center justify-center w-10 h-10 px-2 py-2  rounded-full hover:bg-secondary-foreground hover:text-primary-foreground border border-secondary-foreground"
               variant={"outline"}
               onClick={(e) => {
-                console.log("edit button clicked");
                 e.stopPropagation();
-                console.log("editUrl", editUrl);
+
                 router.push(editUrl);
               }}
             >

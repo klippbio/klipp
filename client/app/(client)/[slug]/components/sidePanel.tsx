@@ -20,7 +20,7 @@ import Link from "next/link";
 
 export default function SidePanel() {
   const username = usePathname().split("/")[1];
-  console.log(username, "paneluser");
+
   const authDetails = useAuthDetails();
   const router = useRouter();
   const [backgroundColor, setBackgroundColor] = useState("");

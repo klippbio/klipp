@@ -122,7 +122,7 @@ function Page() {
       authDetails
     );
     await queryClient.invalidateQueries(["allProducts", storeId]);
-    if (!response?.status === 200) {
+    if (response.status !== 200) {
       toast({
         title: "Something went wrong.",
         duration: 2000,

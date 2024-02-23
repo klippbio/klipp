@@ -42,7 +42,6 @@ type UpdateOrderPayload = {
 export default function ProfileCards() {
   const router = useRouter();
   const authDetails = useAuthDetails();
-  console.log(authDetails, "authDetails");
 
   const username = usePathname().substring(1);
 
@@ -56,8 +55,6 @@ export default function ProfileCards() {
       enabled: true,
     }
   );
-
-  console.log(data, "data");
 
   // State to track items
   const [isDragging, setIsDragging] = useState(false);
@@ -92,8 +89,6 @@ export default function ProfileCards() {
   // Handle drag end to reorder items
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
-    console.log(active, over, "active, over");
 
     if (over !== null && active.id !== over.id) {
       const oldIndex = items.findIndex((item) => item.id === active.id);
@@ -161,8 +156,6 @@ export default function ProfileCards() {
 
   const currencySymbol = getSymbolFromCurrency(currency as string);
 
-  console.log(items, "data");
-
   return (
     <DndContext
       sensors={sensors}
@@ -199,7 +192,6 @@ export default function ProfileCards() {
                           key={item.name}
                           onClick={() => {
                             if (!isDragging) {
-                              console.log(item.linkUrl, "item.linkUrl");
                               router.push(item.linkUrl);
                             }
                           }}

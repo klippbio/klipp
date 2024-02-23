@@ -8,7 +8,6 @@ export default authMiddleware({
   afterAuth: ({ userId, isPublicRoute }, req) => {
     // Check if the user is not authenticated and trying to access a protected route
     if (!userId && !isPublicRoute) {
-      console.log("Redirecting to sign-in page");
       // Redirect unauthenticated user to the sign-in page
       return redirectToSignIn({ returnBackUrl: req.url });
     }

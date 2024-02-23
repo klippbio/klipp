@@ -60,8 +60,6 @@ export function SidePanelEdit({
   data: store;
   username: string;
 }) {
-  console.log(data, "editdata");
-
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
