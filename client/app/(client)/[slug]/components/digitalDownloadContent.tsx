@@ -42,7 +42,9 @@ export default function DigitalDownloadContent({
 
   // Update parent component whenever form fields or slot change
   useEffect(() => {
-    handleSaleFormDataChange(watchedFields);
+    if (watchedFields.name && watchedFields.email) {
+      handleSaleFormDataChange(watchedFields);
+    }
   }, [watchedFields, handleSaleFormDataChange, form]);
 
   return (
