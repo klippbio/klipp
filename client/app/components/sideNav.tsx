@@ -25,8 +25,6 @@ export function SideNav({ className, items, ...props }: NavProps) {
         <div className="flex justify-start py-5 px-4 ">
           <Image
             src={logoText}
-            className="cursor-pointer"
-            onClick={() => (window.location.href = "/")}
             alt="logoWithText"
             width={100}
             priority={true}
