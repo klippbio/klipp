@@ -22,13 +22,13 @@ const AxiosApi = async <T>(
   const { token } = authDetails;
   let headers;
 
-  // if (token) {
-  //   headers = {
-  //     "Content-Type": "application/json",
-  //     Authorization: `Bearer ${token}`,
-  //     mode: "cors",
-  //   };
-  // }
+  if (token) {
+    headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      mode: "cors",
+    };
+  }
 
   const options: ApiRequestOptions<T> = {
     method,
