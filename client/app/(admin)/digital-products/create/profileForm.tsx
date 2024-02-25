@@ -63,7 +63,7 @@ const digitalDownloadsSchema = z
     currency: z.string().array().default(["USD"]),
     price: z.string().default("0"),
     recPrice: z.string().optional(),
-    storeId: z.number().optional(),
+    storeId: z.string().optional(),
     minPrice: z.string().optional(),
     flexPrice: z.boolean().optional(),
     visibility: z.boolean().optional().default(false),
