@@ -9,33 +9,36 @@ import {
   rescheduleSale,
 } from "../services/sale/saleService";
 import { StoreItemType } from "@prisma/client";
+import createCheckoutSession from "./paymentController";
 import { isUsersStore } from "../middlewares/isUsersStore";
 
 export const saleController = express.Router();
 
-saleController.post(
-  "/create",
-  isUsersStore,
-  async (req: Request, res: Response) => {
-    try {
-      const { itemType }: { itemType: StoreItemType } = req.body;
-      if (itemType === "CALENDAR") {
-        await ZCreateNewSaleSchema.parseAsync(req.body);
-        const booking = await createNewSale(req.body);
-        console.log(booking);
-        res.status(200).json(booking);
-      }
-      if (itemType === "DIGITALPRODUCT") {
-        console.log("digital download"); // add the payment and a new service to save the digital product!
-      }
-    } catch (error) {
-      console.log(error);
-      if (error instanceof CustomError)
-        res.status(error.statusCode).json({ error: error.message });
-      else res.status(500).json({ error: error });
+saleController.post("/create", async (req: Request, res: Response) => {
+  try {
+    const { itemType }: { itemType: StoreItemType } = req.body;
+    if (itemType === "CALENDAR") {
+      await ZCreateNewSaleSchema.parseAsync(req.body);
+      const booking = await createNewSale(req.body);
+      console.log(booking);
+      res.status(200).json(booking);
+    } else {
+      //TODO
+      //Markorder as completed
+      const sale = await createNewSale(req.body);
+      const data = req.body;
+      const combinedData = { ...data, saleId: sale.id };
+      const link = await createCheckoutSession(combinedData);
+      res.status(200).json(link);
+      //update sale table
     }
+  } catch (error) {
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
-);
+});
 
 saleController.get(
   "/getAllSales",

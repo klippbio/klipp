@@ -8,6 +8,7 @@ import AxiosApi from "@/app/services/axios";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import CalendarSaleContent from "./calendarSuccessContent";
+import DDSuccessContent from "./ddSuccessContent";
 
 function Mypage() {
   const id = usePathname().split("/")[2];
@@ -110,10 +111,10 @@ function Mypage() {
           <CardContent className="text-sm">
             {data.storeItem.itemType === "CALENDAR" ? (
               <CalendarSaleContent data={data} />
-            ) : data.storeItem.itemType === "DIGITALPRODUCT" ? (
-              <div>digital product success</div>
             ) : (
-              <div></div>
+              <div>
+                <DDSuccessContent data={data} />
+              </div>
             )}
           </CardContent>
         </Card>

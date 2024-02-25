@@ -63,6 +63,7 @@ const digitalDownloadsSchema = z
     currency: z.string().array().default(["USD"]),
     price: z.string().default("0"),
     recPrice: z.string().optional(),
+    storeId: z.string().optional(),
     minPrice: z.string().optional(),
     flexPrice: z.boolean().optional(),
     visibility: z.boolean().optional().default(false),
@@ -217,7 +218,7 @@ export function ProfileForm({
   function onSubmit(data: z.infer<typeof digitalDownloadsSchema>) {
     data.thumbnailUrl = imageUrl;
     data.description = editorData;
-
+    data.storeId = authDetails?.storeId;
     mutation.mutate(data);
   }
 
@@ -255,10 +256,7 @@ export function ProfileForm({
   //mutations
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
-      const combinedData = {
-        ...data,
-        storeId: authDetails.storeId,
-      };
+      const combinedData = { ...data, storeId: authDetails?.storeId };
       const response = await AxiosApi(
         "POST",
         `/api/digital-products/update/?id=${productId}`,
@@ -287,16 +285,12 @@ export function ProfileForm({
 
   const mutateUploadFile = useMutation({
     mutationFn: async (data: { url: string; name: string }) => {
+      const combinedData = { ...data, storeId: authDetails?.storeId };
       setUploadingFile(true);
-      const combinedData = {
-        ...data,
-        storeId: authDetails.storeId,
-      };
       const response = await AxiosApi(
         "post",
         `/api/digital-products/file/?id=${productId}`,
-        combinedData,
-        authDetails
+        combinedData
       );
       return response.data;
     },
@@ -328,12 +322,10 @@ export function ProfileForm({
       setUploadedFiles((prevFiles) =>
         prevFiles.filter((file: fileType) => file.id !== fileId)
       );
+      const storeId = authDetails?.storeId;
       const response = await AxiosApi(
         "delete",
-        `/api/digital-products/file/?id=${fileId}`,
-        {
-          storeId: authDetails.storeId,
-        },
+        `/api/digital-products/file/?id=${fileId}&storeId=${storeId}`,
         authDetails
       );
       return response.data;

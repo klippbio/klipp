@@ -8,6 +8,10 @@ import { toast } from "@/components/ui/use-toast";
 import getSymbolFromCurrency from "currency-symbol-map";
 import { useAuthDetails } from "@/app/components/AuthContext";
 
+type dataType = {
+  accountId: string;
+  storeId: string;
+};
 function PaymentDetails() {
   const queryClient = useQueryClient();
   const authDetails = useAuthDetails();
@@ -48,14 +52,8 @@ function PaymentDetails() {
   const currencySymbol = getSymbolFromCurrency(currency);
 
   const payOutMutation = useMutation({
-    mutationFn: async (data) => {
-      //TODO: Add the correct type for data and authDetails as this will fail as of now!
-      const response = await AxiosApi(
-        "POST",
-        `/api/stripe/payout`,
-        data,
-        authDetails
-      );
+    mutationFn: async (data: dataType) => {
+      const response = await AxiosApi("POST", `/api/stripe/payout`, data);
       await queryClient.invalidateQueries([
         "stripeBalance",
         authDetails?.storeId,
@@ -79,9 +77,10 @@ function PaymentDetails() {
     },
   });
 
-  const handlePayOut = async () => {
-    payOutMutation.mutate(data);
-  };
+  function handlePayOut() {
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    payOutMutation.mutate(combinedData);
+  }
 
   return (
     <div>
@@ -157,7 +156,11 @@ function PaymentDetails() {
                       <div className="text-foreground">
                         Held By Stripe = {currencySymbol} {pendingBalance}
                       </div>
-                      <Button className="mt-3" onClick={() => handlePayOut()}>
+                      <Button
+                        disabled={availableBalance <= 0 ? true : false}
+                        className="mt-3"
+                        onClick={() => handlePayOut()}
+                      >
                         Pay Out
                       </Button>
                     </div>
