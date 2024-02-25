@@ -7,10 +7,9 @@ import {
   getAllSales,
   getSale,
   rescheduleSale,
-  updateSaleStatus,
 } from "../services/sale/saleService";
 import { StoreItemType } from "@prisma/client";
-import createCheckoutSession, { paymentController } from "./paymentController";
+import createCheckoutSession from "./paymentController";
 
 export const saleController = express.Router();
 
