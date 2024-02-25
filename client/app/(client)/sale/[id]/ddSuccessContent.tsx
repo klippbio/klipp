@@ -1,20 +1,10 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  AlertCircle,
-  ArrowDownFromLineIcon,
-  Download,
-  ExternalLink,
-} from "lucide-react";
+import { AlertCircle, ArrowDownFromLineIcon, ExternalLink } from "lucide-react";
 import React from "react";
 
+//eslint-disable-next-line
 function DDSuccessContent({ data }: { data: any }) {
   const urls = JSON.parse(data.storeItem.DigitalProduct.urls);
 
@@ -39,6 +29,7 @@ function DDSuccessContent({ data }: { data: any }) {
                 </div>
                 <Separator />
                 {data.storeItem.DigitalProduct.ddFiles.map(
+                  //eslint-disable-next-line
                   (file: any, index: number) => (
                     <div
                       key={index}
