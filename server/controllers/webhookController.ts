@@ -32,42 +32,38 @@ export const webhookController = express.Router();
 // });
 
 // Your existing endpoint modified according to the Stripe example
-webhookController.post(
-  "/",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const sig = req.headers["stripe-signature"];
-    let event;
+webhookController.post("/", async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  let event;
 
-    try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      console.log(`Error message: ${err.message}`);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
-
-    // Handle the event
-    switch (event.type) {
-      case "account.updated":
-        // eslint-disable-next-line
-        const updatedAccount = event.data.object; // Add your logic here
-        handleUpdateAccount(updatedAccount);
-        break;
-      case "checkout.session.completed":
-        // eslint-disable-next-line
-        const session = event.data.object;
-        // eslint-disable-next-line
-        const saleId = session.metadata.saleId; // Assuming saleId is stored in metadata
-        await updateSaleStatus(saleId, "COMPLETED");
-        console.log("Checkout session completed");
-        break;
-      // Add more case statements for other event types you need to handle
-      default:
-        console.log(`Unhandled event type ${event.type}`);
-    }
-
-    // Return a response to acknowledge receipt of the event
-    res.json({ received: true });
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.log(`Error message: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-);
+
+  // Handle the event
+  switch (event.type) {
+    case "account.updated":
+      // eslint-disable-next-line
+      const updatedAccount = event.data.object; // Add your logic here
+      handleUpdateAccount(updatedAccount);
+      break;
+    case "checkout.session.completed":
+      // eslint-disable-next-line
+      const session = event.data.object;
+      // eslint-disable-next-line
+      const saleId = session.metadata.saleId; // Assuming saleId is stored in metadata
+      await updateSaleStatus(saleId, "COMPLETED");
+      console.log("Checkout session completed");
+      break;
+    // Add more case statements for other event types you need to handle
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a response to acknowledge receipt of the event
+  res.json({ received: true });
+});
