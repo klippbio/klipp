@@ -33,7 +33,7 @@ model Store {
   tiktok           String?
   youtube          String?
   twitter          String?
-  color            String?
+  color            String?   @default("#000000")
   schedules Schedule[]
   bookings Booking[]
   calendarSetting CalendarSetting?
@@ -52,7 +52,7 @@ model Payment {
 
 model StoreItem {
   id           Int   @id @default(autoincrement()) @unique
-  itemOrder      Int             @unique @default(autoincrement())
+  itemOrder      Int    @default(autoincrement())
   storeId        String
   itemType       StoreItemType
   DigitalProduct DigitalProduct?

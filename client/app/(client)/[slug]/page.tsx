@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import Cards from "./components/Cards";
+import ProfileCards from "./components/ProfileCards";
 
 function Mypage() {
   return (
     <div>
-      <Cards />
+      <ProfileCards />
     </div>
   );
 }

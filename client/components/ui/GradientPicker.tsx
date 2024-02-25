@@ -141,7 +141,7 @@ export function GradientPicker({
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64">
+      <PopoverContent className="w-64 pointer-events-auto">
         <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList className="w-full mb-4">
             <TabsTrigger className="flex-1" value="solid">

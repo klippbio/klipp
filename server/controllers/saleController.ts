@@ -10,6 +10,7 @@ import {
 } from "../services/sale/saleService";
 import { StoreItemType } from "@prisma/client";
 import createCheckoutSession from "./paymentController";
+import { isUsersStore } from "../middlewares/isUsersStore";
 
 export const saleController = express.Router();
 
@@ -39,17 +40,23 @@ saleController.post("/create", async (req: Request, res: Response) => {
   }
 });
 
-saleController.get("/all", async (req: Request, res: Response) => {
-  try {
-    const sales = await getAllSales();
-    res.status(200).json(sales);
-  } catch (error) {
-    console.log(error);
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+saleController.get(
+  "/getAllSales",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      const storeId = req.query.storeId;
+      if (!storeId) throw new CustomError("Store id not Found!", 400);
+      const sales = await getAllSales(storeId as string);
+      res.status(200).json(sales);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 saleController.get("/", async (req: Request, res: Response) => {
   try {
