@@ -5,12 +5,10 @@ import {
   createAccount,
   getAccountDetails,
   handleDeleteAccountFromDB,
-  handleUpdateAccount,
 } from "../services/payment/paymentService";
 import CustomError from "../utils/CustomError";
 import { env } from "process";
 import { z } from "zod";
-import { updateSaleStatus } from "../services/sale/saleService";
 
 export const paymentController = express.Router();
 
@@ -39,7 +37,7 @@ export default async function createCheckoutSession(
   data: z.infer<typeof ZCreateNewSaleSchema>
 ) {
   const accountId = await getStripeAccountId(data.storeId);
-  const successUrl = "https://localhost:3000/sale/" + data.saleId;
+  const successUrl = "https://localhost:3000/sale/" + data.saleId + "/success";
   const price = data.price * 100;
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
