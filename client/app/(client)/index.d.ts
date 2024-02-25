@@ -65,7 +65,7 @@ export interface booking {
 
 export interface sale {
   id: number;
-  createdAt: string;
+  createdAtx: string;
   updatedAt: string;
   storeId: string;
   storeItemId: number;

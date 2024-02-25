@@ -7,8 +7,10 @@ import {
   getAllSales,
   getSale,
   rescheduleSale,
+  updateSaleStatus,
 } from "../services/sale/saleService";
 import { StoreItemType } from "@prisma/client";
+import createCheckoutSession, { paymentController } from "./paymentController";
 
 export const saleController = express.Router();
 
@@ -20,12 +22,14 @@ saleController.post("/create", async (req: Request, res: Response) => {
       const booking = await createNewSale(req.body);
       console.log(booking);
       res.status(200).json(booking);
-    }
-    if (itemType === "DIGITALPRODUCT") {
+    } else {
       //TODO
-      //parse data
-      //Get stripe link
-      console.log("Digital Product Data", req.body);
+      //Markorder as completed
+      const sale = await createNewSale(req.body);
+      const data = req.body;
+      const combinedData = { ...data, saleId: sale.id };
+      const link = await createCheckoutSession(combinedData);
+      res.status(200).json(link);
       //update sale table
     }
   } catch (error) {

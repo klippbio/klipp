@@ -147,6 +147,10 @@ export function PaymentMethods() {
       await queryClient.invalidateQueries(["stripeAccountDetails"]);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries([
+        "stripeAccountDetails",
+        authDetails?.storeId,
+      ]);
       toast({
         title: "Success",
         duration: 2000,

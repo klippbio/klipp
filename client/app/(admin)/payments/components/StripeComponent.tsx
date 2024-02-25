@@ -21,6 +21,7 @@ import { useAuthDetails } from "@/app/components/AuthContext";
 
 export default function StripeComponent() {
   const authDetails = useAuthDetails();
+  const storeId = authDetails?.storeId;
   const { data: accountDetails, isLoading: isAccountDetailsLoading } = useQuery(
     ["stripeAccountDetails", authDetails?.storeId],
     async () => {
@@ -47,7 +48,7 @@ export default function StripeComponent() {
         try {
           const response = await AxiosApi(
             "GET",
-            `/api/stripe/account_session/?stripeAccountId=${accountId}`
+            `/api/stripe/account_session/?stripeAccountId=${accountId}&storeId=${storeId}`
           );
           setClientSecret(response.data.client_secret);
         } catch (error) {
@@ -63,8 +64,7 @@ export default function StripeComponent() {
   useEffect(() => {
     if (clientSecret) {
       const connectInstance = loadConnectAndInitialize({
-        publishableKey:
-          "pk_test_51ODeaHKiQFEEPGdjiRhjxO9SISCnKaLbVrsodYC9kXe9IBrDCdfVaX0oEQvF4PvYoIPVWR5mV6W8bzwoABOoZZSA00TFmfyrk2",
+        publishableKey: "pk_test_A7jK4iCYHL045qgjjfzAfPxu",
         fetchClientSecret: () => Promise.resolve(clientSecret),
         fonts: [{ src: "next/font/google", family: "inter" }],
         appearance: {

@@ -256,10 +256,11 @@ export function ProfileForm({
   //mutations
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof digitalDownloadsSchema>) => {
+      const combinedData = { ...data, storeId: authDetails?.storeId };
       const response = await AxiosApi(
         "POST",
         `/api/digital-products/update/?id=${productId}`,
-        data,
+        combinedData,
         authDetails
       );
       return response.data;
@@ -284,12 +285,12 @@ export function ProfileForm({
 
   const mutateUploadFile = useMutation({
     mutationFn: async (data: { url: string; name: string }) => {
+      const combinedData = { ...data, storeId: authDetails?.storeId };
       setUploadingFile(true);
       const response = await AxiosApi(
         "post",
         `/api/digital-products/file/?id=${productId}`,
-        data,
-        authDetails
+        combinedData
       );
       return response.data;
     },
@@ -321,10 +322,10 @@ export function ProfileForm({
       setUploadedFiles((prevFiles) =>
         prevFiles.filter((file: fileType) => file.id !== fileId)
       );
+      const storeId = authDetails?.storeId;
       const response = await AxiosApi(
         "delete",
-        `/api/digital-products/file/?id=${fileId}`,
-        {},
+        `/api/digital-products/file/?id=${fileId}&storeId=${storeId}`,
         authDetails
       );
       return response.data;

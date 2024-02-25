@@ -84,6 +84,20 @@ function ProductPage() {
     }
   );
 
+  const pathname = usePathname();
+
+  function isValidHttpUrl(string: string) {
+    let url;
+
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+
+    return url.protocol === "http:" || url.protocol === "https:";
+  }
+
   const createNewSaleMutation = useMutation({
     mutationFn: async () => {
       const combinedData = {
@@ -98,8 +112,10 @@ function ProductPage() {
         price: data?.itemDetails.price,
         productName: data?.itemDetails.name,
         thumbnailUrl: data?.itemDetails.thumbnailUrl,
+        cancelUrl: "https://localhost:3000" + pathname,
       };
       let response;
+
       if (reschedule === "true" && saleId) {
         response = await AxiosApi("POST", `/api/sale/reschedule`, combinedData);
       } else {
@@ -115,7 +131,10 @@ function ProductPage() {
         description:
           "Booked session for " + dayjs(data.startTime).format("MMMM D HH:mm"),
       });
-      router.push("/" + username);
+      console.log(data, "success");
+      if (data && isValidHttpUrl(data)) {
+        router.push(data);
+      }
     },
     onError: async (data: AxiosError<ErrorResponse>) => {
       console.log(data, "error");

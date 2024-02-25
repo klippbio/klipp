@@ -4,6 +4,8 @@ import dayjs from "../../utils/dayjs.index";
 import { db } from "../../utils/db.server";
 import { createGoogleCalendarBooking } from "../googleCalendar/googleCalendarService";
 
+type StatusType = "PENDING" | "COMPLETED" | "REFUNDED";
+
 function getEndTimes(startTime: string, meetingLength: number): string {
   return dayjs(startTime)
     .utc() // Parse the time in UTC
@@ -163,22 +165,34 @@ export const createNewSale = async (
     });
   }
 
-  if (itemType === "DIGITALPRODUCT") {
-    //do if something special is needed for digital product
-  }
+  // if (itemType === "DIGITALPRODUCT") {
+  //   //do if something special is needed for digital product
+  // }
 
   //call stripe to create a payment intent
 
   // Update the sale status to "COMPLETED" after the booking is created
+
+  // const updatedSale = await db.sale.update({
+  //   where: {
+  //     id: saleInfo.id,
+  //   },
+  //   data: {
+  //     status: "COMPLETED",
+  //   },
+  // });
+  return saleInfo;
+};
+
+export const updateSaleStatus = async (saleId: number, status: StatusType) => {
   const updatedSale = await db.sale.update({
     where: {
-      id: saleInfo.id,
+      id: Number(saleId),
     },
     data: {
-      status: "COMPLETED",
+      status: status,
     },
   });
-
   return updatedSale;
 };
 
@@ -203,7 +217,16 @@ export const getSale = async (id: number) => {
       id: id,
     },
     include: {
-      storeItem: true,
+      storeItem: {
+        include: {
+          DigitalProduct: {
+            include: {
+              ddFiles: true,
+            },
+          },
+          calendarProduct: true,
+        },
+      },
       booking: true,
       store: {
         include: {

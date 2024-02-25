@@ -23,6 +23,6 @@ routes.use("/stripe", isUsersStore, paymentController);
 routes.use("/webhook", webhookController);
 routes.use("/calendar-products", isUsersStore, calendarProductController);
 routes.use("/slots", isUsersStore, slotController);
-routes.use("/sale", isUsersStore, saleController);
+routes.use("/sale", saleController);
 routes.use("/bookings", isUsersStore, bookingController);
 routes.use("/link", isUsersStore, linkController);
