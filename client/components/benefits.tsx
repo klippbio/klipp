@@ -3,7 +3,7 @@ import Image from "next/image";
 import React from "react";
 import Container from "./container";
 
-const Benefits = (props) => {
+const Benefits = (props: any) => {
   const { data } = props;
   return (
     <>
@@ -17,7 +17,6 @@ const Benefits = (props) => {
             <Image
               src={data.image}
               width="521"
-              height="auto"
               alt="Benefits"
               className={"object-cover"}
               placeholder="blur"
@@ -43,7 +42,7 @@ const Benefits = (props) => {
             </div>
 
             <div className="w-full mt-5">
-              {data.bullets.map((item, index) => (
+              {data.bullets.map((item: any, index: any) => (
                 <Benefit key={index} title={item.title} icon={item.icon}>
                   {item.desc}
                 </Benefit>
@@ -56,7 +55,7 @@ const Benefits = (props) => {
   );
 };
 
-function Benefit(props) {
+function Benefit(props: any) {
   return (
     <>
       <div className="flex items-start mt-8 space-x-3">

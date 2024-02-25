@@ -9,11 +9,10 @@ import Benefits from "../components/benefits";
 import Footer from "../components/footer";
 import Cta from "../components/cta";
 import Faq from "../components/faq";
-import PopupWidget from "../components/popupWidget";
 
 const Home = () => {
   return (
-    <div className="selection:bg-teal-300">
+    <div className="bg-white selection:bg-teal-300">
       <Head>
         <title>Klipp - Monetize Your Audience</title>
         <meta
@@ -27,15 +26,13 @@ const Home = () => {
       <Hero />
       <Creators />
       <SectionTitle
-        pretitle="Nextly Benefits"
-        title=" Why should you use this landing page"
-      >
-        Nextly is a free landing page & marketing website template for startups
-        and indie projects. Its built with Next.js & TailwindCSS. And its
-        completely open-source.
-      </SectionTitle>
+        className="bg-black"
+        pretitle="No Coding Required."
+        title="Start Selling in Just 5 Minutes. "
+      ></SectionTitle>
       <Benefits data={benefitOne} />
       <Benefits imgPos="right" data={benefitTwo} />
+
       {/* <SectionTitle
         pretitle="Watch a video"
         title="Learn how to fullfil your needs"
@@ -60,7 +57,6 @@ const Home = () => {
       <Faq />
       <Cta />
       <Footer />
-      <PopupWidget />
     </div>
   );
 };
