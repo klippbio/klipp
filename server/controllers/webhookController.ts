@@ -41,7 +41,8 @@ webhookController.post(
 
     try {
       event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
       console.log(`Error message: ${err.message}`);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
@@ -49,11 +50,14 @@ webhookController.post(
     // Handle the event
     switch (event.type) {
       case "account.updated":
+        // eslint-disable-next-line
         const updatedAccount = event.data.object; // Add your logic here
         handleUpdateAccount(updatedAccount);
         break;
       case "checkout.session.completed":
+        // eslint-disable-next-line
         const session = event.data.object;
+        // eslint-disable-next-line
         const saleId = session.metadata.saleId; // Assuming saleId is stored in metadata
         await updateSaleStatus(saleId, "COMPLETED");
         console.log("Checkout session completed");
