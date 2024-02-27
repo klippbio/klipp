@@ -47,7 +47,7 @@ function DDSuccessContent({ data }: { data: any }) {
               </div>
             )}
 
-            {urls.length > 0 && (
+            {urls.length > 1 && (
               <div className="mt-10">
                 <div className="text-lg font-semibold text-secondary-foreground">
                   External Links

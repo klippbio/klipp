@@ -125,13 +125,6 @@ function ProductPage() {
     },
     onSuccess: async (data) => {
       //redirect to the stripe checkout page if it is a paid product otherwise redirect to the success page
-      toast({
-        title: "Booking successful",
-        duration: 2000,
-        description:
-          "Booked session for " + dayjs(data.startTime).format("MMMM D HH:mm"),
-      });
-      console.log(data, "success");
       if (data && isValidHttpUrl(data)) {
         router.push(data);
       }
