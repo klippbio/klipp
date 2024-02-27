@@ -50,6 +50,7 @@ import DigitalDownloadSkeleton from "./DigitalDownloadSkeleton";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import { AxiosError } from "axios";
+import { ErrorResponse } from "@/types/apiResponse";
 
 type ddType = {
   name: string;
@@ -114,29 +115,34 @@ function Page() {
   }
 
   //TODO: Add delete mutation
-  async function deleteProduct(id: string) {
-    const response = await AxiosApi(
-      "DELETE",
-      `/api/digital-products/deleteDigitalProduct/?id=${id}&storeId=${storeId}`,
-      {},
-      authDetails
-    );
-    await queryClient.invalidateQueries(["allProducts", storeId]);
-    if (response.status !== 200) {
-      toast({
-        title: "Something went wrong.",
-        duration: 2000,
-        description: "Your product was not deleted. Please try again.",
-        variant: "destructive",
-      });
-    } else {
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await AxiosApi(
+        "DELETE",
+        `/api/digital-products/deleteDigitalProduct/?id=${id}&storeId=${storeId}`
+      );
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(["allProducts", storeId]);
       toast({
         title: "Success",
         duration: 2000,
         description: "Product Deleted Successfully",
       });
-    }
-    return true;
+    },
+    onError: async (data: AxiosError<ErrorResponse>) => {
+      console.log(data, "error");
+      toast({
+        title: "Error",
+        variant: "destructive",
+        duration: 2000,
+        description: data.response?.data?.error,
+      });
+    },
+  });
+
+  async function deleteProduct(id: string) {
+    await deleteProductMutation.mutate(id);
   }
 
   const createProductMutation = useMutation({
