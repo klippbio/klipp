@@ -1,16 +1,17 @@
+"use client";
 import { SignIn } from "@clerk/nextjs";
 
-const SignInPage = () => (
-  <div className="flex justify-center h-screen items-center">
-    <SignIn
-      redirectUrl="home"
-      appearance={{
-        elements: {
-          formButtonPrimary: "bg-black hover:bg-gray-800 text-sm normal-case",
-        },
-      }}
-    />
-  </div>
-);
-
-export default SignInPage;
+export default function SignInPage() {
+  return (
+    <div className="flex justify-center h-screen items-center">
+      <SignIn
+        redirectUrl="http://localhost:4000/user/check"
+        appearance={{
+          elements: {
+            formButtonPrimary: "bg-black hover:bg-gray-800 text-sm normal-case",
+          },
+        }}
+      />
+    </div>
+  );
+}
