@@ -83,4 +83,24 @@ userController.get(
   }
 );
 
+userController.get(
+  "/check",
+  ClerkExpressRequireAuth(),
+  async (req: Request, res: Response) => {
+    try {
+      const clerkUser = await clerkClient.users.getUser(req.auth.userId);
+      if (
+        clerkUser.unsafeMetadata === null ||
+        clerkUser.unsafeMetadata === undefined ||
+        Object.keys(clerkUser.unsafeMetadata).length === 0
+      ) {
+        return res.redirect("http://localhost:3000/onboarding");
+      }
+      return res.redirect("http://localhost:3000/dashboard");
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+);
+
 //
