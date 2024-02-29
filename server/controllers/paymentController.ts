@@ -37,7 +37,8 @@ export default async function createCheckoutSession(
   data: z.infer<typeof ZCreateNewSaleSchema>
 ) {
   const accountId = await getStripeAccountId(data.storeId);
-  const successUrl = "https://localhost:3000/sale/" + data.saleId;
+  const successUrl =
+    process.env.FRONTEND_URL + "/dashboard/sale/" + data.saleId;
   const price = data.price * 100;
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -102,7 +103,7 @@ paymentController.post("/connect", async (req: Request, res: Response) => {
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
       refresh_url: "https://klipp.io/reauth",
-      return_url: "http://localhost:3000/payments",
+      return_url: process.env.FRONTEND_URL + "/dashboard/payments",
       type: "account_onboarding",
     });
 
@@ -124,7 +125,7 @@ paymentController.post(
       const accountLink = await stripe.accountLinks.create({
         account: accountId,
         refresh_url: "https://klipp.io/reauth",
-        return_url: "http://localhost:3000/payments",
+        return_url: process.env.FRONTEND_URL + "/dashboard/payments",
         type: "account_onboarding",
       });
       res.status(200).json(accountLink);
