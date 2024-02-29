@@ -6,7 +6,7 @@ import { z } from "zod";
 const oauth2Client = new google.auth.OAuth2({
   clientId: process.env.GOOGLE_AUTH_CLIENT_ID,
   clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET,
-  redirectUri: "http://localhost:4000/calendar/linkCalendar",
+  redirectUri: process.env.BACKEND_URL + "/calendar/linkCalendar",
 });
 
 async function revokeAccessWithRefreshToken(refreshToken: string) {

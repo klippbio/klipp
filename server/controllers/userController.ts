@@ -94,9 +94,9 @@ userController.get(
         clerkUser.unsafeMetadata === undefined ||
         Object.keys(clerkUser.unsafeMetadata).length === 0
       ) {
-        return res.redirect("http://localhost:3000/onboarding");
+        return res.redirect(process.env.FRONTEND_URL + "/onboarding");
       }
-      return res.redirect("http://localhost:3000/dashboard");
+      return res.redirect(process.env.FRONTEND_URL + "/dashboard");
     } catch (error) {
       return res.status(500).json(error);
     }

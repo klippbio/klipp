@@ -23,7 +23,7 @@ saleController.post("/create", async (req: Request, res: Response) => {
       const sale = await createNewSale(req.body);
       if (req.body.price === "0") {
         await updateSaleStatus(sale.id, "COMPLETED");
-        const link = "https://localhost:3000/sale/" + sale.id;
+        const link = process.env.FRONTEND_URL + "/sale/" + sale.id;
         res.status(200).json(link);
       } else {
         const data = req.body;
@@ -35,7 +35,7 @@ saleController.post("/create", async (req: Request, res: Response) => {
       const sale = await createNewSale(req.body);
       if (req.body.price === "0") {
         await updateSaleStatus(sale.id, "COMPLETED");
-        const link = "https://localhost:3000/sale/" + sale.id;
+        const link = process.env.FRONTEND_URL + "/dashboard/sale/" + sale.id;
         res.status(200).json(link);
       } else {
         const data = req.body;
