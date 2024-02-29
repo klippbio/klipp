@@ -46,6 +46,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useAuthDetails } from "@/app/components/AuthContext";
+import Image from "next/image";
 
 const FormSchema = z.object({
   country: z.string({
@@ -246,7 +247,12 @@ export function PaymentMethods() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center">
-                <img src="/stripe.png" alt="stripe logo" />
+                <Image
+                  src="/stripe.png"
+                  alt="stripe logo"
+                  width={140}
+                  height={140}
+                />
               </div>
               <div>
                 {accountStatus === "new" && (

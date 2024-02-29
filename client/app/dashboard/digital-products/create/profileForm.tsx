@@ -51,6 +51,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
+import Image from "next/image";
 //types
 const digitalDownloadsSchema = z
   .object({
@@ -380,7 +381,9 @@ export function ProfileForm({
                           >
                             {selectedFile ? (
                               <div className="relative w-full h-full">
-                                <img
+                                <Image
+                                  width={1000}
+                                  height={1000}
                                   src={selectedFile}
                                   alt="Selected Thumbnail"
                                   className="w-full h-full md:h-32 object-cover rounded-md transition-opacity"
