@@ -1,12 +1,5 @@
 "use client";
-import {
-  HomeIcon,
-  Instagram,
-  Twitter,
-  Undo2,
-  User,
-  Youtube,
-} from "lucide-react";
+import { HomeIcon, Instagram, Twitter, Undo2, Youtube } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -59,7 +52,9 @@ export default function SidePanel() {
   }, [data]);
 
   // Use a default class along with dynamically setting the background color and text color.
-  const dynamicStyle = backgroundColor ? { backgroundColor } : {};
+  const dynamicStyle = backgroundColor
+    ? { backgroundColor }
+    : { backgroundColor: "#E9976A" };
 
   return (
     data &&
@@ -81,7 +76,13 @@ export default function SidePanel() {
                   height={192}
                 />
               ) : (
-                <User className={textColor} />
+                <Image
+                  src="/userImage.webp"
+                  alt="User profile"
+                  className="w-48 h-48 rounded-full object-cover"
+                  width="192"
+                  height={192}
+                />
               )}
             </div>
             <div className="mt-6 flex justify-center">
