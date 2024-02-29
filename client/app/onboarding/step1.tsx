@@ -31,6 +31,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Upload } from "lucide-react";
 import { ErrorResponse } from "@/types/apiResponse";
 import AxiosApi from "../services/axios";
+import Image from "next/image";
 
 //types
 type Step1Props = {
@@ -181,7 +182,9 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
                     >
                       {selectedFile ? (
                         <div className="relative w-full h-full">
-                          <img
+                          <Image
+                            width={1000}
+                            height={1000}
                             src={selectedFile}
                             alt="Selected Thumbnail"
                             className="w-full h-full md:h-32 object-cover rounded-full transition-opacity"

@@ -36,6 +36,7 @@ import {
   uploadFile,
 } from "@/app/services/getS3url";
 import { AxiosError } from "axios";
+import Image from "next/image";
 
 type linkType = {
   title: string;
@@ -237,7 +238,9 @@ function Page() {
                                     >
                                       {selectedFile ? (
                                         <div className="relative rounded-lg w-full h-full">
-                                          <img
+                                          <Image
+                                            width={1000}
+                                            height={1000}
                                             src={selectedFile}
                                             alt="Selected Thumbnail"
                                             className="w-full h-full object-cover transition-opacity"
@@ -371,10 +374,12 @@ function Page() {
                         {item.thumbnailUrl ? (
                           <div>
                             {" "}
-                            <img
+                            <Image
                               src={item.thumbnailUrl}
                               alt="Thumbnail"
-                              className="h-16  rounded-full w-16  object-cover" // Adjust the size as needed
+                              width={1000}
+                              height={1000}
+                              className="rounded-full h-16 w-16 object-cover"
                             />
                           </div>
                         ) : (
