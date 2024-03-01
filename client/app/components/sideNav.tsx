@@ -32,7 +32,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
           />
         </div>
         <nav
-          className={cn("flex flex-col space-y-1 align-center pt-2", className)}
+          className={cn("flex flex-col space-y-2 align-center pt-4", className)}
           {...props}
         >
           {items.map((item) => (
@@ -63,7 +63,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
                   router.push("/" + authDetails?.storeUrl);
                 }}
                 variant={"outline"}
-                className="h-14 w-full bg-input text-l text-accent-foreground border border-primary space-x-2 hover:text-foreground"
+                className="h-14 w-full bg-input text-l text-accent-foreground    border border-primary space-x-2 hover:text-foreground"
               >
                 <Server className="h-5 w-5" />
                 <span>Edit Profile </span>
