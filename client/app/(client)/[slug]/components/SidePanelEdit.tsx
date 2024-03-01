@@ -33,6 +33,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { GradientPicker } from "@/components/ui/GradientPicker";
 import { store } from "../..";
 import { AuthDetails } from "@/app/components/AuthContext";
+import Image from "next/image";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
@@ -199,9 +200,11 @@ export function SidePanelEdit({
                             >
                               {selectedFile ? (
                                 <div className="relative w-full h-full">
-                                  <img
+                                  <Image
                                     src={selectedFile}
                                     alt="Selected Thumbnail"
+                                    width={1000}
+                                    height={1000}
                                     className="w-full h-full object-cover rounded-full transition-opacity"
                                   />
                                   <div className="flex items-center justify-center mt-2 text-red-500">

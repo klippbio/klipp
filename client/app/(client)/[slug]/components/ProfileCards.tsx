@@ -33,6 +33,7 @@ import { toast } from "@/components/ui/use-toast";
 import { ErrorResponse } from "@/types/apiResponse";
 import { cn } from "@/lib/utils";
 import ProductCard from "./ProductCard";
+import Image from "next/image";
 
 type UpdateOrderPayload = {
   id: number;
@@ -203,10 +204,12 @@ export default function ProfileCards() {
                                   {item.thumbnailUrl ? (
                                     <div>
                                       {" "}
-                                      <img
+                                      <Image
                                         src={item.thumbnailUrl}
                                         alt="Thumbnail"
-                                        className="h-36 rounded-md w-36  object-cover" // Adjust the size as needed
+                                        width={1000}
+                                        height={1000}
+                                        className="h-36 rounded-md w-36 object-cover"
                                       />
                                     </div>
                                   ) : (

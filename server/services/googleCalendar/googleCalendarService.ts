@@ -12,7 +12,7 @@ export const createGoogleCalendarBooking = async (
     const oauth2Client = new google.auth.OAuth2({
       clientId: process.env.GOOGLE_AUTH_CLIENT_ID,
       clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET,
-      redirectUri: "http://localhost:4000/calendar/linkCalendar", //TODO: CHANGE THIS WHEN DEPLOYING
+      redirectUri: process.env.BACKEND_URL + "/calendar/linkCalendar", //TODO: CHANGE THIS WHEN DEPLOYING
     });
 
     const calendarSetting = await db.calendarSetting.findUnique({
@@ -86,7 +86,7 @@ export const cancelGoogleCalendarEvent = async (
   const oauth2Client = new google.auth.OAuth2({
     clientId: process.env.GOOGLE_AUTH_CLIENT_ID,
     clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET,
-    redirectUri: "http://localhost:4000/calendar/linkCalendar", //TODO: CHANGE THIS WHEN DEPLOYING
+    redirectUri: process.env.BACKEND_URL + "/calendar/linkCalendar", //TODO: CHANGE THIS WHEN DEPLOYING
   });
 
   const calendarSetting = await db.calendarSetting.findUnique({

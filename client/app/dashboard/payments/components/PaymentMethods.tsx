@@ -46,11 +46,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useAuthDetails } from "@/app/components/AuthContext";
+import Image from "next/image";
 
 const FormSchema = z.object({
   country: z.string({
     required_error: "Please select your country to get started.",
   }),
+  storeId: z.string().optional(),
 });
 
 type dataType = {
@@ -123,8 +125,7 @@ export function PaymentMethods() {
       const response = await AxiosApi(
         "POST",
         `/api/stripe/pendingAccount/`,
-        data,
-        authDetails
+        data
       );
       return response.data;
     },
@@ -147,6 +148,10 @@ export function PaymentMethods() {
       await queryClient.invalidateQueries(["stripeAccountDetails"]);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries([
+        "stripeAccountDetails",
+        authDetails?.storeId,
+      ]);
       toast({
         title: "Success",
         duration: 2000,
@@ -187,19 +192,23 @@ export function PaymentMethods() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    mutation.mutate(data);
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    mutation.mutate(combinedData);
   }
 
   function pendingSubmit() {
-    pendingMutation.mutate(data);
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    pendingMutation.mutate(combinedData);
   }
 
   function disconnectSubmit() {
-    disconnectMutation.mutate(data);
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    disconnectMutation.mutate(combinedData);
   }
 
   function handleDashboardRedirect() {
-    redirectMutation.mutate(data);
+    const combinedData = { ...data, storeId: authDetails.storeId };
+    redirectMutation.mutate(combinedData);
   }
 
   return (
@@ -238,7 +247,12 @@ export function PaymentMethods() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center">
-                <img src="/stripe.png" alt="stripe logo" />
+                <Image
+                  src="/stripe.png"
+                  alt="stripe logo"
+                  width={140}
+                  height={140}
+                />
               </div>
               <div>
                 {accountStatus === "new" && (

@@ -26,6 +26,7 @@ import AxiosApi from "@/app/services/axios";
 import { useToast } from "@/components/ui/use-toast";
 import { GradientPicker } from "@/components/ui/GradientPicker";
 import { useAuthDetails } from "@/app/components/AuthContext";
+import Image from "next/image";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
@@ -171,8 +172,10 @@ function UserSettings(data: any) {
                               >
                                 {selectedFile ? (
                                   <div className="relative w-full h-full">
-                                    <img
+                                    <Image
                                       src={selectedFile}
+                                      width={1000}
+                                      height={1000}
                                       alt="Selected Thumbnail"
                                       className="w-full h-full md:h-40 object-cover rounded-full transition-opacity"
                                     />

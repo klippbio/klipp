@@ -1,12 +1,5 @@
 "use client";
-import {
-  HomeIcon,
-  Instagram,
-  Twitter,
-  Undo2,
-  User,
-  Youtube,
-} from "lucide-react";
+import { HomeIcon, Instagram, Twitter, Undo2, Youtube } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -59,7 +52,9 @@ export default function SidePanel() {
   }, [data]);
 
   // Use a default class along with dynamically setting the background color and text color.
-  const dynamicStyle = backgroundColor ? { backgroundColor } : {};
+  const dynamicStyle = backgroundColor
+    ? { backgroundColor }
+    : { backgroundColor: "#E9976A" };
 
   return (
     data &&
@@ -81,7 +76,13 @@ export default function SidePanel() {
                   height={192}
                 />
               ) : (
-                <User className={textColor} />
+                <Image
+                  src="/userImage.webp"
+                  alt="User profile"
+                  className="w-48 h-48 rounded-full object-cover"
+                  width="192"
+                  height={192}
+                />
               )}
             </div>
             <div className="mt-6 flex justify-center">
@@ -125,12 +126,17 @@ export default function SidePanel() {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 448 512"
-                    fill="#FFFFFF"
+                    viewBox="0 0 460 524"
+                    fill={textColor === "text-white" ? "white" : "black"}
                     width={24}
                     height={24}
                   >
-                    <path d="M448 209.9a210.1 210.1 0 0 1 -122.8-39.3V349.4A162.6 162.6 0 1 1 185 188.3V278.2a74.6 74.6 0 1 0 52.2 71.2V0l88 0a121.2 121.2 0 0 0 1.9 22.2h0A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z" />
+                    <path
+                      d="M448 209.9a210.1 210.1 0 0 1 -122.8-39.3V349.4A162.6 162.6 0 1 1 185 188.3V278.2a74.6 74.6 0 1 0 52.2 71.2V0l88 0a121.2 121.2 0 0 0 1.9 22.2h0A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z"
+                      fill="none"
+                      stroke={textColor === "text-white" ? "white" : "black"}
+                      stroke-width="40"
+                    />
                   </svg>
                 </Link>
               )}

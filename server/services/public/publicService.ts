@@ -46,25 +46,34 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
     },
   });
 
-  //TODO: EDIT THIS TO MATCH YOUR NEEDS
   const transformedUser = publicUser && {
     ...publicUser,
-    storeItems: publicUser.storeItems.map((item) => ({
-      id: item.id,
-      itemType: item.itemType,
-      name:
-        item.DigitalProduct?.name ||
-        item.calendarProduct?.title ||
-        item.Link?.title,
-      price: item.DigitalProduct?.price || item.calendarProduct?.price || "0",
-      thumbnailUrl: item.Link?.thumbnailUrl || "",
-      linkUrl: item.Link?.url || "",
-      flexPrice:
-        item.DigitalProduct?.flexPrice || item.calendarProduct?.price || "0",
-      currency: item.DigitalProduct?.currency || item.calendarProduct?.currency,
-      itemOrder: item.itemOrder,
-      itemTypeId: item.DigitalProduct?.id || item.calendarProduct?.id || "",
-    })),
+    storeItems: publicUser.storeItems
+      .filter(
+        (item) =>
+          // Assuming visibility is a boolean field indicating if the item is public
+          (item.DigitalProduct && item.DigitalProduct.visibility) ||
+          item.calendarProduct ||
+          item.Link
+      )
+      .map((item) => ({
+        id: item.id,
+        itemType: item.itemType,
+        name:
+          item.DigitalProduct?.name ||
+          item.calendarProduct?.title ||
+          item.Link?.title,
+        price: item.DigitalProduct?.price || item.calendarProduct?.price || "0",
+        thumbnailUrl: item.Link?.thumbnailUrl || "",
+        linkUrl: item.Link?.url || "",
+        flexPrice:
+          item.DigitalProduct?.flexPrice || item.calendarProduct?.price || "0",
+        currency:
+          item.DigitalProduct?.currency || item.calendarProduct?.currency,
+        itemOrder: item.itemOrder,
+        itemTypeId: item.DigitalProduct?.id || item.calendarProduct?.id || "",
+        // Add any other fields you need
+      })),
   };
   return transformedUser;
 };

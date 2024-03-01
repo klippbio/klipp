@@ -48,6 +48,7 @@ import { useRouter } from "next/navigation";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import { CalendarProductApiResponse } from "@/types/apiResponse";
+import Image from "next/image";
 
 //types
 export const calendarProductSchema = z
@@ -251,9 +252,11 @@ export function CalendarProductEdit({
                             }`}
                           >
                             {selectedFile ? (
-                              <img
+                              <Image
                                 src={selectedFile}
-                                alt="Selected Thumbnail"
+                                alt="Thumbnail"
+                                width={1000}
+                                height={1000}
                                 className="w-full h-full md:h-32 object-cover rounded-md"
                               />
                             ) : (
