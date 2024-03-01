@@ -10,7 +10,6 @@ import {
   CalendarClock,
   FileCheck2,
   Link,
-  SettingsIcon,
 } from "lucide-react/";
 import { HomeIcon } from "lucide-react/";
 import { Separator } from "@/components/ui/separator";
@@ -28,16 +27,22 @@ export default function RootLayout({
       icon: <HomeIcon size={20} />,
     },
     {
-      title: "Calendar",
-      href: "/dashboard/calendar/products",
-      baseHref: "/dashboard/calendar",
-      icon: <CalendarClock size={20} />,
+      title: "Links",
+      href: "/dashboard/links",
+      baseHref: "/dashboard/links",
+      icon: <Link size={20} />,
     },
     {
       title: "Digital Products",
       href: "/dashboard/digital-products",
       baseHref: "/dashboard/digital-products",
       icon: <FileCheck2 size={20} />,
+    },
+    {
+      title: "Calendar Products",
+      href: "/dashboard/calendar/products",
+      baseHref: "/dashboard/calendar",
+      icon: <CalendarClock size={20} />,
     },
     {
       title: "My Bookings",
@@ -52,22 +57,10 @@ export default function RootLayout({
       icon: <BadgeDollarSign size={20} />,
     },
     {
-      title: "Payments",
+      title: "Payment Settings",
       href: "/dashboard/payments",
       baseHref: "/dashboard/payments",
       icon: <DollarSignIcon size={20} />,
-    },
-    {
-      title: "Links",
-      href: "/dashboard/links",
-      baseHref: "/dashboard/links",
-      icon: <Link size={20} />,
-    },
-    {
-      title: "Settings",
-      href: "/dashboard/settings",
-      baseHref: "/dashboard/settings",
-      icon: <SettingsIcon size={20} />,
     },
   ];
 

@@ -147,13 +147,13 @@ export default function SidePanel() {
           </div>
           {authDetails.token !== undefined &&
             authDetails.storeUrl === username && (
-              <div className="mt-auto mb-8 w-3/4 text-sm lg:w-1/2 border rounded-2xl flex justify-between items-center space-x-2 px-2 h-16 bg-input text-foreground">
+              <div className="mt-auto mb-8 w-3/4 text-sm lg:w-2/3 border rounded-2xl flex justify-between items-center space-x-2 px-2 h-16 bg-input text-foreground">
                 <Button
                   onClick={() => {
                     router.push("/dashboard/");
                   }}
                   variant={"ghost"}
-                  className="h-14 bg-input text-accent-foreground rounded-3xl border border-primary space-x-2 w-2/3 hover:text-foreground"
+                  className="h-12 bg-input text-accent-foreground border border-primary space-x-2 w-2/3 hover:text-foreground"
                 >
                   <Undo2 className="w-5 h-5 lg:w-6 lg:h-6" />
                   <span className="text-sm lg:text-base">Home</span>
