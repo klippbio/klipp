@@ -35,7 +35,7 @@ export default function GlobalError({
         </CardHeader>
         <CardFooter className="flex justify-center">
           <Button asChild>
-            <Link href="/home">Take me home</Link>
+            <Link href="/dashboard">Take me home</Link>
           </Button>
         </CardFooter>
       </Card>

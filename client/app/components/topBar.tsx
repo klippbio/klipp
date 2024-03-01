@@ -33,7 +33,7 @@ export default function TopBar({
       <div className="z-1 flex flex-col mt-2 w-full">
         <nav className="w-full flex h-16 min-h-[50px] items-center justify-between">
           <div className="md:hidden">
-            <a href="/home">
+            <a href="/dashboard">
               <Image src={logo} alt="logo" width={40} />
             </a>
           </div>

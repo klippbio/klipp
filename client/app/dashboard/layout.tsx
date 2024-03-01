@@ -22,9 +22,9 @@ export default function RootLayout({
 }) {
   const navItems = [
     {
-      title: "Home",
-      href: "/dashboard/home",
-      baseHref: "/dashboard/home",
+      title: "Dashboard",
+      href: "/dashboard",
+      baseHref: "/dashboard",
       icon: <HomeIcon size={20} />,
     },
     {

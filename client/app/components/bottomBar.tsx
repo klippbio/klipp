@@ -45,17 +45,17 @@ export function BottomBar({ className, items, ...props }: NavProps) {
           </div>
         </Link>
         <Link
-          key={"/home"}
-          href="/home"
+          key={"/dashboard"}
+          href="/dashboard"
           className={cn(
             buttonVariants({ variant: "ghost" }),
             "flex flex-col items-center hover:bg-background",
-            pathname === "/home" && "text-overlay-foreground"
+            pathname === "/dashboard" && "text-overlay-foreground"
           )}
         >
           <div className="flex flex-col items-center">
             <HomeIcon size={20} />
-            <span className="pt-1">Home</span>
+            <span className="pt-1">Dashboard</span>
           </div>
         </Link>
         <Sheet>

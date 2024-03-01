@@ -150,7 +150,7 @@ export default function SidePanel() {
               <div className="mt-auto mb-8 w-3/4 text-sm lg:w-1/2 border rounded-2xl flex justify-between items-center space-x-2 px-2 h-16 bg-input text-foreground">
                 <Button
                   onClick={() => {
-                    router.push("/dashboard/home");
+                    router.push("/dashboard/");
                   }}
                   variant={"ghost"}
                   className="h-14 bg-input text-accent-foreground rounded-3xl border border-primary space-x-2 w-2/3 hover:text-foreground"
@@ -167,7 +167,7 @@ export default function SidePanel() {
                 {/* This is button for add feature if we want in future!
               <Button
                 onClick={() => {
-                  router.push("/dashboard/home");
+                  router.push("/dashboard");
                 }}
                 variant={"ghost"}
                 className="h-14 rounded-2xl w-1/4 space-x-2 hover:bg-input hover:text-accent-foreground"
