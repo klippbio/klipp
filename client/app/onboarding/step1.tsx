@@ -106,7 +106,7 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
         title: "User already onboarded!",
         duration: 3000,
       });
-      router.push("/");
+      router.push("/dashboard");
     } else if (authDetails.userId && !authDetails.storeUrl) {
       setIsLoading(false);
     }
