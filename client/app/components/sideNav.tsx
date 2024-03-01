@@ -34,23 +34,33 @@ export function SideNav({ className, items, ...props }: NavProps) {
           className={cn("flex flex-col space-y-1 align-center pt-2", className)}
           {...props}
         >
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                buttonVariants({ variant: "ghost" }),
-                pathname?.startsWith(item.baseHref) &&
-                  "bg-overlay text-overlay-foreground",
-                "justify-start flex items-center hover:bg-overlay hover:text-primary"
-              )}
-            >
-              <div className="flex flex-wrap items-center">
-                {item.icon}
-                <span className="pl-4">{item.title}</span>
-              </div>
-            </Link>
-          ))}
+          {items.map((item) => {
+            // Check if the current pathname exactly matches "/dashboard" for the Dashboard item.
+            const isDashboardActive =
+              item.baseHref === "/dashboard" && pathname === "/dashboard";
+            // For other items, check if the pathname starts with the item's baseHref and is not just "/dashboard".
+            const isOtherItemActive =
+              item.baseHref !== "/dashboard" &&
+              pathname.startsWith(item.baseHref);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  (isDashboardActive || isOtherItemActive) &&
+                    "bg-overlay text-overlay-foreground",
+                  "justify-start flex items-center hover:bg-overlay hover:text-primary"
+                )}
+              >
+                <div className="flex flex-wrap items-center">
+                  {item.icon}
+                  <span className="pl-4">{item.title}</span>
+                </div>
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Example for bottom settings */}
