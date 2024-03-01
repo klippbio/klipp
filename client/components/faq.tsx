@@ -36,29 +36,29 @@ const Faq = () => {
 
 const faqdata = [
   {
-    question: "What is Klipp?",
+    question: "What is klipp?",
     answer:
-      "Klipp is an all-in-one platform designed for creators who wish to monetize their content and engage with their audience in a more organized and efficient manner. It serves as a link-in-bio digital store, enabling creators to sell digital products, offer personalized links, manage a scheduling calendar, and much more.",
+      "klipp is a platform for creators to monetize content, offering a digital store, scheduling, and more within a link-in-bio setup.",
   },
   {
-    question: "Is Klipp completely free to use?",
+    question: "Is klipp free to use?",
     answer:
-      "Yes, Klipp is completely free to use. There are no hidden fees or charges for setting up and operating your Klipp store. The only costs involved are those associated with payment processing, which are handled by Stripe, our payment processing partner. These fees are standard for online transactions and are beyond our control.",
+      "Yes, using klipp is free for now, with no setup or subscription fees; you only pay standard transaction fees to Stripe for payment processing.",
   },
   {
-    question: "How much can I earn? ",
+    question: "How much can I earn?",
     answer:
-      "Your earning potential on Klipp is directly influenced by the size, engagement, and loyalty of your audience, as well as the value and pricing of the products or services you offer. There is no upper limit to how much you can earn; it all depends on your strategy, marketing efforts, and the demand for your offerings.",
+      "Your earnings depend on what and how much you sell. There's no limit – the more you sell, the more you earn.",
   },
   {
-    question: "What type of products can I sell? ",
+    question: "What can I sell?",
     answer:
-      "On Klipp, you can sell a wide variety of digital products and services. This includes, but is not limited to, scheduling sessions for consultations or classes, digital products such as ebooks, courses, videos, music, software, and personalized links to exclusive content or communities.",
+      "You can sell any digital product like courses, ebooks, or offer services like coaching sessions.",
   },
   {
-    question: "How does the payments work? ",
+    question: "How do payments work?",
     answer:
-      "Payments on Klipp are processed through Stripe Connect, a powerful and secure payment processing platform. When a customer makes a purchase on your Klipp store, the payment is handled by Stripe, which ensures a smooth and secure transaction process. As a seller, you'll need to set up a Stripe account and connect it to your Klipp store. This allows you to receive payments directly into your bank account. ",
+      "When you sell something, the money goes through Stripe and then straight to your bank account.",
   },
 ];
 

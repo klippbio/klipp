@@ -11,6 +11,7 @@ import {
 
 import benefitOneImg from "../public/img/benefit-one.png";
 import benefitTwoImg from "../public/img/benefit-two.png";
+import benefitThreeImg from "../public/img/benefit-three.png";
 import { CalendarCheck, Link } from "lucide-react";
 
 const benefitOne = {
@@ -36,27 +37,25 @@ const benefitOne = {
   ],
 };
 
-const benefitTwo = {
-  title: "All Your Tools, One Platform",
-  desc: "You can use this same layout with a flip image to highlight your rest of the benefits of your product. It can also contain an image or Illustration as above section along with some bullet points.",
+const stepOne = {
+  pretitle: "Step 1. ",
+  title: "Create your link-in-bio store in 5 minutes.",
+  desc: "Get started in just 3 minutes with our user-friendly setup. Creating your klipp store is simple and completely free.",
   image: benefitTwoImg,
-  bullets: [
-    {
-      title: "Mobile Responsive Template",
-      desc: "Nextly is designed as a mobile first responsive template.",
-      icon: <DevicePhoneMobileIcon />,
-    },
-    {
-      title: "Powered by Next.js & TailwindCSS",
-      desc: "This template is powered by latest technologies and tools.",
-      icon: <AdjustmentsHorizontalIcon />,
-    },
-    {
-      title: "Dark & Light Mode",
-      desc: "Nextly comes with a zero-config light & dark mode. ",
-      icon: <SunIcon />,
-    },
-  ],
 };
 
-export { benefitOne, benefitTwo };
+const stepTwo = {
+  pretitle: "Step 2.",
+  title: "Get Your Products Live",
+  desc: "Set up your first product be it Digital Download, Coaching/Mentoring Session or External Link in no time. ",
+  image: benefitOneImg,
+};
+
+const stepThree = {
+  pretitle: "Step 3 . ",
+  title: "Promote Your Shop & Start Selling",
+  desc: "Keep track of sales and schedules easily. Great for your social media bios.",
+  image: benefitTwoImg,
+};
+
+export { benefitOne, stepTwo, stepOne, stepThree };

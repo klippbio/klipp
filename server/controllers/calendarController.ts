@@ -27,97 +27,117 @@ export const calendarController = express.Router();
 
 //schedule apis
 
-calendarController.post("/create", async (req: Request, res: Response) => {
-  try {
-    ZCreateScheduleSchema.parseAsync(req.body);
-    const schedule = await createSchedule(req.body);
-    res.status(201).json(schedule);
-  } catch (error) {
-    console.log(error);
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
-  }
-});
-
-calendarController.post("/update", async (req: Request, res: Response) => {
-  try {
-    let parsedBody = req.body;
-    if (req.body.availability) {
-      parsedBody = {
-        ...parsedBody,
-        availability: req.body.availability.map(
-          (
-            slot: any //eslint-disable-line
-          ) =>
-            //eslint-disable-next-line
-            slot.map((item: any) => ({
-              start: new Date(item.start),
-              end: new Date(item.end),
-            }))
-        ),
-      };
+calendarController.post(
+  "/create",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      ZCreateScheduleSchema.parseAsync(req.body);
+      const schedule = await createSchedule(req.body);
+      res.status(201).json(schedule);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
     }
-    if (req.body.dateOverrides) {
-      parsedBody = {
-        ...parsedBody,
-        //eslint-disable-next-line
-        dateOverrides: req.body.dateOverrides.map((item: any) => ({
-          //eslint-disable-line
-          start: new Date(item.start),
-          end: new Date(item.end),
-        })),
-      };
+  }
+);
+
+calendarController.post(
+  "/update",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      let parsedBody = req.body;
+      if (req.body.availability) {
+        parsedBody = {
+          ...parsedBody,
+          availability: req.body.availability.map(
+            (
+              slot: any //eslint-disable-line
+            ) =>
+              //eslint-disable-next-line
+              slot.map((item: any) => ({
+                start: new Date(item.start),
+                end: new Date(item.end),
+              }))
+          ),
+        };
+      }
+      if (req.body.dateOverrides) {
+        parsedBody = {
+          ...parsedBody,
+          //eslint-disable-next-line
+          dateOverrides: req.body.dateOverrides.map((item: any) => ({
+            //eslint-disable-line
+            start: new Date(item.start),
+            end: new Date(item.end),
+          })),
+        };
+      }
+      await ZUpdateInputSchema.parseAsync(parsedBody);
+      const result = await updateSchedule(parsedBody);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
     }
-    await ZUpdateInputSchema.parseAsync(parsedBody);
-    const result = await updateSchedule(parsedBody);
-    res.status(200).json(result);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
   }
-});
+);
 
-calendarController.get("/get", async (req: Request, res: Response) => {
-  try {
-    const params = await ZGetOrDeleteScheduleSchema.parseAsync({
-      scheduleId: parseInt(req.query.scheduleId as string),
-    });
-    const result = await getSchedule(params);
-    res.status(200).json(result);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+calendarController.get(
+  "/get",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      const params = await ZGetOrDeleteScheduleSchema.parseAsync({
+        scheduleId: parseInt(req.query.scheduleId as string),
+      });
+      const result = await getSchedule(params);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
-calendarController.get("/getAll", async (req: Request, res: Response) => {
-  try {
-    const { storeId } = req.query;
-    const result = await getAllSchedules(
-      await ZCreateScheduleSchema.shape.storeId.parseAsync(storeId)
-    );
-    res.status(200).json(result);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+calendarController.get(
+  "/getAll",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      const { storeId } = req.query;
+      const result = await getAllSchedules(
+        await ZCreateScheduleSchema.shape.storeId.parseAsync(storeId)
+      );
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
-calendarController.delete("/delete", async (req: Request, res: Response) => {
-  try {
-    await ZGetOrDeleteScheduleSchema.parseAsync(req.body);
-    const result = await deleteSchedule(req.body);
-    res.status(200).json(result);
-  } catch (error) {
-    if (error instanceof CustomError)
-      res.status(error.statusCode).json({ error: error.message });
-    else res.status(500).json({ error: error });
+calendarController.delete(
+  "/delete",
+  isUsersStore,
+  async (req: Request, res: Response) => {
+    try {
+      await ZGetOrDeleteScheduleSchema.parseAsync(req.body);
+      const result = await deleteSchedule(req.body);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 //calendar setting apis
 

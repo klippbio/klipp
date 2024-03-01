@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Disclosure } from "@headlessui/react";
 import LogoText from "../utils/logoText.png";
+import { useAuthDetails } from "@/app/components/AuthContext";
+import { Button } from "./ui/button";
 const Navbar = () => {
   const navigation = [
     "Product",
@@ -11,10 +13,11 @@ const Navbar = () => {
     "FAQs",
     "Earnings Calculator",
   ];
+  const authDetails = useAuthDetails();
 
   return (
-    <div className="w-full">
-      <nav className="container relative flex flex-wrap items-center justify-between p-8 mx-auto lg:justify-between xl:px-0">
+    <div className="w-full ">
+      <nav className="container relative flex items-center justify-between p-8 mx-auto lg:justify-between xl:px-0">
         {/* Logo  */}
         <Disclosure>
           {({ open }) => (
@@ -27,7 +30,7 @@ const Navbar = () => {
                     </span>
                   </span>
                 </Link>
-
+                {/* 
                 <Disclosure.Button
                   aria-label="Toggle Menu"
                   className="px-2 py-1 ml-auto text-gray-500 rounded-md lg:hidden hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 focus:outline-none dark:text-gray-300 dark:focus:bg-trueGray-700"
@@ -55,15 +58,6 @@ const Navbar = () => {
 
                 <Disclosure.Panel className="flex flex-wrap w-full my-5 lg:hidden">
                   <>
-                    {navigation.map((item, index) => (
-                      <Link
-                        key={index}
-                        href="/"
-                        className="w-full px-4 py-2 -ml-4 text-gray-500 rounded-md dark:text-gray-300 hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 dark:focus:bg-gray-800 focus:outline-none"
-                      >
-                        {item}
-                      </Link>
-                    ))}
                     <div className="flex w-full gap-4 items-center mt-4 text-center">
                       <Link
                         href="/app/login"
@@ -80,14 +74,14 @@ const Navbar = () => {
                       </Link>
                     </div>
                   </>
-                </Disclosure.Panel>
+                </Disclosure.Panel> */}
               </div>
             </>
           )}
         </Disclosure>
 
         {/* menu  */}
-        <div className="hidden text-center lg:flex lg:items-center">
+        {/* <div className="hidden text-center lg:flex lg:items-center">
           <ul className="items-center justify-end flex-1 pt-6 list-none lg:pt-0 lg:flex">
             {navigation.map((menu, index) => (
               <li className="mr-3 nav__item" key={index}>
@@ -100,25 +94,36 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
 
-        <div className="flex ">
-          <div className="hidden lg:flex nav__item">
-            <Link
-              href="/app/login"
-              className="px-6 py-2 text-primary border-2 rounded-md md:ml-5"
-            >
-              Login
-            </Link>
-          </div>
-          <div className="hidden lg:flex nav__item">
-            <Link
-              href="/app/signup"
-              className="px-6 py-2 text-white bg-primary rounded-md md:ml-5"
-            >
-              Sign Up
-            </Link>
-          </div>
+        <div className="flex items-center">
+          {authDetails.token ? (
+            <div className="flex nav__item">
+              <Link
+                href="/dashboard"
+                className="px-6 py-2 text-white bg-primary rounded-md md:ml-5"
+              >
+                Dashboard
+              </Link>
+            </div>
+          ) : (
+            <div className="flex items-center ">
+              <div className="flex nav__item m-2">
+                <Button asChild>
+                  <Link href="/sign-in" className="w-24">
+                    Login
+                  </Link>
+                </Button>
+              </div>
+              <div className="flex nav__item m-2">
+                <Button variant={"outline"} asChild>
+                  <Link href="/sign-up" className="w-24">
+                    Sign Up
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
     </div>

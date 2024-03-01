@@ -1,38 +1,28 @@
 "use client";
-import Head from "next/head";
 import Hero from "../components/hero";
 import Navbar from "../components/navbar";
 import SectionTitle from "../components/sectionTitle";
-import Creators from "../components/creators";
-import { benefitOne, benefitTwo } from "../components/data";
+import { benefitOne, stepOne, stepThree, stepTwo } from "../components/data";
 import Benefits from "../components/benefits";
 import Footer from "../components/footer";
 import Cta from "../components/cta";
 import Faq from "../components/faq";
+import Steps from "@/components/steps";
 
 const Home = () => {
   return (
     <div className="bg-white selection:bg-teal-300">
-      <Head>
-        <title>Klipp - Monetize Your Audience</title>
-        <meta
-          name="description"
-          content="Nextly is a free landing page template built with next.js & Tailwind CSS"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <Navbar />
       <Hero />
-      <Creators />
+      {/* <Creators /> */}
       <SectionTitle
-        className="bg-black"
         pretitle="No Coding Required."
         title="Start Selling in Just 5 Minutes. "
       ></SectionTitle>
       <Benefits data={benefitOne} />
-      <Benefits imgPos="right" data={benefitTwo} />
-
+      <Steps imgPos="right" data={stepOne} />
+      <Steps imgPos="left" data={stepTwo} />
+      <Steps imgPos="right" data={stepThree} />
       {/* <SectionTitle
         pretitle="Watch a video"
         title="Learn how to fullfil your needs"
