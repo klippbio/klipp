@@ -157,10 +157,6 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
     },
   });
 
-  // if (user?.unsafeMetadata.onboarded) {
-  //   return null;
-  // }
-
   return (
     <div className="flex w-96">
       <Form {...form}>

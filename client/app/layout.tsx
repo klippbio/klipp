@@ -7,6 +7,12 @@ import QueryWrapper from "./components/QueryWrapper";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "./components/AuthContext";
 
+
+export const metadata = {
+  title: {
+    default: "klipp",
+  },
+};
 export default function RootLayout({
   children,
 }: {

@@ -16,7 +16,7 @@ export const routes = express.Router();
 
 routes.use("/user", userController);
 
-routes.use("/calendar", isUsersStore, calendarController);
+routes.use("/calendar", calendarController);
 routes.use("/", publicController);
 routes.use("/digital-products", isUsersStore, ddController);
 routes.use("/stripe", isUsersStore, paymentController);
