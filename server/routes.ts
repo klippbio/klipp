@@ -19,7 +19,7 @@ routes.use("/user", userController);
 routes.use("/calendar", isUsersStore, calendarController);
 routes.use("/", publicController);
 routes.use("/digital-products", isUsersStore, ddController);
-routes.use("/stripe", paymentController);
+routes.use("/stripe", isUsersStore, paymentController);
 routes.use("/webhook", webhookController);
 routes.use("/calendar-products", isUsersStore, calendarProductController);
 routes.use("/slots", slotController);
