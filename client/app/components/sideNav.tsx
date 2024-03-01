@@ -11,6 +11,7 @@ import Image from "next/image";
 import logoText from "./../../utils/logoText.png";
 import { LogOut, MoveUpRight, Server } from "lucide-react";
 import { useAuthDetails } from "./AuthContext";
+import { Separator } from "@/components/ui/separator";
 
 export function SideNav({ className, items, ...props }: NavProps) {
   const pathname = usePathname();
@@ -62,11 +63,11 @@ export function SideNav({ className, items, ...props }: NavProps) {
                   router.push("/" + authDetails?.storeUrl);
                 }}
                 variant={"outline"}
-                className="h-14 w-full bg-input text-l text-accent-foreground rounded-full border border-primary space-x-2 hover:text-foreground"
+                className="h-14 w-full bg-input text-l text-accent-foreground border border-primary space-x-2 hover:text-foreground"
               >
-                <Server className="h-5 w-5 " />
+                <Server className="h-5 w-5" />
                 <span>Edit Profile </span>
-                <MoveUpRight className="h-5 w-5 " />
+                <MoveUpRight className="h-5 w-5" />
               </Button>
             </div>
           )}
@@ -81,8 +82,12 @@ export function SideNav({ className, items, ...props }: NavProps) {
             </>
           ) : (
             <div className="w-full">
+              <Separator className="my-2" />
               <SignOutButton>
-                <Button variant="destructive" className="w-full space-x-2">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start space-x-4"
+                >
                   <LogOut className="h-5 w-5" />
                   <span>Sign Out</span>
                 </Button>
