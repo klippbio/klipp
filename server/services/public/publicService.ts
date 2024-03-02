@@ -53,7 +53,7 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
         (item) =>
           // Assuming visibility is a boolean field indicating if the item is public
           (item.DigitalProduct && item.DigitalProduct.visibility) ||
-          item.calendarProduct ||
+          (item.calendarProduct && !item.calendarProduct.hidden) ||
           item.Link
       )
       .map((item) => ({

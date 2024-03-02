@@ -205,7 +205,7 @@ export function CalendarProductEdit({
         duration: 1000,
         description: "Product Created.",
       });
-      router.push("/calendar/products");
+      router.push("/dashboard/calendar/products");
     },
     onError: () => {
       toast({
