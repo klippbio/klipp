@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_KEVAL")
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -33,7 +33,7 @@ model Store {
   tiktok           String?
   youtube          String?
   twitter          String?
-  color            String?   @default("#000000")
+  color            String?   @default("#E9976A")
   schedules Schedule[]
   bookings Booking[]
   calendarSetting CalendarSetting?
@@ -176,7 +176,7 @@ model CalendarProduct {
   shortDescription                String?
   description                     Json?
   length                          Int                 
-  hidden                          Boolean                 @default(false)
+  visibility                      Boolean                 @default(false)
   bookings                        Booking[]
   availability                    Availability[]
   timeZone                        String
@@ -267,9 +267,9 @@ model Booking{
   meetingId String?
   rescheduled           Boolean?                @default(false)
 
-  saleId Int? @unique
+  saleId String? @unique
   sale Sale? @relation(fields: [saleId], references: [id])
-  cancelledSaleId Int? 
+  cancelledSaleId String? 
 
   @@index([calendarProductId])
   @@index([googleCalendarId])
@@ -277,7 +277,7 @@ model Booking{
 }
 
 model Sale {
-  id             Int         @id @default(autoincrement())
+  id             String      @id @default(uuid())
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   storeId        String

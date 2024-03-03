@@ -35,7 +35,7 @@ saleController.post("/create", async (req: Request, res: Response) => {
       const sale = await createNewSale(req.body);
       if (req.body.price === "0") {
         await updateSaleStatus(sale.id, "COMPLETED");
-        const link = process.env.FRONTEND_URL + "/dashboard/sale/" + sale.id;
+        const link = process.env.FRONTEND_URL + "/sale/" + sale.id;
         res.status(200).json(link);
       } else {
         const data = req.body;
@@ -73,9 +73,9 @@ saleController.get(
 saleController.get("/", async (req: Request, res: Response) => {
   try {
     const { id } = req.query;
-    //convert id to number and check if it is a number
-    if (isNaN(Number(id))) throw new CustomError("Invalid id", 400);
-    const sale = await getSale(Number(id));
+    //check if id is a string
+    if (typeof id !== "string") throw new CustomError("Invalid id", 400);
+    const sale = await getSale(String(id));
     res.status(200).json(sale);
   } catch (error) {
     console.log(error);
@@ -90,7 +90,7 @@ saleController.post("/cancel", async (req: Request, res: Response) => {
     const { id } = req.query;
     //convert id to number and check if it is a number
     if (isNaN(Number(id))) throw new CustomError("Invalid id", 400);
-    const sale = await cancelGoogleCalendarSale(Number(id));
+    const sale = await cancelGoogleCalendarSale(String(id));
     res.status(200).json(sale);
   } catch (error) {
     console.log(error);

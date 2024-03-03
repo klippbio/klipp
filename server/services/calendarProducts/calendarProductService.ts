@@ -2,6 +2,7 @@ import { z } from "zod";
 import { PeriodType } from "@prisma/client";
 import { db } from "../../utils/db.server";
 import CustomError from "../../utils/CustomError";
+import { getAccountDetails } from "../payment/paymentService";
 
 // Schema for creating a CalendarProduct
 export const ZCreateCalendarProductSchema = z.object({
@@ -12,7 +13,7 @@ export const ZCreateCalendarProductSchema = z.object({
   shortDescription: z.string().optional(),
   description: z.any().optional(),
   length: z.number(),
-  hidden: z.boolean().optional(),
+  visibility: z.boolean().optional(),
   timeZone: z.string().optional(),
   price: z.string().optional(),
   recPrice: z.string().optional(),
@@ -132,8 +133,20 @@ export const updateCalendarProduct = async (
     throw new CustomError("Missing id", 400);
   }
   const { storeId, id, ...restOfInput } = input; // Destructure to separate id and the rest
+
   if (!storeId) {
     throw new CustomError("Missing storeId", 400);
+  }
+
+  const stripeAccount = await getAccountDetails({ storeId: storeId });
+  if (
+    (!stripeAccount ||
+      stripeAccount.onboardingComplete === false ||
+      stripeAccount.onboardingComplete === undefined) &&
+    Number(input?.price) > 0 &&
+    input?.visibility === true
+  ) {
+    throw new CustomError("Stripe account not found", 404);
   }
   const updatedCalendarProduct = await db.calendarProduct.update({
     where: { id },

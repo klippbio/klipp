@@ -2,6 +2,7 @@ import { db } from "../../utils/db.server";
 import type { DigitalProduct } from "@prisma/client";
 import { z } from "zod";
 import CustomError from "../../utils/CustomError";
+import { getAccountDetails } from "../payment/paymentService";
 
 export const ZCreateDigitalProductSchema = z.object({
   name: z.string(),
@@ -64,6 +65,17 @@ export const createProduct = async (
 
 //eslint-disable-next-line
 export const updateProduct = async (id: string, input: any) => {
+  const stripeAccount = await getAccountDetails({ storeId: input.storeId });
+  if (
+    (!stripeAccount ||
+      stripeAccount.onboardingComplete === false ||
+      stripeAccount.onboardingComplete === undefined) &&
+    input.price > 0 &&
+    input.visibility === true
+  ) {
+    throw new CustomError("Stripe account not found", 404);
+  }
+
   const refinedData = {
     name: input.name,
     shortDescription: input.shortDescription,

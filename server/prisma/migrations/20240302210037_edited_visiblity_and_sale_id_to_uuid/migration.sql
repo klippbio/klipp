@@ -32,7 +32,7 @@ CREATE TABLE "Store" (
     "tiktok" TEXT,
     "youtube" TEXT,
     "twitter" TEXT,
-    "color" TEXT,
+    "color" TEXT DEFAULT '#E9976A',
 
     CONSTRAINT "Store_pkey" PRIMARY KEY ("id")
 );
@@ -155,7 +155,7 @@ CREATE TABLE "CalendarProduct" (
     "shortDescription" TEXT,
     "description" JSONB,
     "length" INTEGER NOT NULL,
-    "hidden" BOOLEAN NOT NULL DEFAULT false,
+    "visibility" BOOLEAN NOT NULL DEFAULT false,
     "timeZone" TEXT NOT NULL,
     "price" TEXT DEFAULT '0',
     "recPrice" TEXT DEFAULT '0',
@@ -218,7 +218,7 @@ CREATE TABLE "Booking" (
     "meetingPassword" TEXT,
     "meetingId" TEXT,
     "rescheduled" BOOLEAN DEFAULT false,
-    "saleId" INTEGER,
+    "saleId" TEXT,
     "cancelledSaleId" INTEGER,
 
     CONSTRAINT "Booking_pkey" PRIMARY KEY ("id")
@@ -226,7 +226,7 @@ CREATE TABLE "Booking" (
 
 -- CreateTable
 CREATE TABLE "Sale" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "storeId" TEXT NOT NULL,
@@ -271,9 +271,6 @@ CREATE UNIQUE INDEX "Payment_accountId_key" ON "Payment"("accountId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "StoreItem_id_key" ON "StoreItem"("id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "StoreItem_itemOrder_key" ON "StoreItem"("itemOrder");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Link_storeItemId_key" ON "Link"("storeItemId");

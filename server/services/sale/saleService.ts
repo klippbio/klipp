@@ -184,10 +184,10 @@ export const createNewSale = async (
   return saleInfo;
 };
 
-export const updateSaleStatus = async (saleId: number, status: StatusType) => {
+export const updateSaleStatus = async (saleId: string, status: StatusType) => {
   const updatedSale = await db.sale.update({
     where: {
-      id: Number(saleId),
+      id: String(saleId),
     },
     data: {
       status: status,
@@ -202,7 +202,17 @@ export const getAllSales = async (storeId: string) => {
       storeId: storeId,
     },
     include: {
-      storeItem: true,
+      storeItem: {
+        include: {
+          DigitalProduct: {
+            include: {
+              ddFiles: true,
+            },
+          },
+          calendarProduct: true,
+          Link: true,
+        },
+      },
       booking: true,
       store: {
         include: {
@@ -211,10 +221,21 @@ export const getAllSales = async (storeId: string) => {
       },
     },
   });
-  return sales;
+
+  // First, sort the sales
+  const sortedSales = sales.sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  // Then, filter the sorted sales for those that have a status of "COMPLETED"
+  const completedSales = sortedSales.filter(
+    (sale) => sale.status === "COMPLETED"
+  );
+
+  return completedSales;
 };
 
-export const getSale = async (id: number) => {
+export const getSale = async (id: string) => {
   const sale = await db.sale.findFirst({
     where: {
       id: id,
@@ -263,7 +284,7 @@ export const rescheduleSale = async (
     slot,
   } = saleFormData;
 
-  if (itemType === "CALENDAR" && slot && customerTimezone && Number(saleId)) {
+  if (itemType === "CALENDAR" && slot && customerTimezone && String(saleId)) {
     const calendarProduct = storeItem?.calendarProduct;
     const meetingLength = calendarProduct?.length as number;
 
@@ -274,7 +295,7 @@ export const rescheduleSale = async (
 
     const deleteBookingId = await db.sale.findFirst({
       where: {
-        id: Number(saleId),
+        id: String(saleId),
       },
       select: {
         booking: {
@@ -285,7 +306,7 @@ export const rescheduleSale = async (
       },
     });
 
-    await cancelGoogleCalendarSale(Number(saleId));
+    await cancelGoogleCalendarSale(String(saleId));
 
     await db.booking.update({
       where: {
@@ -294,7 +315,7 @@ export const rescheduleSale = async (
       data: {
         bookingStatus: "CANCELLED",
         saleId: null,
-        cancelledSaleId: Number(saleId),
+        cancelledSaleId: String(saleId),
       },
     });
 
@@ -332,7 +353,7 @@ export const rescheduleSale = async (
     //update saleinfo connection to booking
     const updatedSale = await db.sale.update({
       where: {
-        id: Number(saleId),
+        id: String(saleId),
       },
       data: {
         buyerEmail: customerEmail,
@@ -373,7 +394,7 @@ export const rescheduleSale = async (
   }
 };
 
-export const cancelGoogleCalendarSale = async (saleId: number | undefined) => {
+export const cancelGoogleCalendarSale = async (saleId: string | undefined) => {
   if (!saleId) return false;
   const sale = await db.sale.findFirst({
     where: {
