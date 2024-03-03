@@ -6,6 +6,7 @@ import ProfileCards from "./components/ProfileCards";
 function Mypage() {
   return (
     <div>
+
       <ProfileCards />
     </div>
   );
