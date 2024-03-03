@@ -39,7 +39,15 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
       storeItems: {
         include: {
           DigitalProduct: true,
-          calendarProduct: true,
+          calendarProduct: {
+            include: {
+              calendarSetting: {
+                include: {
+                  googleCalendar: true,
+                },
+              },
+            },
+          },
           Link: true,
         },
       },
@@ -53,7 +61,9 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
         (item) =>
           // Assuming visibility is a boolean field indicating if the item is public
           (item.DigitalProduct && item.DigitalProduct.visibility) ||
-          (item.calendarProduct && !item.calendarProduct.hidden) ||
+          (item.calendarProduct &&
+            item.calendarProduct.visibility &&
+            item.calendarProduct.calendarSetting.googleCalendar?.email) ||
           item.Link
       )
       .map((item) => ({
