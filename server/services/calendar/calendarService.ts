@@ -82,7 +82,7 @@ export const createSchedule = async (
   if (!store?.calendarSetting) {
     throw new CustomError(
       "Configure and connect with Google Calendar First",
-      404
+      405
     );
   }
 

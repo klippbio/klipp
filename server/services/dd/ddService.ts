@@ -73,7 +73,7 @@ export const updateProduct = async (id: string, input: any) => {
     input.price > 0 &&
     input.visibility === true
   ) {
-    throw new CustomError("Stripe account not found", 404);
+    throw new CustomError("Stripe account not found", 405);
   }
 
   const refinedData = {
