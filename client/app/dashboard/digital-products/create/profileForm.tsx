@@ -650,13 +650,12 @@ export function ProfileForm({
                           <FormItem>
                             <FormLabel htmlFor="storeUrl">Currency</FormLabel>
                             <FormControl></FormControl>
-                            <Select defaultValue="USD">
+                            <Select defaultValue="USD" disabled>
                               <SelectTrigger className="w-auto">
                                 <SelectValue placeholder="Currency" />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="USD">USD</SelectItem>
-                                <SelectItem value="CAD">CAD</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
