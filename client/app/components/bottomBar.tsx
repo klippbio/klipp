@@ -1,7 +1,7 @@
 "use client";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
-import { HomeIcon, WrapText } from "lucide-react";
+import { HomeIcon, Server } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
@@ -11,18 +11,20 @@ import { Separator } from "@/components/ui/separator";
 import logoText from "./../../utils/logoText.png";
 import { NavProps } from "admin";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import Image from "next/image";
+import { useAuthDetails } from "./AuthContext";
 
 export function BottomBar({ className, items, ...props }: NavProps) {
   const pathname = usePathname();
+  const authDetails = useAuthDetails();
 
   return (
     // Bottom Navigation Panel Code
@@ -32,16 +34,16 @@ export function BottomBar({ className, items, ...props }: NavProps) {
       <Separator orientation="horizontal" />
       <div className="flex justify-between p-4">
         <Link
-          key={"/mypage"}
-          href="/mypage"
+          key={`/` + authDetails?.storeUrl}
+          href={`/` + authDetails?.storeUrl}
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "flex flex-col items-center "
+            "flex flex-col items-center hover:bg-background"
           )}
         >
           <div className="flex flex-col items-center">
-            <WrapText />
-            <span className="pt-1">Preview</span>
+            <Server size={20} />
+            <span className="pt-1 text-sm">Preview </span>
           </div>
         </Link>
         <Link
@@ -49,7 +51,7 @@ export function BottomBar({ className, items, ...props }: NavProps) {
           href="/dashboard"
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "flex flex-col items-center hover:bg-background",
+            "flex flex-col items-center hover:bg-background ",
             pathname === "/dashboard" && "text-overlay-foreground"
           )}
         >
@@ -58,37 +60,50 @@ export function BottomBar({ className, items, ...props }: NavProps) {
             <span className="pt-1">Dashboard</span>
           </div>
         </Link>
-        <Sheet>
-          <SheetTrigger asChild className="items-center flex flex-col">
-            <Button variant={"ghost"} className="flex flex-col items-center">
-              <div className="flex flex-col items-center">
-                <Menu size={24} />
-                <span className="pt-1">Menu</span>
-              </div>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side={"bottom"} className="h-4/5">
-            <SheetHeader>
-              <SheetTitle className="text-left text-primary mb-2">
+        <Drawer>
+          <DrawerTrigger
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "flex flex-col items-center hover:bg-background "
+            )}
+          >
+            <div className="flex flex-col items-center">
+              <Menu size={20} />
+              <span className="pt-1">Menu</span>
+            </div>
+          </DrawerTrigger>
+          <DrawerContent className="h-4/5">
+            <DrawerHeader>
+              <DrawerTitle className="text-left text-primary mb-2">
                 <Image
                   src={logoText}
                   alt="logoWithText"
                   width={100}
                   priority={true}
                 />
-              </SheetTitle>
+              </DrawerTitle>
               <Separator orientation="horizontal" />
-              <SheetDescription className="text-left">
-                <nav
-                  className={cn(
-                    "flex flex-col space-y-5 align-center pt-4",
-                    className
-                  )}
-                  {...props}
-                >
-                  {items.map((item) => (
+            </DrawerHeader>
+            <DrawerDescription className="text-left overflow-y-scroll pb-5">
+              <nav
+                className={cn(
+                  "flex flex-col space-y-5 align-center p-4 ",
+                  className
+                )}
+                {...props}
+              >
+                {items.map((item) => {
+                  // Check if the current pathname exactly matches "/dashboard" for the Dashboard item.
+                  const isDashboardActive =
+                    item.baseHref === "/dashboard" && pathname === "/dashboard";
+                  // For other items, check if the pathname starts with the item's baseHref and is not just "/dashboard".
+                  const isOtherItemActive =
+                    item.baseHref !== "/dashboard" &&
+                    pathname.startsWith(item.baseHref);
+
+                  return (
                     // If the pathname is the same as the item.href, then show the SheetClose button, else show the Link button
-                    <SheetClose asChild key={item.href}>
+                    <DrawerClose asChild key={item.href}>
                       <Link
                         key={item.href}
                         href={item.href}
@@ -98,7 +113,7 @@ export function BottomBar({ className, items, ...props }: NavProps) {
                             size: "lg",
                           }),
                           "justify-start flex items-center rounded-3xl h-12 hover:bg-overlay",
-                          pathname?.startsWith(item.baseHref) &&
+                          (isDashboardActive || isOtherItemActive) &&
                             "bg-overlay text-overlay-foreground"
                         )}
                       >
@@ -107,13 +122,13 @@ export function BottomBar({ className, items, ...props }: NavProps) {
                           <span className="pl-5">{item.title}</span>
                         </div>
                       </Link>
-                    </SheetClose>
-                  ))}
-                </nav>
-              </SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
+                    </DrawerClose>
+                  );
+                })}
+              </nav>
+            </DrawerDescription>
+          </DrawerContent>
+        </Drawer>
       </div>
     </div>
   );
