@@ -20,6 +20,7 @@
     "@clerk/clerk-sdk-node": "^4.12.2",
     "@google-analytics/data": "^4.4.0",
     "@prisma/client": "^5.1.1",
+    "axios": "^1.6.7",
     "city-timezones": "^1.2.1",
     "cookies": "^0.8.0",
     "cors": "^2.8.5",

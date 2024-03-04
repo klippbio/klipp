@@ -1,12 +1,11 @@
 import express from "express";
 import { Request, Response } from "express";
-import { google } from "googleapis";
-import { BetaAnalyticsDataClient } from "@google-analytics/data";
 
 import * as publicService from "../services/public/publicService";
 import CustomError from "../utils/CustomError";
 import cityTimezones from "../services/calendar/cityTimezones";
 import { isUsersStore } from "../middlewares/isUsersStore";
+import axios from "axios";
 
 export const publicController = express.Router();
 
@@ -85,107 +84,133 @@ publicController.get("/cityTimezones", async (req: Request, res: Response) => {
   }
 });
 
+//TODO
+/* 
+Collect only pageview events 
+Make it dynamic 
+Dont save home page and /dashboard and /sign-in /singup 
+*/
+
+// publicController.get("/analytics/", async (req: Request, res: Response) => {
+//   try {
+//     // Retrieve date parameters from the request query, with defaults if not provided
+//     const {
+//       // dateFrom = "1609483395.338",
+//       // dateTo = "1709488905",
+//       path = "/nonexistant",
+//     } = req.query;
+
+//     // const thirtyDaysAgo = new Date();
+//     // thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+//     // const defaultAfter = encodeURIComponent(thirtyDaysAgo.toISOString()); // Encoded 30 days ago timestamp
+//     // const defaultBefore = encodeURIComponent(new Date().toISOString()); // Encoded current timestamp
+
+//     // const {
+//     //   dateFrom = defaultAfter,
+//     //   dateTo = defaultBefore,
+//     //   pathname = "/aeric",
+//     // } = req.query;
+
+//     const posthogApiKey: string =
+//       "phx_d2XebPoWkHYH6FJzq3Egp8aZ43FLRYYxq8OyTKpr217";
+//     const posthogHost: string = "https://app.posthog.com";
+//     const apiUrl: string = `${posthogHost}/api/projects/56613/events/`;
+
+//     const response = await axios.get(apiUrl, {
+//       headers: {
+//         Authorization: `Bearer ${posthogApiKey}`,
+//       },
+//       params: {
+//         event: "$pageview",
+//         properties: JSON.stringify([
+//           {
+//             key: "$pathname",
+//             value: path,
+//             operator: "exact",
+//             type: "event",
+//           },
+//         ]),
+//         dateRange: {
+//           date_to: "-30d",
+//           date_from: "-20d",
+//         },
+//       },
+//     });
+
+//     // Aggregate the event count per date
+//     // const eventCountsByDate: { [key: string]: number } = {};
+
+//     // //eslint-disable-next-line
+//     // response.data.results.forEach((event: any) => {
+//     //   // Extract the date from the timestamp
+//     //   const eventDate = event.timestamp.split("T")[0];
+
+//     //   // Initialize or increment the count for this date
+//     //   if (!eventCountsByDate[eventDate]) {
+//     //     eventCountsByDate[eventDate] = 1;
+//     //   } else {
+//     //     eventCountsByDate[eventDate]++;
+//     //   }
+//     // });
+
+//     res.status(200).json(response.data.results);
+//   } catch (error) {
+//     console.error("Error fetching event count by date:", error);
+//     if (axios.isAxiosError(error) && error.response) {
+//       // This will capture any non-200 responses from the PostHog API and provide the status code and message
+//       res.status(error.response.status).json({ error: error.message });
+//     } else {
+//       // Generic error fallback
+//       res.status(500).json({ error: "Internal server error" });
+//     }
+//   }
+// });
+
 publicController.get("/analytics", async (req: Request, res: Response) => {
   try {
-    const analytics = google.analytics("v3");
-    const auth = new google.auth.GoogleAuth({
-      keyFilename: "./aeric-416005-d8e5598e21c7.json", // Specify the path to your credentials file
-      scopes: ["https://www.googleapis.com/auth/analytics.readonly"],
-    });
+    const path = req.query.path; // Assuming the query parameter is named 'path'
 
-    const viewId = "429901889"; // Replace this with your actual view ID
-
-    const response = await analytics.data.ga.get({
-      auth: auth,
-      ids: "ga:" + viewId,
-      "start-date": "30daysAgo",
-      "end-date": "today",
-      metrics: "ga:pageviews",
-      filters: "ga:pagePath==/dashboard",
-    });
-
-    console.log("******", response.data);
-    res.status(200).json({ response });
-  } catch (error) {
-    if (error instanceof CustomError) {
-      res.status(error.statusCode).json({ error: error.message });
-    } else {
-      console.error("Error fetching analytics:", error);
-      res.status(500).json({ error: "Internal server error" });
+    // Validate the path to ensure it's a safe and usable string
+    if (!path || typeof path !== "string") {
+      return res
+        .status(400)
+        .json({ error: "Invalid or missing path parameter." });
     }
-  }
-});
 
-publicController.get("/analytics2", async (req: Request, res: Response) => {
-  try {
-    const client = new BetaAnalyticsDataClient({
-      credentials: {
-        private_key:
-          "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQDEFneN5ig0I+94\nCgmHDpPUvvfxNdonuyZkVOkPktduevou9FFdhEDwajBI+1TeDQ+KDRZjm+uciiod\nUFLJitGGAio4Sgd70kG2rxJJ7O9v/113fyRn9jPlpA7pAHnRWRzLv2r9q7mP8iB+\nzviNLjPqD36Rg57ImeOM+Oz43B2Jhxrx11/js9yvpsInnC8rM0WBFLycHz06Nn8e\nvUsZexfkVlCPAq1SurF/J+8MIsIuemaij7JTuygvRgkANT0ZPloQDqCA70xSD1Wr\n6YndCu8ZyU1x2g96ju1ckxLmeN5fnnJY1ZAA0M6q8rjqEylzYlUvnAyrnUgEVS6L\nJCeSe84RAgMBAAECgf9CKDGJ0qPRhAymfTKY5RPT+Fiu3mwHhXWSn1ThuwHZ8nxv\nvY7W7fK5Ubfrn3C9yPkPb/8NYUjRakJBZozJk5mM6HzZZrEL/qXk8v5WLdIkq8vg\nYSk5WboVBVVk8g+kRqRS+OmF0906WwO17FmaJ5a4PWfIlkcTHv/r4iqHsa7wKdy0\nGIHkkd7TRk7lG2o+BUWCDpeheudCBQzwtW0iwzLjT7QUBoYpSgaAlTzh58AkqbcB\nkTg4q0yOnKUQsLGYrPabca1yBl0PEKU0G7SKGnOt9oFGOogFTYF8bISf4OylhV/Z\n+UraSzG+9AkseNH/OfeDEvFmjiK4ZNsnfX3Whh8CgYEA4NN6QPM73/wXMiFY2CJX\ndBZ+CnMyftk+AJ8lR1dletx6GxQQgofVht5KGRysmmCPYp7fMi4wzmpebGRH5pL4\nZZtJxVK5kvABtPQnjyiWiTHS3rbiRCZlkrvRn6CbCNaQUl5zRWC8brn/CYvnmihD\nDkSSzVZroXiR3QfPuLER7vcCgYEA30bhuH1UoKyrx8KvjgKDgVfoSV8ptQJ3hd/z\nfnZTF6A+ny3Z7K4wf1as08IL5VBvcfoJldzV/AA4JDwqF1GJpPWrp6OsWo4dtEoQ\nEmWHKETlIMZlsZYWd0JiXUenncrD9uYpjOp+GdRRsht/IzO6a62y0aDueYlRvaEo\npNrBgTcCgYBHAGJ2ippZJUrKCR/+ufG2drf9Yt4Kk17yYVArlJ02zNQ/IvoHzxAP\nFLp/7b9QzbfapGPGfDHrrkn9nznZxoZtyDnm+DYlAmj3lbe8jUvlLffzX/xbG2ku\niuQrrlPn2aMgcDWlLmSz70ds42MUGyz6H4vhDy7UgrhF/oaKRFluhwKBgQC5hnRY\nkAuZ1uCGBEdLgNs0xo7FKMXHGl2maAgztK4mm4htS/QgrjyuEp9Y9Yxc5xEza8g7\nNly4IJaFxVhUN/RflaMkkOPN+vjDribconBEDbs2GKS3gzb3sbl6OOgWPT3IEkfE\nR7SwUbPwgtiJr5nfj11ewpJleqzpHNhg40SW0QKBgCpA0vl+Azm1Sp2z8tpAIHjV\n5bg/cJiZ1Lm6vRH8uFtyf/tJzpWGvxWXFLtnf2z4Zaeu0ih5+yiB9Kt4OR3gj8OC\nuIOickUReHRZ9snfDYrhP9f4YMN7+usZCqvQCtDCXDo5BuS4ZlZzivgwiFhVo/+y\nrPGG7Ly7/aEAS1Gybr9o\n-----END PRIVATE KEY-----\n",
-        client_email: "aeric-771@aeric-416005.iam.gserviceaccount.com",
+    const posthogApiKey = process.env.POSTHOG_API_KEY;
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${posthogApiKey}`,
+    };
+
+    const data = {
+      query: {
+        kind: "HogQLQuery",
+        query: `
+          SELECT toDate(timestamp) AS event_date, COUNT(*) AS event_count
+          FROM events
+          WHERE event = '$pageview'
+                AND toDate(timestamp) >= today() - INTERVAL 30 DAY
+                AND toDate(timestamp) <= today()
+                AND properties.$current_url LIKE '%${path}%'
+          GROUP BY toDate(timestamp)
+          ORDER BY toDate(timestamp)
+        `,
       },
-    });
+    };
 
-    // Replace this with your actual GA4 property ID
-    const propertyId = "429901889";
-
-    // const [response] = await client.runReport({
-    //   property: `properties/${propertyId}`,
-    //   dateRanges: [
-    //     {
-    //       startDate: "2023-03-31",
-    //       endDate: "today",
-    //     },
-    //   ],
-    //   dimensions: [
-    //     {
-    //       name: "year",
-    //     },
-    //   ],
-    //   metrics: [
-    //     {
-    //       name: "activeUsers",
-    //     },
-    //   ],
-    // });
-
-    const [response] = await client.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [
-        {
-          startDate: "2023-03-31",
-          endDate: "today",
-        },
-      ],
-      dimensions: [
-        {
-          name: "pagePath",
-        },
-      ],
-      metrics: [
-        {
-          name: "activeUsers",
-        },
-      ],
-      dimensionFilter: {
-        filter: {
-          fieldName: "pagePath",
-          stringFilter: {
-            value: "/meetshukla",
-            matchType: "EXACT",
-          },
-        },
-      },
-    });
-
-    console.log("response", response);
-
-    res.status(200).json({ dashboardPageViews: response });
+    const response = await axios.post(
+      `https://app.posthog.com/api/projects/${process.env.POSTHOG_PROJECT_ID}/query`,
+      data,
+      { headers }
+    );
+    res.status(200).json(response.data.results);
   } catch (error) {
-    if (error instanceof CustomError) {
-      res.status(error.statusCode).json({ error: error.message });
+    console.error("Error fetching event count by date:", error);
+    if (axios.isAxiosError(error) && error.response) {
+      res.status(error.response.status).json({ error: error.message });
     } else {
-      console.error("Error fetching analytics:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   }
