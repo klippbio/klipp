@@ -81,39 +81,96 @@ function Page() {
             </Card>
           </div>
         ) : (
-          <Card className="md:w-2/3 w-full">
-            <CardHeader title="page visits">
-              <CardTitle className="text-foreground">Store Visits</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <AreaChart
-                  data={data}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                  }}
-                >
-                  <CartesianGrid
-                    vertical={false}
-                    stroke="#f0f0f0"
-                    strokeDasharray="3 3"
-                  />
-                  <XAxis dataKey="date" />
-                  <YAxis axisLine={false} />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="pageView"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          <div className="flex items-center flex-col justify-center">
+            <div className="text-2xl mb-6 font-bold">Hey {storeUrl} 👋</div>
+            <Card className="md:w-2/3 w-full shadow-xl">
+              <CardHeader title="page visits">
+                <CardTitle className="text-foreground">Store Visits</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart
+                    data={data}
+                    margin={{
+                      top: 10,
+                      right: 30,
+                      left: 0,
+                      bottom: 0,
+                    }}
+                  >
+                    <CartesianGrid
+                      vertical={false}
+                      stroke="#f0f0f0"
+                      strokeDasharray="3 3"
+                    />
+                    <XAxis dataKey="date" />
+                    <YAxis axisLine={false} />
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="pageView"
+                      stroke="#8884d8"
+                      fill="#8884d8"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+            <div className="w-2/3 mt-10 flex flex-col gap-6">
+              <div className="flex gap-6">
+                <Card className="w-2/6 shadow-xl">
+                  <CardHeader title="page visits">
+                    <CardTitle className="text-foreground">
+                      Store Visits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>Test</CardContent>
+                </Card>
+                <Card className="w-2/6 shadow-xl">
+                  <CardHeader title="page visits">
+                    <CardTitle className="text-foreground">
+                      Store Visits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>Test</CardContent>
+                </Card>
+                <Card className="w-2/6 shadow-xl">
+                  <CardHeader title="page visits">
+                    <CardTitle className="text-foreground">
+                      Store Visits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>Test</CardContent>
+                </Card>
+              </div>
+              <div className="flex gap-6">
+                <Card className="w-2/6 shadow-xl">
+                  <CardHeader title="page visits">
+                    <CardTitle className="text-foreground">
+                      Store Visits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>Test</CardContent>
+                </Card>
+                <Card className="w-2/6 shadow-xl">
+                  <CardHeader title="page visits">
+                    <CardTitle className="text-foreground">
+                      Store Visits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>Test</CardContent>
+                </Card>
+                <Card className="w-2/6 shadow-xl">
+                  <CardHeader title="page visits">
+                    <CardTitle className="text-foreground">
+                      Store Visits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>Test</CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
