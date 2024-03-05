@@ -18,6 +18,17 @@ export const ZChangeOrder = z.array(
   })
 );
 
+export const AnalyticsEntrySchema = z.tuple([
+  z.string(), // storeUrl
+  z.string(), // date
+  z.number(), // pageView
+]);
+const ZAnalyticsData = z.array(AnalyticsEntrySchema);
+
+export const ZStoreUrl = z.object({
+  storeUrl: z.string(),
+});
+
 export const ZUpdatePublicUser = z.object({
   storeUrl: z.string(),
   displayName: z.string(),
@@ -149,5 +160,51 @@ export const changeOrder = async (input: z.infer<typeof ZChangeOrder>) => {
   } catch (error) {
     console.log(error);
     throw new CustomError("Failed to update item order", 500);
+  }
+};
+
+export const saveOrUpdateAnalytics = async (data: unknown) => {
+  try {
+    const analyticsData = ZAnalyticsData.parse(data);
+
+    for (const [storeUrl, date, pageView] of analyticsData) {
+      await db.analytics.upsert({
+        where: {
+          storeUrl_date: { storeUrl, date },
+        },
+        update: {
+          pageView,
+        },
+        create: {
+          storeUrl,
+          date,
+          pageView,
+        },
+      });
+    }
+    return true;
+  } catch (error) {
+    console.error("Error updating page views:", error);
+    throw new CustomError("Failed to update analytics", 500);
+  }
+};
+
+export const getStoreAnalytics = async (data: z.infer<typeof ZStoreUrl>) => {
+  try {
+    // Fetch analytics data for the given store URL
+    const analyticsData = await db.analytics.findMany({
+      where: {
+        storeUrl: data.storeUrl,
+      },
+      select: {
+        date: true,
+        pageView: true,
+      },
+    });
+
+    return analyticsData;
+  } catch (error) {
+    console.error("Error fetching page views:", error);
+    throw new CustomError("Failed to fetch analytics", 500);
   }
 };

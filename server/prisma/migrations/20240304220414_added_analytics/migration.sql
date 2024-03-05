@@ -32,7 +32,7 @@ CREATE TABLE "Store" (
     "tiktok" TEXT,
     "youtube" TEXT,
     "twitter" TEXT,
-    "color" TEXT,
+    "color" TEXT DEFAULT '#000000',
 
     CONSTRAINT "Store_pkey" PRIMARY KEY ("id")
 );
@@ -251,6 +251,16 @@ CREATE TABLE "Attendee" (
     CONSTRAINT "Attendee_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Analytics" (
+    "id" SERIAL NOT NULL,
+    "date" TEXT NOT NULL,
+    "pageView" INTEGER NOT NULL,
+    "storeUrl" TEXT NOT NULL,
+
+    CONSTRAINT "Analytics_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -271,9 +281,6 @@ CREATE UNIQUE INDEX "Payment_accountId_key" ON "Payment"("accountId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "StoreItem_id_key" ON "StoreItem"("id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "StoreItem_itemOrder_key" ON "StoreItem"("itemOrder");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Link_storeItemId_key" ON "Link"("storeItemId");
@@ -418,3 +425,6 @@ ALTER TABLE "Sale" ADD CONSTRAINT "Sale_storeItemId_fkey" FOREIGN KEY ("storeIte
 
 -- AddForeignKey
 ALTER TABLE "Attendee" ADD CONSTRAINT "Attendee_bookingId_fkey" FOREIGN KEY ("bookingId") REFERENCES "Booking"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Analytics" ADD CONSTRAINT "Analytics_storeUrl_fkey" FOREIGN KEY ("storeUrl") REFERENCES "Store"("storeUrl") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -6,7 +6,7 @@ import CustomError from "../utils/CustomError";
 import cityTimezones from "../services/calendar/cityTimezones";
 import { isUsersStore } from "../middlewares/isUsersStore";
 import axios from "axios";
-
+import { saveOrUpdateAnalytics } from "../services/public/publicService";
 export const publicController = express.Router();
 
 publicController.get("/publicUser", async (req: Request, res: Response) => {
@@ -84,99 +84,9 @@ publicController.get("/cityTimezones", async (req: Request, res: Response) => {
   }
 });
 
-//TODO
-/* 
-Collect only pageview events 
-Make it dynamic 
-Dont save home page and /dashboard and /sign-in /singup 
-*/
-
-// publicController.get("/analytics/", async (req: Request, res: Response) => {
-//   try {
-//     // Retrieve date parameters from the request query, with defaults if not provided
-//     const {
-//       // dateFrom = "1609483395.338",
-//       // dateTo = "1709488905",
-//       path = "/nonexistant",
-//     } = req.query;
-
-//     // const thirtyDaysAgo = new Date();
-//     // thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-//     // const defaultAfter = encodeURIComponent(thirtyDaysAgo.toISOString()); // Encoded 30 days ago timestamp
-//     // const defaultBefore = encodeURIComponent(new Date().toISOString()); // Encoded current timestamp
-
-//     // const {
-//     //   dateFrom = defaultAfter,
-//     //   dateTo = defaultBefore,
-//     //   pathname = "/aeric",
-//     // } = req.query;
-
-//     const posthogApiKey: string =
-//       "phx_d2XebPoWkHYH6FJzq3Egp8aZ43FLRYYxq8OyTKpr217";
-//     const posthogHost: string = "https://app.posthog.com";
-//     const apiUrl: string = `${posthogHost}/api/projects/56613/events/`;
-
-//     const response = await axios.get(apiUrl, {
-//       headers: {
-//         Authorization: `Bearer ${posthogApiKey}`,
-//       },
-//       params: {
-//         event: "$pageview",
-//         properties: JSON.stringify([
-//           {
-//             key: "$pathname",
-//             value: path,
-//             operator: "exact",
-//             type: "event",
-//           },
-//         ]),
-//         dateRange: {
-//           date_to: "-30d",
-//           date_from: "-20d",
-//         },
-//       },
-//     });
-
-//     // Aggregate the event count per date
-//     // const eventCountsByDate: { [key: string]: number } = {};
-
-//     // //eslint-disable-next-line
-//     // response.data.results.forEach((event: any) => {
-//     //   // Extract the date from the timestamp
-//     //   const eventDate = event.timestamp.split("T")[0];
-
-//     //   // Initialize or increment the count for this date
-//     //   if (!eventCountsByDate[eventDate]) {
-//     //     eventCountsByDate[eventDate] = 1;
-//     //   } else {
-//     //     eventCountsByDate[eventDate]++;
-//     //   }
-//     // });
-
-//     res.status(200).json(response.data.results);
-//   } catch (error) {
-//     console.error("Error fetching event count by date:", error);
-//     if (axios.isAxiosError(error) && error.response) {
-//       // This will capture any non-200 responses from the PostHog API and provide the status code and message
-//       res.status(error.response.status).json({ error: error.message });
-//     } else {
-//       // Generic error fallback
-//       res.status(500).json({ error: "Internal server error" });
-//     }
-//   }
-// });
-
+//TODO: Run a cron job to fetch the analytics data and save it to the database
 publicController.get("/analytics", async (req: Request, res: Response) => {
   try {
-    const path = req.query.path; // Assuming the query parameter is named 'path'
-
-    // Validate the path to ensure it's a safe and usable string
-    if (!path || typeof path !== "string") {
-      return res
-        .status(400)
-        .json({ error: "Invalid or missing path parameter." });
-    }
-
     const posthogApiKey = process.env.POSTHOG_API_KEY;
 
     const headers = {
@@ -187,16 +97,22 @@ publicController.get("/analytics", async (req: Request, res: Response) => {
     const data = {
       query: {
         kind: "HogQLQuery",
-        query: `
-          SELECT toDate(timestamp) AS event_date, COUNT(*) AS event_count
-          FROM events
-          WHERE event = '$pageview'
-                AND toDate(timestamp) >= today() - INTERVAL 30 DAY
-                AND toDate(timestamp) <= today()
-                AND properties.$current_url LIKE '%${path}%'
-          GROUP BY toDate(timestamp)
-          ORDER BY toDate(timestamp)
-        `,
+        query: `SELECT 
+                properties.$pathname AS path, 
+                toDate(timestamp) AS event_date, 
+                COUNT(*) AS event_count
+              FROM 
+                events
+              WHERE 
+                event = '$pageview'
+                AND properties.$pathname <> '/'
+                AND toDate(timestamp) = today()
+              GROUP BY 
+                path, 
+                toDate(timestamp)
+              ORDER BY 
+                path, 
+                toDate(timestamp)`,
       },
     };
 
@@ -205,7 +121,10 @@ publicController.get("/analytics", async (req: Request, res: Response) => {
       data,
       { headers }
     );
-    res.status(200).json(response.data.results);
+
+    const result = await saveOrUpdateAnalytics(response);
+
+    res.status(200).json(result);
   } catch (error) {
     console.error("Error fetching event count by date:", error);
     if (axios.isAxiosError(error) && error.response) {
@@ -213,5 +132,20 @@ publicController.get("/analytics", async (req: Request, res: Response) => {
     } else {
       res.status(500).json({ error: "Internal server error" });
     }
+  }
+});
+
+publicController.get("/storeanalytics", async (req: Request, res: Response) => {
+  try {
+    let storeUrl = req.query.storeurl;
+    storeUrl = "/" + storeUrl;
+    const storeAnalytics = await publicService.getStoreAnalytics(
+      await publicService.ZStoreUrl.parseAsync({ storeUrl: storeUrl })
+    );
+    res.status(200).json(storeAnalytics);
+  } catch (error) {
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });

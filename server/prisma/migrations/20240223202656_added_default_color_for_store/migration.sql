@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Store" ALTER COLUMN "color" SET DEFAULT '#000000';
