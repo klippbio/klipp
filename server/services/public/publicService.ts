@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { db } from "../../utils/db.server";
 import CustomError from "../../utils/CustomError";
-
+import { format, subDays } from "date-fns";
 export const ZUserName = z.object({
   userName: z.string(),
 });
@@ -206,5 +206,24 @@ export const getStoreAnalytics = async (data: z.infer<typeof ZStoreUrl>) => {
   } catch (error) {
     console.error("Error fetching page views:", error);
     throw new CustomError("Failed to fetch analytics", 500);
+  }
+};
+
+export const deleteStoreAnalytics = async () => {
+  try {
+    const sevenDaysAgo = format(subDays(new Date(), 7), "yyyy-MM-dd");
+
+    const result = await db.analytics.deleteMany({
+      where: {
+        date: {
+          lt: sevenDaysAgo,
+        },
+      },
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Error deleting analytics records:", error);
+    throw new CustomError("Failed to delete analytics", 500);
   }
 };

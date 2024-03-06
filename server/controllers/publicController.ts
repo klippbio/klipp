@@ -6,7 +6,6 @@ import CustomError from "../utils/CustomError";
 import cityTimezones from "../services/calendar/cityTimezones";
 import { isUsersStore } from "../middlewares/isUsersStore";
 import axios from "axios";
-import { saveOrUpdateAnalytics } from "../services/public/publicService";
 export const publicController = express.Router();
 
 publicController.get("/publicUser", async (req: Request, res: Response) => {
@@ -122,7 +121,9 @@ publicController.get("/analytics", async (req: Request, res: Response) => {
       { headers }
     );
 
-    const result = await saveOrUpdateAnalytics(response);
+    const result = await publicService.saveOrUpdateAnalytics(
+      response.data.results
+    );
 
     res.status(200).json(result);
   } catch (error) {
@@ -149,3 +150,17 @@ publicController.get("/storeanalytics", async (req: Request, res: Response) => {
     else res.status(500).json({ error: error });
   }
 });
+
+publicController.delete(
+  "/storeanalytics",
+  async (req: Request, res: Response) => {
+    try {
+      const results = await publicService.deleteStoreAnalytics();
+      res.status(200).json(results);
+    } catch (error) {
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
+    }
+  }
+);
