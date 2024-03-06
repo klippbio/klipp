@@ -26,7 +26,7 @@ app.use("/", routes);
 // Run it every 2 hours
 cron.schedule("0 */2 * * *", () => {
   console.log("Running a task every 2 hours");
-  const serverUrl = `http://localhost:${port}/analytics`;
+  const serverUrl = `${process.env.BACKEND_URL}/analytics`;
   axios
     .get(serverUrl)
     .then(() => console.log("Analytics endpoint triggered successfully"))
@@ -39,7 +39,7 @@ cron.schedule("0 */2 * * *", () => {
 cron.schedule("0 0 * * *", function () {
   console.log("Running a task every day at midnight");
   axios
-    .delete("http://localhost:" + port + "/storeanalytics")
+    .delete(process.env.BACKEND_URL + "/storeanalytics")
     .then((response) =>
       console.log("Successfully called /storeanalytics delete", response)
     )
