@@ -11,6 +11,31 @@ export const metadata = {
   title: {
     default: "klipp",
   },
+  description: {
+    default:
+      "Turn Passion into Profit with your Digital Store Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
+  },
+  openGraph: {
+    title: "klipp",
+    description:
+      "Turn Passion into Profit with your Digital Store Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
+    type: "article",
+    images: [
+      {
+        url: "https://www.klipp.io/logoText.jpg",
+        width: 1200,
+        height: 630,
+        alt: "klipp",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "klipp",
+    description:
+      "Turn Passion into Profit with your Digital Store Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
+    images: ["https://www.klipp.io/logoText.jpg"],
+  },
 };
 export default function RootLayout({
   children,

@@ -39,6 +39,7 @@ function Page() {
     },
     {
       cacheTime: 0,
+      enabled: !!productId && !!authDetails?.storeId,
     }
   );
 

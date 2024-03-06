@@ -77,7 +77,7 @@ export default function ScheduleForm({
         `/api/calendar/get?scheduleId=${currentScheduleId}&storeId=${authDetails?.storeId}`
       ).then((res) => res.data),
     {
-      enabled: !!currentScheduleId,
+      enabled: !!currentScheduleId && !!authDetails?.storeId,
     }
   );
 

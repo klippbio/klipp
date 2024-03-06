@@ -34,7 +34,7 @@ export default function CalendarProductAvailabilityCard({
           "GET",
           `/api/calendar/get?scheduleId=${scheduleId}&storeId=${authDetails?.storeId}`
         ).then((res) => res.data),
-      { enabled: !!scheduleId }
+      { enabled: !!scheduleId && !!authDetails?.storeId }
     );
 
   const extractTime = (dateString: string | undefined) => {
