@@ -2,22 +2,15 @@
 import React from "react";
 import TopBar from "../components/topBar";
 import { Separator } from "@/components/ui/separator";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthDetails } from "../components/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import AxiosApi from "../services/axios";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AxiosError } from "axios";
+import PageView from "./components/PageView";
+import CustomeSkeleton from "./components/CustomeSkeleton";
+import DashboardCards from "./components/DashboardCards";
 
 type PageViewData = {
   date: string;
@@ -63,22 +56,9 @@ function Page() {
         <Separator className="mt-4" orientation="horizontal" />
       </div>
       <div className="mx-4 md:mx-8 mt-8 overflow-auto pb-20 md:pb-0">
-        {isLoading ? (
+        {isLoading && !data ? (
           <div>
-            <Card className="w-full flex flex-col gap-4 p-5">
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-              <Skeleton className="w-full h-6" />
-            </Card>
+            <CustomeSkeleton />
           </div>
         ) : (
           <div className="flex items-center flex-col justify-center">
@@ -88,87 +68,11 @@ function Page() {
                 <CardTitle className="text-foreground">Store Visits</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart
-                    data={data}
-                    margin={{
-                      top: 10,
-                      right: 30,
-                      left: 0,
-                      bottom: 0,
-                    }}
-                  >
-                    <CartesianGrid
-                      vertical={false}
-                      stroke="#f0f0f0"
-                      strokeDasharray="3 3"
-                    />
-                    <XAxis dataKey="date" />
-                    <YAxis axisLine={false} />
-                    <Tooltip />
-                    <Area
-                      type="monotone"
-                      dataKey="pageView"
-                      stroke="#8884d8"
-                      fill="#8884d8"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <PageView data={data} />
               </CardContent>
             </Card>
-            <div className="w-2/3 mt-10 flex flex-col gap-6">
-              <div className="flex gap-6">
-                <Card className="w-2/6 shadow-xl">
-                  <CardHeader title="page visits">
-                    <CardTitle className="text-foreground">
-                      Store Visits
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>Test</CardContent>
-                </Card>
-                <Card className="w-2/6 shadow-xl">
-                  <CardHeader title="page visits">
-                    <CardTitle className="text-foreground">
-                      Store Visits
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>Test</CardContent>
-                </Card>
-                <Card className="w-2/6 shadow-xl">
-                  <CardHeader title="page visits">
-                    <CardTitle className="text-foreground">
-                      Store Visits
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>Test</CardContent>
-                </Card>
-              </div>
-              <div className="flex gap-6">
-                <Card className="w-2/6 shadow-xl">
-                  <CardHeader title="page visits">
-                    <CardTitle className="text-foreground">
-                      Store Visits
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>Test</CardContent>
-                </Card>
-                <Card className="w-2/6 shadow-xl">
-                  <CardHeader title="page visits">
-                    <CardTitle className="text-foreground">
-                      Store Visits
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>Test</CardContent>
-                </Card>
-                <Card className="w-2/6 shadow-xl">
-                  <CardHeader title="page visits">
-                    <CardTitle className="text-foreground">
-                      Store Visits
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>Test</CardContent>
-                </Card>
-              </div>
+            <div className="md:w-2/3 w-full mt-10">
+              <DashboardCards />
             </div>
           </div>
         )}

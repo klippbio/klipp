@@ -6,7 +6,6 @@ const inter = Inter({ subsets: ["latin"] });
 import QueryWrapper from "./components/QueryWrapper";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "./components/AuthContext";
-import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const metadata = {
   title: {
@@ -28,7 +27,6 @@ export default function RootLayout({
               {children}
             </QueryWrapper>
           </body>
-          <GoogleAnalytics gaId="G-YHC4MB4DGZ" />
         </html>
       </AuthProvider>
     </ClerkProvider>
