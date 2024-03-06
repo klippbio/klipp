@@ -25,8 +25,6 @@ model Store {
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   storeItems       StoreItem[]
   sale           Sale[]
-
-
   payments         Payment[]
   thumbnailUrl     String?
   instagram        String?
@@ -318,4 +316,13 @@ model Attendee {
 
   @@index([email])
   @@index([bookingId])
+}
+
+model Analytics {
+  id       Int    @id @default(autoincrement())
+  storeUrl String
+  date     String
+  pageView Int
+
+  @@unique([storeUrl, date])
 }

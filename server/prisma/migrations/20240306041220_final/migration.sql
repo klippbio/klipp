@@ -219,7 +219,7 @@ CREATE TABLE "Booking" (
     "meetingId" TEXT,
     "rescheduled" BOOLEAN DEFAULT false,
     "saleId" TEXT,
-    "cancelledSaleId" INTEGER,
+    "cancelledSaleId" TEXT,
 
     CONSTRAINT "Booking_pkey" PRIMARY KEY ("id")
 );
@@ -249,6 +249,16 @@ CREATE TABLE "Attendee" (
     "bookingId" INTEGER,
 
     CONSTRAINT "Attendee_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Analytics" (
+    "id" SERIAL NOT NULL,
+    "storeUrl" TEXT NOT NULL,
+    "date" TEXT NOT NULL,
+    "pageView" INTEGER NOT NULL,
+
+    CONSTRAINT "Analytics_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -346,6 +356,9 @@ CREATE INDEX "Attendee_email_idx" ON "Attendee"("email");
 
 -- CreateIndex
 CREATE INDEX "Attendee_bookingId_idx" ON "Attendee"("bookingId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Analytics_storeUrl_date_key" ON "Analytics"("storeUrl", "date");
 
 -- AddForeignKey
 ALTER TABLE "Store" ADD CONSTRAINT "Store_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

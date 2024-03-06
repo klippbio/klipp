@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { db } from "../../utils/db.server";
 import CustomError from "../../utils/CustomError";
-
+import { format, subDays } from "date-fns";
 export const ZUserName = z.object({
   userName: z.string(),
 });
@@ -17,6 +17,17 @@ export const ZChangeOrder = z.array(
     itemOrder: z.number(),
   })
 );
+
+export const AnalyticsEntrySchema = z.tuple([
+  z.string(), // storeUrl
+  z.string(), // date
+  z.number(), // pageView
+]);
+const ZAnalyticsData = z.array(AnalyticsEntrySchema);
+
+export const ZStoreUrl = z.object({
+  storeUrl: z.string(),
+});
 
 export const ZUpdatePublicUser = z.object({
   storeUrl: z.string(),
@@ -159,5 +170,70 @@ export const changeOrder = async (input: z.infer<typeof ZChangeOrder>) => {
   } catch (error) {
     console.log(error);
     throw new CustomError("Failed to update item order", 500);
+  }
+};
+
+export const saveOrUpdateAnalytics = async (data: unknown) => {
+  try {
+    const analyticsData = ZAnalyticsData.parse(data);
+
+    for (const [storeUrl, date, pageView] of analyticsData) {
+      await db.analytics.upsert({
+        where: {
+          storeUrl_date: { storeUrl, date },
+        },
+        update: {
+          pageView,
+        },
+        create: {
+          storeUrl,
+          date,
+          pageView,
+        },
+      });
+    }
+    return true;
+  } catch (error) {
+    console.error("Error updating page views:", error);
+    throw new CustomError("Failed to update analytics", 500);
+  }
+};
+
+export const getStoreAnalytics = async (data: z.infer<typeof ZStoreUrl>) => {
+  try {
+    // Fetch analytics data for the given store URL
+    const analyticsData = await db.analytics.findMany({
+      where: {
+        storeUrl: data.storeUrl,
+      },
+      select: {
+        date: true,
+        pageView: true,
+      },
+    });
+
+    return analyticsData;
+  } catch (error) {
+    console.error("Error fetching page views:", error);
+    throw new CustomError("Failed to fetch analytics", 500);
+  }
+};
+
+export const deleteStoreAnalytics = async () => {
+  try {
+    const sevenDaysAgo = format(subDays(new Date(), 7), "yyyy-MM-dd");
+
+    const result = await db.analytics.deleteMany({
+      where: {
+        date: {
+          lt: sevenDaysAgo,
+        },
+      },
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Error deleting analytics records:", error);
+    throw new CustomError("Failed to delete analytics", 500);
   }
 };
