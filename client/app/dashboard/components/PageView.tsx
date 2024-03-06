@@ -9,6 +9,7 @@ import {
   Area,
 } from "recharts";
 
+//eslint-disable-next-line
 function PageView({ data }: { data: any }) {
   return (
     <div>

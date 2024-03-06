@@ -59,7 +59,7 @@ export default function StripeComponent() {
     };
 
     fetchClientSecret();
-  }, [accountId]);
+  }, [accountId, storeId]);
 
   useEffect(() => {
     if (clientSecret) {

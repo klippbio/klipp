@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import {
   CalendarClock,
   CreditCard,
-  Image,
+  ImageIcon,
   PercentIcon,
   ShoppingBag,
   Video,
@@ -29,7 +29,7 @@ function DashboardCards() {
           >
             <CardContent className={cn("")}>
               <div className="h-16 flex items-center justify-center align-items-center w-16 bg-accent rounded-full mt-5">
-                <Image color="#7c5bcf" size={30} />
+                <ImageIcon color="#7c5bcf" size={30} />
               </div>
             </CardContent>
             <CardHeader className={cn("p-0 ml-6 mb-4")} title="page visits">
