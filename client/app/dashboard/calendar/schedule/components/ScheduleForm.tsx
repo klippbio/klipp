@@ -178,7 +178,7 @@ export default function ScheduleForm({
         duration: 1000,
         description: "Schedule Deleted.",
       });
-      router.push("/calendar/schedule");
+      router.push("/dashboard/calendar/schedule");
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       toast({

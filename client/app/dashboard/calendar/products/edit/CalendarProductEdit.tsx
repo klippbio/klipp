@@ -47,8 +47,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import AxiosApi from "@/app/services/axios";
 import { useAuthDetails } from "@/app/components/AuthContext";
-import { CalendarProductApiResponse } from "@/types/apiResponse";
+import { CalendarProductApiResponse, ErrorResponse } from "@/types/apiResponse";
 import Image from "next/image";
+import { AxiosError } from "axios";
 
 //types
 export const calendarProductSchema = z
@@ -58,7 +59,7 @@ export const calendarProductSchema = z
     shortDescription: z.string().optional(),
     description: z.any().optional(),
     length: z.string().min(1, { message: "Please enter duration " }),
-    hidden: z.boolean().optional(),
+    visibility: z.boolean().optional().default(false),
     timeZone: z.string().optional(),
     price: z.string().default("0"),
     recPrice: z.string().optional(),
@@ -105,8 +106,8 @@ export function CalendarProductEdit({
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [editorData, setEditorData] = useState("");
-  const [flexPrice, setFlexPrice] = useState(true);
-  const [minPrice, setMinPrice] = useState("0");
+  // const [flexPrice, setFlexPrice] = useState(true);
+  // const [minPrice, setMinPrice] = useState("0");
   const [initialBlocksData, setInitialBlocksData] = useState([]);
   const { toast } = useToast();
   const router = useRouter();
@@ -124,7 +125,7 @@ export function CalendarProductEdit({
     recPrice: productData.recPrice || "",
     minPrice: productData.minPrice || "",
     flexPrice: productData.flexPrice || false,
-    hidden: productData.hidden,
+    visibility: productData.visibility,
     length: String(productData.length),
   };
 
@@ -134,7 +135,7 @@ export function CalendarProductEdit({
     mode: "all",
   });
 
-  const { watch } = form;
+  // const { watch } = form;
 
   //effects
   useEffect(() => {
@@ -142,9 +143,9 @@ export function CalendarProductEdit({
       setSelectedFile(productData.thumbnailUrl);
       setImageUrl(productData.thumbnailUrl);
     }
-    if (productData.flexPrice) {
-      setFlexPrice(false);
-    }
+    // if (productData.flexPrice) {
+    //   setFlexPrice(false);
+    // }
     if (productData.description) {
       const parsedDescription = JSON.parse(productData.description);
       setEditorData(parsedDescription);
@@ -155,11 +156,11 @@ export function CalendarProductEdit({
     productData.flexPrice,
     productData.thumbnailUrl,
   ]);
-  const price = watch("price");
+  // const price = watch("price");
 
-  useEffect(() => {
-    setMinPrice(price);
-  }, [price, form]);
+  // useEffect(() => {
+  //   setMinPrice(price);
+  // }, [price, form]);
 
   //functions
   function onSubmit(data: z.infer<typeof calendarProductSchema>) {
@@ -205,14 +206,14 @@ export function CalendarProductEdit({
         duration: 1000,
         description: "Product Created.",
       });
-      router.push("/calendar/products");
+      router.push("/dashboard/calendar/products");
     },
-    onError: () => {
+    onError: async (error: AxiosError<ErrorResponse>) => {
       toast({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: "Failed to create product",
+        description: error.response?.data?.error || "Failed to create product!",
       });
     },
   });
@@ -367,13 +368,12 @@ export function CalendarProductEdit({
                       <FormItem>
                         <FormLabel htmlFor="storeUrl">Currency</FormLabel>
                         <FormControl></FormControl>
-                        <Select defaultValue="USD">
+                        <Select defaultValue="USD" disabled>
                           <SelectTrigger className="w-auto">
                             <SelectValue placeholder="Currency" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="USD">USD</SelectItem>
-                            <SelectItem value="CAD">CAD</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -395,7 +395,7 @@ export function CalendarProductEdit({
                     )}
                   />
                 </div>
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="flexPrice"
                   render={({ field }) => (
@@ -464,7 +464,7 @@ export function CalendarProductEdit({
                       )}
                     />
                   </div>
-                )}
+                )} */}
                 <Separator className="mt-8" />
                 <div>
                   <h1 className="text-xl font-bold mt-6 text-secondary-foreground">
@@ -473,14 +473,14 @@ export function CalendarProductEdit({
                 </div>
                 <FormField
                   control={form.control}
-                  name="hidden"
+                  name="visibility"
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mt-4 mb-6 ">
                       <div className="space-y-0.5">
-                        <FormLabel>Product Hidden</FormLabel>
+                        <FormLabel>Product Visible</FormLabel>
                         <FormDescription>
                           Make this product visible on your profile. By default,
-                          its public.
+                          its private.
                         </FormDescription>
                       </div>
                       <FormControl>

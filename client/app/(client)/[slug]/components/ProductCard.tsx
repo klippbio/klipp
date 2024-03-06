@@ -46,7 +46,7 @@ export default function ProductCard({
       }}
       className={cn(
         "w-full h-44 rounded-lg hover:bg-primary-background hover:shadow-md",
-        authDetails.token === undefined ? "cursor-pointer" : "cursor-move"
+        authDetails.storeUrl !== username ? "cursor-pointer" : "cursor-move"
       )}
       key={item.id}
       onMouseEnter={() => setIsHovered(true)}
@@ -55,7 +55,7 @@ export default function ProductCard({
       <div className=" p-4">
         <div className="flex flex-row justify-between text-secondary-foreground p-4 bg-secondary rounded-lg h-20">
           <div className="p-4 text-xl font-semibold">{item?.name}</div>
-          {isHovered && !isDragging && authDetails.token !== undefined && (
+          {isHovered && !isDragging && authDetails.storeUrl === username && (
             <Button
               className="flex items-center justify-center w-10 h-10 px-2 py-2  rounded-full hover:bg-secondary-foreground hover:text-primary-foreground border border-secondary-foreground"
               variant={"outline"}

@@ -40,7 +40,7 @@ export default function GoogleCalendarSettings({
       if (response.status === 200) {
         toast({
           title: "Successfully unlinked Google Calendar",
-          description: "It is done really!",
+          description: "Your products wont be visible if no calendar is linked",
           variant: "default",
         });
       }
@@ -66,13 +66,13 @@ export default function GoogleCalendarSettings({
           title: "Successfully linked Google Calendar",
           variant: "default",
         });
-        router.replace("/calendar/settings");
+        router.replace("/dashboard/calendar/settings");
       } else if (message == "auth_failed") {
         toast({
           title: "Failed to link Google Calendar. Please try again",
           variant: "destructive",
         });
-        router.replace("/calendar/settings");
+        router.replace("/dashboard/calendar/settings");
       }
     }
   }, [message, router, toast]);
@@ -148,8 +148,8 @@ export default function GoogleCalendarSettings({
             <div className="flex items-center">
               <Button onClick={handleLinkCalendar}>Link</Button>
               <p className="text-[0.8rem] text-destructive ml-2">
-                Users will not be able to book meeting if calendar is not
-                connected
+                Users will not be able to view calendar products and book
+                meeting if calendar is not connected
               </p>
             </div>
           )}

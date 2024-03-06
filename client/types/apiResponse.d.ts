@@ -30,7 +30,7 @@ export interface CalendarProductApiResponse {
   shortDescription?: string;
   description?: string;
   length: number;
-  hidden: boolean;
+  visibility: boolean;
   bookings?: Booking[];
   availability?: AvailabilityApiResponse[];
   timeZone?: string;
@@ -88,4 +88,11 @@ export interface BookingApiResponse extends booking {
 
 export interface ErrorResponse {
   error: string;
+}
+
+export interface StripePaymentDetailsApiResponse {
+  id: number;
+  storeId: string;
+  accountId: string;
+  onboardingComplete: boolean;
 }

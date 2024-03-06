@@ -38,8 +38,7 @@ export default async function createCheckoutSession(
   data: z.infer<typeof ZCreateNewSaleSchema>
 ) {
   const accountId = await getStripeAccountId(data.storeId);
-  const successUrl =
-    process.env.FRONTEND_URL + "/dashboard/sale/" + data.saleId;
+  const successUrl = process.env.FRONTEND_URL + "/sale/" + data.saleId;
   const price = data.price * 100;
   const session = await stripe.checkout.sessions.create({
     mode: "payment",

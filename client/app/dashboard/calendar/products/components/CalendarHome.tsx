@@ -59,7 +59,7 @@ function CalendarHome() {
                       <div className="flex space-x-4">
                         <div>{item.title}</div>
                         <Badge variant={"outline"} className="h-6 mt-1">
-                          {item.hidden ? "Private" : "Public"}
+                          {item.visibility ? "Public" : "Private"}
                         </Badge>
                       </div>
                       <div className="">

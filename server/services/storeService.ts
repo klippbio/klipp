@@ -7,6 +7,9 @@ export const checkStoreUrlExists = async (
   if (!storeUrl) {
     throw new Error("storeUrl must be a non-empty string");
   }
+  if (storeUrl === "/dashboard") {
+    throw new Error("storeUrl cannot be /dashboard");
+  }
   return db.store.findUnique({
     where: {
       storeUrl: storeUrl,
