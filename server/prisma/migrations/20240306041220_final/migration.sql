@@ -32,11 +32,7 @@ CREATE TABLE "Store" (
     "tiktok" TEXT,
     "youtube" TEXT,
     "twitter" TEXT,
-<<<<<<<< HEAD:server/prisma/migrations/20240304220414_added_analytics/migration.sql
-    "color" TEXT DEFAULT '#000000',
-========
     "color" TEXT DEFAULT '#E9976A',
->>>>>>>> origin:server/prisma/migrations/20240302210037_edited_visiblity_and_sale_id_to_uuid/migration.sql
 
     CONSTRAINT "Store_pkey" PRIMARY KEY ("id")
 );
@@ -223,7 +219,7 @@ CREATE TABLE "Booking" (
     "meetingId" TEXT,
     "rescheduled" BOOLEAN DEFAULT false,
     "saleId" TEXT,
-    "cancelledSaleId" INTEGER,
+    "cancelledSaleId" TEXT,
 
     CONSTRAINT "Booking_pkey" PRIMARY KEY ("id")
 );
@@ -258,9 +254,9 @@ CREATE TABLE "Attendee" (
 -- CreateTable
 CREATE TABLE "Analytics" (
     "id" SERIAL NOT NULL,
+    "storeUrl" TEXT NOT NULL,
     "date" TEXT NOT NULL,
     "pageView" INTEGER NOT NULL,
-    "storeUrl" TEXT NOT NULL,
 
     CONSTRAINT "Analytics_pkey" PRIMARY KEY ("id")
 );
@@ -361,6 +357,9 @@ CREATE INDEX "Attendee_email_idx" ON "Attendee"("email");
 -- CreateIndex
 CREATE INDEX "Attendee_bookingId_idx" ON "Attendee"("bookingId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Analytics_storeUrl_date_key" ON "Analytics"("storeUrl", "date");
+
 -- AddForeignKey
 ALTER TABLE "Store" ADD CONSTRAINT "Store_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -429,6 +428,3 @@ ALTER TABLE "Sale" ADD CONSTRAINT "Sale_storeItemId_fkey" FOREIGN KEY ("storeIte
 
 -- AddForeignKey
 ALTER TABLE "Attendee" ADD CONSTRAINT "Attendee_bookingId_fkey" FOREIGN KEY ("bookingId") REFERENCES "Booking"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Analytics" ADD CONSTRAINT "Analytics_storeUrl_fkey" FOREIGN KEY ("storeUrl") REFERENCES "Store"("storeUrl") ON DELETE CASCADE ON UPDATE CASCADE;
