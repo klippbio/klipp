@@ -37,7 +37,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import DigitalDownloadContent from "../components/digitalDownloadContent";
 import { ErrorResponse } from "@/types/apiResponse";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthDetails } from "@/app/components/AuthContext";
 
 interface CalendarSaleFormData {
@@ -73,7 +72,7 @@ function ProductPage() {
     setSaleFormData(saleFormData);
   };
 
-  const { data, isLoading, error } = useQuery<storeItem, AxiosError>(
+  const { data, error } = useQuery<storeItem, AxiosError>(
     ["productId", id],
     async () => {
       const response = await AxiosApi(
@@ -191,23 +190,6 @@ function ProductPage() {
 
   return (
     <div className="md:flex md:justify-center md:mt-8 md:mx-8 ">
-      {isLoading ? (
-        <div>
-          <Card className="flex flex-col gap-4">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-8 w-1/3" />
-            <Skeleton className="h-2 w-full" />
-            <Skeleton className="h-4 w-2/3" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-6 w-1/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-1/2" />
-            <Skeleton className="h-8 w-full" />
-          </Card>
-        </div>
-      ) : null}
       {data && (
         <Card className="border-hidden md:border-solid md:w-9/12">
           <div className="bg-secondary p-3 rounded-t-xl">

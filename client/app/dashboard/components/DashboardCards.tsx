@@ -110,7 +110,7 @@ function DashboardCards() {
             </CardHeader>
           </Card>
           <Card
-            onClick={() => router.push("/dashboard/digital-product")}
+            onClick={() => router.push("/dashboard/digital-products")}
             className={cn("md:w-2/6 w-full shadow-xl cursor-pointer ")}
           >
             <CardContent className={cn("")}>
