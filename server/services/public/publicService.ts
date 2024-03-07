@@ -44,7 +44,7 @@ export const ZUpdatePublicUser = z.object({
 export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
   const publicUser = await db.store.findUnique({
     where: {
-      storeUrl: input.userName,
+      storeUrl: input.userName.toLowerCase(),
     },
     include: {
       storeItems: {
@@ -103,7 +103,7 @@ export const updatePublicUser = async (
   input: z.infer<typeof ZUpdatePublicUser>
 ) => {
   const updatePublicUser = await db.store.update({
-    where: { storeUrl: input.storeUrl },
+    where: { storeUrl: input.storeUrl.toLowerCase() },
     data: {
       storeTitle: input.displayName,
       storeDescription: input.description,
@@ -127,7 +127,7 @@ export const getPublicProduct = async (input: z.infer<typeof ZProduct>) => {
 
   const store = await db.store.findUnique({
     where: {
-      storeUrl: input.userName,
+      storeUrl: input.userName.toLowerCase(),
     },
   });
 
@@ -178,15 +178,16 @@ export const saveOrUpdateAnalytics = async (data: unknown) => {
     const analyticsData = ZAnalyticsData.parse(data);
 
     for (const [storeUrl, date, pageView] of analyticsData) {
+      const lowerCasedStoreUrl = storeUrl.toLowerCase();
       await db.analytics.upsert({
         where: {
-          storeUrl_date: { storeUrl, date },
+          storeUrl_date: { storeUrl: lowerCasedStoreUrl, date },
         },
         update: {
           pageView,
         },
         create: {
-          storeUrl,
+          storeUrl: lowerCasedStoreUrl,
           date,
           pageView,
         },
@@ -204,7 +205,7 @@ export const getStoreAnalytics = async (data: z.infer<typeof ZStoreUrl>) => {
     // Fetch analytics data for the given store URL
     const analyticsData = await db.analytics.findMany({
       where: {
-        storeUrl: data.storeUrl,
+        storeUrl: data.storeUrl.toLowerCase(),
       },
       select: {
         date: true,

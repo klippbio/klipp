@@ -33,7 +33,7 @@ userController.post("/onboarding", async (req: Request, res: Response) => {
     const newUser = await userService.onboarding(onboardingInput);
     await clerkClient.users.updateUserMetadata(onboardingInput.userId, {
       publicMetadata: {
-        storeUrl: onboardingInput.username,
+        storeUrl: onboardingInput.username.toLowerCase(),
         onboarded: true,
         storeId: newUser.stores[0].id,
       },

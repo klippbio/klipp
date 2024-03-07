@@ -648,7 +648,7 @@ export function ProfileForm({
                         name="currency"
                         render={() => (
                           <FormItem>
-                            <FormLabel htmlFor="storeUrl">Currency</FormLabel>
+                            <FormLabel htmlFor="currency">Currency</FormLabel>
                             <FormControl></FormControl>
                             <Select defaultValue="USD" disabled>
                               <SelectTrigger className="w-auto">
@@ -668,7 +668,7 @@ export function ProfileForm({
                         name="price"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel htmlFor="storeUrl">Price</FormLabel>
+                            <FormLabel htmlFor="price">Price</FormLabel>
                             <FormControl>
                               <Input {...field} id="price" type={"number"} />
                             </FormControl>

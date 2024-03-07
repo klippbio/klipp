@@ -179,14 +179,18 @@ export default function ProfileCards() {
                   <SortableItem
                     key={item.id}
                     id={item.id}
-                    disabled={authDetails.storeUrl !== username ? true : false}
+                    disabled={
+                      authDetails.storeUrl !== username.toLowerCase()
+                        ? true
+                        : false
+                    }
                   >
                     {item.itemType === "LINK" ? (
                       <div className="w-full" key={item.id}>
                         <Card
                           className={cn(
                             "w-full h-44 rounded-lg hover:bg-primary-background overflow-hidden hover:shadow-md",
-                            authDetails.storeUrl !== username
+                            authDetails.storeUrl !== username.toLowerCase()
                               ? "cursor-pointer"
                               : "cursor-move"
                           )}

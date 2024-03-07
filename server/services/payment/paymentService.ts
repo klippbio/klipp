@@ -34,8 +34,17 @@ export const createAccount = async (
 
 //eslint-disable-next-line
 export const handleUpdateAccount = async (input: any) => {
-  //get account from db based on id from event
-  //update charges enabled, transfers enabled, payouts enabled and onboarding complete details
+  const existingAccount = await db.payment.findUnique({
+    where: {
+      accountId: input.id,
+    },
+  });
+
+  if (!existingAccount) {
+    console.log("Account does not exist in the database", input);
+    return;
+  }
+
   const account = await db.payment.update({
     where: {
       accountId: input.id,
@@ -44,6 +53,7 @@ export const handleUpdateAccount = async (input: any) => {
       onboardingComplete: input.details_submitted,
     },
   });
+
   return account;
 };
 

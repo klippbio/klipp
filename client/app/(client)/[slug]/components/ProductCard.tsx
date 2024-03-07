@@ -46,7 +46,9 @@ export default function ProductCard({
       }}
       className={cn(
         "w-full h-44 rounded-lg hover:bg-primary-background hover:shadow-md",
-        authDetails.storeUrl !== username ? "cursor-pointer" : "cursor-move"
+        authDetails.storeUrl !== username.toLowerCase()
+          ? "cursor-pointer"
+          : "cursor-move"
       )}
       key={item.id}
       onMouseEnter={() => setIsHovered(true)}
@@ -55,19 +57,21 @@ export default function ProductCard({
       <div className=" p-4">
         <div className="flex flex-row justify-between text-secondary-foreground p-4 bg-secondary rounded-lg h-20">
           <div className="p-4 text-xl font-semibold">{item?.name}</div>
-          {isHovered && !isDragging && authDetails.storeUrl === username && (
-            <Button
-              className="flex items-center justify-center w-10 h-10 px-2 py-2  rounded-full hover:bg-secondary-foreground hover:text-primary-foreground border border-secondary-foreground"
-              variant={"outline"}
-              onClick={(e) => {
-                e.stopPropagation();
+          {isHovered &&
+            !isDragging &&
+            authDetails.storeUrl === username.toLowerCase() && (
+              <Button
+                className="flex items-center justify-center w-10 h-10 px-2 py-2  rounded-full hover:bg-secondary-foreground hover:text-primary-foreground border border-secondary-foreground"
+                variant={"outline"}
+                onClick={(e) => {
+                  e.stopPropagation();
 
-                router.push(editUrl);
-              }}
-            >
-              <Pencil className="w-10 h-10" />
-            </Button>
-          )}
+                  router.push(editUrl);
+                }}
+              >
+                <Pencil className="w-10 h-10" />
+              </Button>
+            )}
         </div>
         <div className="flex h-20 p-0 items-end justify-between">
           <div className="mb-6 ml-2">
