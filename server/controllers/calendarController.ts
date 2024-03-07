@@ -154,6 +154,7 @@ calendarController.get("/linkCalendar", async (req: Request, res: Response) => {
         "/dashboard/calendar/settings?message=auth_success"
     );
   } catch (error) {
+    console.log(error);
     res.redirect(
       process.env.FRONTEND_URL +
         "/dashboard/calendar/settings?message=auth_failed"

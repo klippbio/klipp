@@ -97,21 +97,22 @@ publicController.get("/analytics", async (req: Request, res: Response) => {
       query: {
         kind: "HogQLQuery",
         query: `SELECT 
-                properties.$pathname AS path, 
-                toDate(timestamp) AS event_date, 
-                COUNT(*) AS event_count
-              FROM 
-                events
-              WHERE 
-                event = '$pageview'
-                AND properties.$pathname <> '/'
-                AND toDate(timestamp) = today()
-              GROUP BY 
-                path, 
-                toDate(timestamp)
-              ORDER BY 
-                path, 
-                toDate(timestamp)`,
+        properties.$pathname AS path, 
+        toDate(timestamp) AS event_date, 
+        COUNT(*) AS event_count
+      FROM 
+        events
+      WHERE 
+        event = '$pageview'
+        AND toDate(timestamp) >= today() - INTERVAL 8 DAY
+        AND toDate(timestamp) <= today()
+        AND toDate(timestamp) = today()
+      GROUP BY 
+        path, 
+        toDate(timestamp)
+      ORDER BY 
+        path, 
+        toDate(timestamp)`,
       },
     };
 

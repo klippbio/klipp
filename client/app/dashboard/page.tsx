@@ -2,7 +2,6 @@
 import React from "react";
 import TopBar from "../components/topBar";
 import { Separator } from "@/components/ui/separator";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthDetails } from "../components/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -19,13 +18,42 @@ type PageViewData = {
 
 //eslint-disable-next-line
 function convertDateToDay(data: any) {
-  //eslint-disable-next-line
-  return data.map((item: any) => {
-    const day = new Date(item.date).toLocaleDateString("en-US", {
-      weekday: "short",
-    });
-    return { ...item, date: day };
-  });
+  const rangeData = [];
+
+  for (let i = 0; i <= 6; i++) {
+    // Calculate date for each day in the range
+    const date = new Date();
+    date.setUTCDate(date.getUTCDate() - i);
+
+    // Format the date to match the API date format, consider using UTC date to align the day
+    const formattedDate = date.toISOString().split("T")[0];
+
+    // Check if there is data for this date
+    const found = data.find(
+      (item: PageViewData) => item.date === formattedDate
+    );
+
+    if (found) {
+      // If data is found, convert the date format for display using UTC date
+      const day = new Date(found.date + "T00:00:00Z").toLocaleDateString(
+        "en-US",
+        {
+          weekday: "short",
+          timeZone: "UTC",
+        }
+      );
+      rangeData.push({ ...found, date: day });
+    } else {
+      // If no data is found, set pageView to 0 using UTC date
+      const day = new Date(date.toISOString()).toLocaleDateString("en-US", {
+        weekday: "short",
+        timeZone: "UTC",
+      });
+      rangeData.push({ date: day, pageView: 0 });
+    }
+  }
+
+  return rangeData.reverse();
 }
 
 function Page() {
