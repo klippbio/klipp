@@ -5,6 +5,7 @@ import Container from "./container";
 
 const Steps = (props: any) => {
   const { data } = props;
+  const bgColor = data.bgColor;
   return (
     <>
       <Container className="flex flex-wrap mb-20 lg:gap-10 lg:flex-nowrap ">
@@ -13,12 +14,14 @@ const Steps = (props: any) => {
             props.imgPos === "right" ? "lg:order-1" : ""
           }`}
         >
-          <div>
+          <div
+            className={`md:p-14 p-5 ${bgColor} mt-8 mr-6 shadow-xl rounded-2xl`}
+          >
             <Image
               src={data.image}
               width="521"
               alt="Benefits"
-              className={"object-cover"}
+              className={"object-cover shadow-xl rounded-2xl"}
               placeholder="blur"
               blurDataURL={data.image.src}
             />
