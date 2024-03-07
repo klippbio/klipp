@@ -2,7 +2,6 @@
 import React from "react";
 import { PaymentMethods } from "./components/PaymentMethods";
 import PaymentDetails from "./components/PaymentDetails";
-import StripeComponent from "./components/StripeComponent";
 
 function Payments() {
   return (
@@ -15,9 +14,9 @@ function Payments() {
           <PaymentMethods />
         </div>
       </div>
-      <div className="w-full mt-4">
+      {/* <div className="w-full mt-4">
         <StripeComponent />
-      </div>
+      </div> */}
     </div>
   );
 }

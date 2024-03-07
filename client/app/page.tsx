@@ -8,22 +8,22 @@ import Footer from "../components/footer";
 import Cta from "../components/cta";
 import Faq from "../components/faq";
 import Steps from "@/components/steps";
-
 const Home = () => {
   return (
-    <div className="bg-white selection:bg-teal-300">
-      <Navbar />
-      <Hero />
-      {/* <Creators /> */}
-      <SectionTitle
-        pretitle="No Coding Required."
-        title="Start Selling in Just 5 Minutes. "
-      ></SectionTitle>
-      <Benefits data={benefitOne} />
-      <Steps imgPos="right" data={stepOne} />
-      <Steps imgPos="left" data={stepTwo} />
-      <Steps imgPos="right" data={stepThree} />
-      {/* <SectionTitle
+    <div>
+      <div className="bg-white md:px-14">
+        <Navbar />
+        <Hero />
+        {/* <Creators /> */}
+        <SectionTitle
+          pretitle="No Coding Required."
+          title="Start Selling in Just 5 Minutes. "
+        ></SectionTitle>
+        <Benefits data={benefitOne} />
+        <Steps imgPos="right" data={stepOne} />
+        <Steps imgPos="left" data={stepTwo} />
+        <Steps imgPos="right" data={stepThree} />
+        {/* <SectionTitle
         pretitle="Watch a video"
         title="Learn how to fullfil your needs"
       >
@@ -31,8 +31,8 @@ const Home = () => {
         Analysts says a landing page with video has 3% more conversion rate. So,
         don&apos;t forget to add one. Just like this.
       </SectionTitle> */}
-      {/* <Video /> */}
-      {/* <SectionTitle
+        {/* <Video /> */}
+        {/* <SectionTitle
         pretitle="Testimonials"
         title="Here's what our customers said"
       >
@@ -40,12 +40,15 @@ const Home = () => {
         Use this section to highlight your popular customers.
       </SectionTitle>
       <Testimonials /> */}
-      <SectionTitle
-        pretitle="FAQ"
-        title="Frequently Asked Questions"
-      ></SectionTitle>
-      <Faq />
-      <Cta />
+
+        <SectionTitle
+          pretitle="FAQ"
+          title="Frequently Asked Questions"
+        ></SectionTitle>
+        <Faq />
+
+        <Cta />
+      </div>
       <Footer />
     </div>
   );

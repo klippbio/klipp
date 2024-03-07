@@ -13,12 +13,12 @@ const Benefits = (props: any) => {
             props.imgPos === "right" ? "lg:order-1" : ""
           }`}
         >
-          <div>
+          <div className="bg-[#faf5ff] md:p-14 p-5 mt-8 mr-6 shadow-xl rounded-2xl">
             <Image
               src={data.image}
-              width="521"
+              width="720"
               alt="Benefits"
-              className={"object-cover"}
+              className={"object-cover shadow-xl rounded-2xl"}
               placeholder="blur"
               blurDataURL={data.image.src}
             />

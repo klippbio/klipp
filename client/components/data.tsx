@@ -9,11 +9,11 @@ import {
   FolderArrowDownIcon,
 } from "@heroicons/react/24/solid";
 
-import benefitOneImg from "../public/img/benefit-one.png";
-import benefitTwoImg from "../public/img/benefit-two.png";
-import benefitThreeImg from "../public/img/benefit-three.png";
+import benefitOneImg from "../public/img/benefits.png";
+import benefitTwoImg from "../public/img/step1.png";
+import benefitThreeImg from "../public/img/meet.png";
 import { CalendarCheck, Link } from "lucide-react";
-
+import benefitFourImg from "../public/img/landscape_img_1.png";
 const benefitOne = {
   title: "All Your Tools, One Platform",
   desc: "Designed for modern creators, mentors, and digital entrepreneurs, we provide everything you need to effortlessly monetize your expertise and products.",
@@ -42,20 +42,23 @@ const stepOne = {
   title: "Create your link-in-bio store in 5 minutes.",
   desc: "Get started in just 3 minutes with our user-friendly setup. Creating your klipp store is simple and completely free.",
   image: benefitTwoImg,
+  bgColor: "bg-[#e5f3f3]",
 };
 
 const stepTwo = {
   pretitle: "Step 2.",
   title: "Get Your Products Live",
   desc: "Set up your first product be it Digital Download, Coaching/Mentoring Session or External Link in no time. ",
-  image: benefitOneImg,
+  image: benefitThreeImg,
+  bgColor: "bg-[#fcf2d6]",
 };
 
 const stepThree = {
   pretitle: "Step 3 . ",
   title: "Promote Your Shop & Start Selling",
   desc: "Keep track of sales and schedules easily. Great for your social media bios.",
-  image: benefitTwoImg,
+  image: benefitFourImg,
+  bgColor: "bg-[#fff1f9]",
 };
 
 export { benefitOne, stepTwo, stepOne, stepThree };

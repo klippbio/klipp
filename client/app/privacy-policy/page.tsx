@@ -5,7 +5,7 @@ import PrivacyPolicy from "@/components/privacy-policy";
 
 const Home = () => {
   return (
-    <div className="bg-white selection:bg-teal-300">
+    <div className="bg-white">
       <Navbar />
 
       <PrivacyPolicy />
