@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const refreshAuthDetails: RefreshAuthDetails = (storeUrl, storeId) => {
     setAuthDetails({
       ...authDetails,
-      storeUrl: storeUrl,
+      storeUrl: storeUrl.toLowerCase(),
       storeId: storeId,
     });
   };

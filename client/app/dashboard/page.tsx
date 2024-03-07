@@ -58,7 +58,7 @@ function convertDateToDay(data: any) {
 
 function Page() {
   const authDetails = useAuthDetails();
-  const storeUrl = authDetails?.storeUrl;
+  const storeUrl = authDetails?.storeUrl?.toLowerCase();
   const storeId = authDetails?.storeId;
 
   const { data, isLoading } = useQuery<Array<PageViewData>, AxiosError>(

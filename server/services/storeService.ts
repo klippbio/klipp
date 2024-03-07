@@ -12,7 +12,7 @@ export const checkStoreUrlExists = async (
   }
   return db.store.findUnique({
     where: {
-      storeUrl: storeUrl,
+      storeUrl: storeUrl.toLowerCase(),
     },
   });
 };

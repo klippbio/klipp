@@ -34,7 +34,7 @@ export const onboarding = async (
       stores: {
         create: {
           thumbnailUrl: input.thumbnailUrl,
-          storeUrl: input.username,
+          storeUrl: input.username.toLowerCase(),
           storeTitle: input.displayName,
           storeDescription: input.description,
           calendarSetting: {

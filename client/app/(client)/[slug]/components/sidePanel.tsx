@@ -146,7 +146,7 @@ export default function SidePanel() {
             </div>
           </div>
           {authDetails.token !== undefined &&
-            authDetails.storeUrl === username && (
+            authDetails.storeUrl === username.toLowerCase() && (
               <div className="mt-auto mb-8 w-3/4 text-sm lg:w-2/3 border rounded-2xl flex justify-between items-center space-x-2 px-2 h-16 bg-input text-foreground">
                 <Button
                   onClick={() => {
