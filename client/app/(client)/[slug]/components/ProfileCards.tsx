@@ -44,7 +44,7 @@ export default function ProfileCards() {
   const router = useRouter();
   const authDetails = useAuthDetails();
 
-  const username = usePathname().substring(1);
+  const username = usePathname().substring(1).toLowerCase();
 
   const { data, error } = useQuery<store, AxiosError>(
     ["allProducts", username],
