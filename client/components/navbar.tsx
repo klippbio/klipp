@@ -101,7 +101,7 @@ const Navbar = () => {
             <div className="flex nav__item">
               <Link
                 href="/dashboard"
-                className="px-6 py-2 text-white bg-primary rounded-md md:ml-5"
+                className="px-6 py-2 text-white bg-purple-600 hover:bg-purple-400 rounded-md md:ml-5"
               >
                 Dashboard
               </Link>
