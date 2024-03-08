@@ -16,8 +16,8 @@ const Navbar = () => {
   const authDetails = useAuthDetails();
 
   return (
-    <div className="w-full ">
-      <nav className="container relative flex items-center justify-between p-8 mx-auto lg:justify-between xl:px-0">
+    <div className="w-full md:px-14 p-8 ">
+      <nav className="container relative flex items-center justify-between mx-auto lg:justify-between xl:px-0">
         {/* Logo  */}
         <Disclosure>
           {({ open }) => (
@@ -101,7 +101,7 @@ const Navbar = () => {
             <div className="flex nav__item">
               <Link
                 href="/dashboard"
-                className="px-6 py-2 text-white bg-primary rounded-md md:ml-5"
+                className="px-6 py-2 text-white bg-purple-600 hover:bg-purple-400 rounded-md md:ml-5"
               >
                 Dashboard
               </Link>
@@ -109,14 +109,18 @@ const Navbar = () => {
           ) : (
             <div className="flex items-center ">
               <div className="flex nav__item m-2">
-                <Button asChild>
+                <Button className="bg-purple-600 hover:bg-purple-500" asChild>
                   <Link href="/sign-in" className="w-24">
                     Login
                   </Link>
                 </Button>
               </div>
               <div className="flex nav__item m-2">
-                <Button variant={"outline"} asChild>
+                <Button
+                  className="hover:text-purple-600 hover:bg-purple-100"
+                  variant={"outline"}
+                  asChild
+                >
                   <Link href="/sign-up" className="w-24">
                     Sign Up
                   </Link>
