@@ -11,19 +11,23 @@ import Steps from "@/components/steps";
 const Home = () => {
   return (
     <div>
-      <div className="bg-white md:px-14">
-        <Navbar />
-        <Hero />
-        {/* <Creators /> */}
-        <SectionTitle
-          pretitle="No Coding Required."
-          title="Start Selling in Just 5 Minutes. "
-        ></SectionTitle>
-        <Benefits data={benefitOne} />
-        <Steps imgPos="right" data={stepOne} />
-        <Steps imgPos="left" data={stepTwo} />
-        <Steps imgPos="right" data={stepThree} />
-        {/* <SectionTitle
+      <div className="">
+        <div className="">
+          <Navbar />
+          <Hero />
+        </div>
+
+        <div className="bg-white md:px-14">
+          {/* <Creators /> */}
+          <SectionTitle
+            pretitle="No Coding Required."
+            title="Start Selling in Just 5 Minutes. "
+          ></SectionTitle>
+          <Benefits data={benefitOne} />
+          <Steps imgPos="right" data={stepOne} />
+          <Steps imgPos="left" data={stepTwo} />
+          <Steps imgPos="right" data={stepThree} />
+          {/* <SectionTitle
         pretitle="Watch a video"
         title="Learn how to fullfil your needs"
       >
@@ -31,8 +35,8 @@ const Home = () => {
         Analysts says a landing page with video has 3% more conversion rate. So,
         don&apos;t forget to add one. Just like this.
       </SectionTitle> */}
-        {/* <Video /> */}
-        {/* <SectionTitle
+          {/* <Video /> */}
+          {/* <SectionTitle
         pretitle="Testimonials"
         title="Here's what our customers said"
       >
@@ -41,15 +45,16 @@ const Home = () => {
       </SectionTitle>
       <Testimonials /> */}
 
-        <SectionTitle
-          pretitle="FAQ"
-          title="Frequently Asked Questions"
-        ></SectionTitle>
-        <Faq />
+          <SectionTitle
+            pretitle="FAQ"
+            title="Frequently Asked Questions"
+          ></SectionTitle>
+          <Faq />
 
-        <Cta />
+          <Cta />
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 };
