@@ -5,6 +5,13 @@ import { Disclosure } from "@headlessui/react";
 import LogoText from "../utils/logoText.png";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Menu } from "lucide-react";
 const Navbar = () => {
   const navigation = [
     "Product",
@@ -16,7 +23,7 @@ const Navbar = () => {
   const authDetails = useAuthDetails();
 
   return (
-    <div className="w-full md:px-14 p-8 ">
+    <div className="w-full md:px-14 p-8 px-0 ">
       <nav className="container relative flex items-center justify-between mx-auto lg:justify-between xl:px-0">
         {/* Logo  */}
         <Disclosure>
@@ -107,26 +114,61 @@ const Navbar = () => {
               </Link>
             </div>
           ) : (
-            <div className="flex items-center ">
-              <div className="flex nav__item m-2">
-                <Button className="bg-purple-600 hover:bg-purple-500" asChild>
-                  <Link href="/sign-in" className="w-24">
-                    Login
-                  </Link>
-                </Button>
+            <>
+              <div className="">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="flex flex-col items-center">
+                      <Menu size={28} />
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      <Button
+                        className="bg-purple-600 hover:bg-purple-500"
+                        asChild
+                      >
+                        <Link href="/sign-in" className="w-24">
+                          Login
+                        </Link>
+                      </Button>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      {" "}
+                      <Button
+                        className="hover:text-purple-600 hover:bg-purple-100"
+                        variant={"outline"}
+                        asChild
+                      >
+                        <Link href="/sign-up" className="w-24">
+                          Sign Up
+                        </Link>
+                      </Button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-              <div className="flex nav__item m-2">
-                <Button
-                  className="hover:text-purple-600 hover:bg-purple-100"
-                  variant={"outline"}
-                  asChild
-                >
-                  <Link href="/sign-up" className="w-24">
-                    Sign Up
-                  </Link>
-                </Button>
+              <div className="hidden md:flex items-center ">
+                <div className="flex nav__item m-2">
+                  <Button className="bg-purple-600 hover:bg-purple-500" asChild>
+                    <Link href="/sign-in" className="w-24">
+                      Login
+                    </Link>
+                  </Button>
+                </div>
+                <div className="flex nav__item m-2">
+                  <Button
+                    className="hover:text-purple-600 hover:bg-purple-100"
+                    variant={"outline"}
+                    asChild
+                  >
+                    <Link href="/sign-up" className="w-24">
+                      Sign Up
+                    </Link>
+                  </Button>
+                </div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </nav>
