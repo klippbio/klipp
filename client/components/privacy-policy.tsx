@@ -289,6 +289,25 @@ function PrivacyPolicy() {
         practices or for other operational, legal, or regulatory reasons.
       </p>
 
+      <h2 className="text-xl font-semibold mb-4">Disclosure</h2>
+      <p>
+        Klipp complies with the Google API Services User Data Policy's
+        requirements. We use Google user data exclusively for enhancing
+        user-facing features prominently within our app. All data use aligns
+        with user consent and serves to improve app functionality or user
+        experience. No data is transferred for advertising purposes. We maintain
+        a strict protocol to prevent unauthorized data reading, adhering to
+        security, legal compliance, and user privacy standards. For detailed
+        insights, visit{" "}
+        <a
+          href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes"
+          className="text-blue-600 hover:text-blue-800"
+        >
+          Google's User Data Policy
+        </a>
+        .
+      </p>
+
       <h2 className="text-xl font-semibold mb-4">Get In Touch</h2>
       <p>
         For more information about our privacy practices, inquiries, or

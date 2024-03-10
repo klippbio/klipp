@@ -115,7 +115,7 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              <div className="">
+              <div className="block md:hidden">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <div className="flex flex-col items-center">
