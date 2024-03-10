@@ -44,7 +44,7 @@ function DashboardCards() {
             className={cn("md:w-2/6 w-full shadow-xl cursor-pointer")}
           >
             <CardContent className={cn("")}>
-              <div className="h-16 flex items-center justify-center align-items-center w-16 bg-red-300 rounded-full mt-5">
+              <div className="h-16 flex items-center justify-center align-items-center w-16 bg-accent rounded-full mt-5">
                 <CreditCard color="#7c5bcf" size={30} />
               </div>
             </CardContent>
