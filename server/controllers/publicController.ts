@@ -7,6 +7,7 @@ import cityTimezones from "../services/calendar/cityTimezones";
 import { isUsersStore } from "../middlewares/isUsersStore";
 import axios from "axios";
 export const publicController = express.Router();
+import { Resend } from "resend";
 
 publicController.get("/publicUser", async (req: Request, res: Response) => {
   try {
@@ -165,3 +166,20 @@ publicController.delete(
     }
   }
 );
+
+publicController.get("/email", async (req: Request, res: Response) => {
+  const resend = new Resend("re_YnWzmCJN_HHCY9gbaD4iX58Q16UtJ6g1V");
+
+  const { data, error } = await resend.emails.send({
+    from: "Meet Shukla <orders@klipp.io>",
+    to: ["kevaljagani0119@gmail.com"],
+    subject: "Your download from meet",
+    html: "<strong>Your download from meet</strong>",
+  });
+
+  if (error) {
+    return res.status(400).json({ error });
+  }
+
+  res.status(200).json({ data });
+});
