@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AxiosApi from "@/app/services/axios";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
 import {
   Form,
   FormControl,
