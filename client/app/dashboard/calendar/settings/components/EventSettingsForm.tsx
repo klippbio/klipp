@@ -9,7 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
 import { CalendarClock, MapPinIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
@@ -170,9 +170,13 @@ export function EventSettingsForm({
           )}
         />
 
-        <Button type="submit" className="w-32">
-          Submit
-        </Button>
+        {mutation.isLoading ? (
+          <ButtonLoading />
+        ) : (
+          <Button type="submit">
+            <span>Save</span>
+          </Button>
+        )}
       </form>
     </Form>
   );

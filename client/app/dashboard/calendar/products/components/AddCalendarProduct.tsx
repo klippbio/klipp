@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -190,12 +190,13 @@ export default function AddCalendarProduct({
               </div>
 
               <DialogFooter>
-                <Button type="submit">
-                  <span>Save</span>
-                  {createCalendarProductMutation.isLoading && (
-                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                  )}
-                </Button>
+                {createCalendarProductMutation.isLoading ? (
+                  <ButtonLoading />
+                ) : (
+                  <Button type="submit">
+                    <span>Save</span>
+                  </Button>
+                )}
               </DialogFooter>
             </form>
           </Form>

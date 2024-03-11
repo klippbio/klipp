@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 
 export default function CalendarProductSelect({
   currentScheduleId,
@@ -153,7 +153,13 @@ export default function CalendarProductSelect({
                 </div>
               </div>
               <div>
-                <Button type="submit">Save</Button>
+                {mutation.isLoading ? (
+                  <ButtonLoading />
+                ) : (
+                  <Button type="submit">
+                    <span>Save</span>
+                  </Button>
+                )}
               </div>
             </form>
           </Form>

@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, ButtonLoading, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -370,7 +370,13 @@ export function SidePanelEdit({
                 )}
               />
               <div className="flex justify-end">
-                <Button type="submit">Save</Button>
+                {mutation.isLoading ? (
+                  <ButtonLoading />
+                ) : (
+                  <Button type="submit">
+                    <span>Save</span>
+                  </Button>
+                )}
               </div>
             </form>
           </Form>

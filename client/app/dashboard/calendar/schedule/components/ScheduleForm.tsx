@@ -24,7 +24,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import DeleteScheduleModal from "./DeleteScheduleModal";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { PencilIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -285,9 +285,13 @@ export default function ScheduleForm({
                       orientation="vertical"
                       className="hidden lg:block h-10"
                     />
-                    <Button type="submit" className="w-16">
-                      Save
-                    </Button>
+                    {updateScheduleMutation.isLoading ? (
+                      <ButtonLoading />
+                    ) : (
+                      <Button type="submit">
+                        <span>Save</span>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardTitle>

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, ButtonLoading, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
@@ -261,7 +261,13 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
               </FormItem>
             )}
           />
-          <Button type="submit">Next</Button>
+          {mutation.isLoading ? (
+            <ButtonLoading />
+          ) : (
+            <Button type="submit">
+              <span>Next</span>
+            </Button>
+          )}
         </form>
       </Form>
     </div>

@@ -1,5 +1,5 @@
 "use client";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, ButtonLoading, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   Dialog,
@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import { Link, Loader2, Trash2, Upload } from "lucide-react";
+import { Link, Trash2, Upload } from "lucide-react";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -329,12 +329,13 @@ function Page() {
                       {/* <div className="w-full flex flex-col mt-2 gap-3"></div> */}
                     </div>
                     <DialogFooter>
-                      <Button type="submit">
-                        <span>Save</span>
-                        {createProductMutation.isLoading && (
-                          <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                        )}
-                      </Button>
+                      {createProductMutation.isLoading ? (
+                        <ButtonLoading />
+                      ) : (
+                        <Button type="submit">
+                          <span>Save</span>
+                        </Button>
+                      )}
                     </DialogFooter>
                   </form>
                 </Form>

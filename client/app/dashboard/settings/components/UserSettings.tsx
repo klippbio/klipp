@@ -12,7 +12,7 @@ import {
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, ButtonLoading, buttonVariants } from "@/components/ui/button";
 import {
   deleteFile,
   generateUploadURL,
@@ -344,7 +344,13 @@ function UserSettings(data: any) {
                   )}
                 />
                 <div className="flex justify-end">
-                  <Button type="submit">Save</Button>
+                  {mutation.isLoading ? (
+                    <ButtonLoading />
+                  ) : (
+                    <Button type="submit">
+                      <span>Save</span>
+                    </Button>
+                  )}
                 </div>
               </form>
             </Form>

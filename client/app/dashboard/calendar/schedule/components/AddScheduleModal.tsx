@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -130,12 +130,13 @@ export default function AddScheduleModal({
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit" onClick={() => setOpen(false)}>
-                  <span>Save</span>
-                  {createScheduleMutation.isLoading && (
-                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                  )}
-                </Button>
+                {createScheduleMutation.isLoading ? (
+                  <ButtonLoading />
+                ) : (
+                  <Button type="submit" onClick={() => setOpen(false)}>
+                    <span>Save</span>
+                  </Button>
+                )}
               </DialogFooter>
             </form>
           </Form>

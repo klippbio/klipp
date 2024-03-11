@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import { AxiosError } from "axios";
@@ -171,7 +171,13 @@ function Step2() {
             )}
           />
           <div className="flex gap-4 items-center">
-            <Button type="submit">Submit</Button>
+            {mutation.isLoading ? (
+              <ButtonLoading />
+            ) : (
+              <Button type="submit">
+                <span>Submit</span>
+              </Button>
+            )}
             <a href="/dashboard">Skip</a>
           </div>
         </form>

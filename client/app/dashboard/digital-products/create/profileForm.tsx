@@ -10,7 +10,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, ButtonLoading, buttonVariants } from "@/components/ui/button";
 import { useState, useEffect, useCallback } from "react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -778,12 +778,14 @@ export function ProfileForm({
                         </FormItem>
                       )}
                     />
-                    <Button className="mt-10 w-32 items-center" type="submit">
-                      <span>Submit</span>
-                      {mutation.isLoading && (
-                        <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                      )}
-                    </Button>
+
+                    {mutation.isLoading ? (
+                      <ButtonLoading />
+                    ) : (
+                      <Button className="mt-10 w-32 items-center" type="submit">
+                        <span>Save</span>
+                      </Button>
+                    )}
                   </form>
                 </Form>
               </div>

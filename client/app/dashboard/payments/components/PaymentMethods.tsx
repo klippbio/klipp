@@ -1,6 +1,6 @@
 "use client";
 import React, { useMemo } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import AxiosApi from "@/app/services/axios";
@@ -334,14 +334,14 @@ export function PaymentMethods() {
                         )}
                       />
                       <div className="flex items-center gap-4 mt-6">
-                        {accountStatus === "new" && (
-                          <Button type="submit">
-                            <span>Connect Stripe</span>
-                            {mutation.isLoading && (
-                              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                            )}
-                          </Button>
-                        )}
+                        {accountStatus === "new" &&
+                          (mutation.isLoading ? (
+                            <ButtonLoading />
+                          ) : (
+                            <Button type="submit">
+                              <span>Save</span>
+                            </Button>
+                          ))}
                         {accountStatus === "new" && (
                           <Badge className="h-8 ml-auto" variant="secondary">
                             <span>Stripe not connected</span>

@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   Dialog,
@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import { Loader2, MoreVertical, Pencil, Trash } from "lucide-react";
+import { MoreVertical, Pencil, Trash } from "lucide-react";
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -244,12 +244,13 @@ function Page() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button type="submit">
-                        <span>Save</span>
-                        {createProductMutation.isLoading && (
-                          <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                        )}
-                      </Button>
+                      {createProductMutation.isLoading ? (
+                        <ButtonLoading />
+                      ) : (
+                        <Button type="submit">
+                          <span>Save</span>
+                        </Button>
+                      )}
                     </DialogFooter>
                   </form>
                 </Form>
