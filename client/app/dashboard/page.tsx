@@ -76,29 +76,27 @@ function Page() {
   );
 
   return (
-    <div className="h-full pt-24 px-4 md:px-8 overflow-hidden ">
-      <div className="mx-4 md:mx-8 mt-8 pb-20 md:pb-0">
-        {isLoading && !data ? (
-          <div>
-            <CustomeSkeleton />
+    <div className="h-full pt-8 px-4 md:px-8 overflow-y-auto ">
+      {isLoading && !data ? (
+        <div>
+          <CustomeSkeleton />
+        </div>
+      ) : (
+        <div className="flex items-center flex-col justify-center md:pb-10">
+          <div className="text-2xl mb-6 font-bold">Hey {storeUrl} 👋</div>
+          <Card className="md:w-2/3 w-full shadow-xl">
+            <CardHeader title="page visits">
+              <CardTitle className="text-foreground">Store Visits</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PageView data={data} />
+            </CardContent>
+          </Card>
+          <div className="md:w-2/3 w-full mt-10">
+            <DashboardCards />
           </div>
-        ) : (
-          <div className="flex items-center flex-col justify-center">
-            <div className="text-2xl mb-6 font-bold">Hey {storeUrl} 👋</div>
-            <Card className="md:w-2/3 w-full shadow-xl">
-              <CardHeader title="page visits">
-                <CardTitle className="text-foreground">Store Visits</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PageView data={data} />
-              </CardContent>
-            </Card>
-            <div className="md:w-2/3 w-full mt-10">
-              <DashboardCards />
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -199,7 +199,7 @@ function Page() {
       {isLoading || isError ? (
         <DigitalDownloadSkeleton />
       ) : (
-        <div className="mt-4 mr-6 w-full grid ">
+        <div className="mr-6 w-full grid ">
           <div>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
