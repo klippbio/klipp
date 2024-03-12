@@ -88,8 +88,6 @@ saleController.get("/", async (req: Request, res: Response) => {
 saleController.post("/cancel", async (req: Request, res: Response) => {
   try {
     const { id } = req.query;
-    //convert id to number and check if it is a number
-    if (isNaN(Number(id))) throw new CustomError("Invalid id", 400);
     const sale = await cancelGoogleCalendarSale(String(id));
     res.status(200).json(sale);
   } catch (error) {

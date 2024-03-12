@@ -1,7 +1,5 @@
 "use client";
 import React from "react";
-import TopBar from "../components/topBar";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthDetails } from "../components/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -78,12 +76,8 @@ function Page() {
   );
 
   return (
-    <div className="h-screen relative">
-      <div className="sticky top-0 z-50 bg-background ">
-        <TopBar pageTitle="Dashboard" className="mx-4 md:mx-8" />
-        <Separator className="mt-4" orientation="horizontal" />
-      </div>
-      <div className="mx-4 md:mx-8 mt-8 overflow-auto pb-20 md:pb-0">
+    <div className="h-full pt-24 px-4 md:px-8 overflow-hidden ">
+      <div className="mx-4 md:mx-8 mt-8 pb-20 md:pb-0">
         {isLoading && !data ? (
           <div>
             <CustomeSkeleton />

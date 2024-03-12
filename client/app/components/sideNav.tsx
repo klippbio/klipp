@@ -6,14 +6,21 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { SignOutButton, useAuth } from "@clerk/nextjs";
-import { NavProps } from "admin";
 import Image from "next/image";
 import logoText from "./../../utils/logoText.png";
 import { LogOut, MoveUpRight, Server } from "lucide-react";
 import { useAuthDetails } from "./AuthContext";
 import { Separator } from "@/components/ui/separator";
+import { NavItem } from "../dashboard/layout";
 
-export function SideNav({ className, items, ...props }: NavProps) {
+export function SideNav({
+  className,
+  items,
+  ...props
+}: {
+  items: NavItem[];
+  className?: string;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const authDetails = useAuthDetails();
@@ -22,7 +29,7 @@ export function SideNav({ className, items, ...props }: NavProps) {
 
   return (
     <>
-      <div className="flex flex-col h-full w-full justify-start p-2.5 bg-secondary text-secondary-foreground">
+      <div className="flex flex-col h-full w-full justify-start p-2.5 bg-secondary text-secondary-foreground z-15">
         <div className="flex justify-start py-5 px-4 ">
           <Image
             src={logoText}
