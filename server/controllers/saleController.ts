@@ -69,7 +69,7 @@ saleController.post("/create", async (req: Request, res: Response) => {
           from_name: req.body.storeUrl,
           to_email: req.body.saleFormData.email,
           to_name: req.body.saleFormData.name,
-          subject: "Meeting with" + req.body.storeUrl,
+          subject: "Meeting with " + req.body.storeUrl,
           link: link,
           itemType: "CALENDAR",
         };
