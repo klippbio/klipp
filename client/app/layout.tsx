@@ -22,7 +22,7 @@ export const metadata = {
     type: "article",
     images: [
       {
-        url: "https://www.klipp.io/logoText.jpg",
+        url: "https://www.klipp.io/logoBanner.jpg",
         width: 1200,
         height: 630,
         alt: "klipp",
@@ -34,7 +34,7 @@ export const metadata = {
     title: "klipp",
     description:
       "Turn Passion into Profit with your Digital Store Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
-    images: ["https://www.klipp.io/logoText.jpg"],
+    images: ["https://www.klipp.io/logoBanner.jpg"],
   },
 };
 export default function RootLayout({
