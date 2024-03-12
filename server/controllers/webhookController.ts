@@ -7,7 +7,6 @@ import { emailTrigger } from "./saleController";
 export const webhookController = express.Router();
 
 webhookController.post("/", async (req: Request, res: Response) => {
-  console.log("webhook triggered");
   try {
     if (req.body.type === "account.updated") {
       handleUpdateAccount(req.body.data.object);
