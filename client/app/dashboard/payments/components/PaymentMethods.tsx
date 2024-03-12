@@ -402,7 +402,7 @@ export function PaymentMethods() {
 
                     {accountStatus === "connected" && (
                       <Button
-                        variant={"outline"}
+                        variant={"secondary"}
                         onClick={() => handleDashboardRedirect()}
                       >
                         <span className="">
@@ -421,7 +421,7 @@ export function PaymentMethods() {
                     {accountStatus === "connected" && (
                       <Badge
                         className="h-8 ml-auto text-center"
-                        variant="secondary"
+                        variant="outline"
                       >
                         <span>
                           <div className="text-xs">Stripe Connected</div>
