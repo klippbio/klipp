@@ -106,12 +106,14 @@ export default function RootLayout({
         <SideNav items={navItems} />
         <Separator orientation="vertical" />
       </div>
-      <div className="flex flex-col md:pl-64 md:h-screen pb-20 md:pb-0 w-full ">
-        <div className="fixed top-0 w-full z-10 bg-background overflow-hidden">
+      <div className="flex flex-col md:pl-64 md:h-screen pb-20 md:pb-0 w-full overflow-hidden">
+        <div className="fixed md:static top-0 w-full z-10 bg-background ">
           <TopBar items={navItems} className="mx-4 md:mx-8" />
           <Separator className="mt-4" orientation="horizontal" />
         </div>
-        <div>{children}</div>
+        <div className="relative overflow-hidden h-full w-full mt-20 md:mt-0">
+          {children}
+        </div>
       </div>
       <div className="md:hidden w-full">
         <BottomBar items={navItems} />

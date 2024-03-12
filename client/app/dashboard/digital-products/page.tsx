@@ -184,7 +184,7 @@ function Page() {
       {isLoading || isError ? (
         <DigitalDownloadSkeleton />
       ) : (
-        <div className="mt-4 mr-6 grid ">
+        <div className="mr-6 grid ">
           <div>
             <Dialog>
               <DialogTrigger asChild>
