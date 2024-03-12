@@ -165,38 +165,4 @@ publicController.delete(
   }
 );
 
-// publicController.get("/email", async (req: Request, res: Response) => {
-//   // const resend = new Resend(process.env.RESEND_API_KEY);
-//   // const emailHtmlPath = path.join(__dirname, "email.html");
-//   // const name = "keval";
-//   // let emailHtml = await fs.readFile(emailHtmlPath, "utf8");
-
-//   // // Replace the placeholder in your email template with the actual name
-//   // emailHtml = emailHtml.replace(/alanturing/g, name);
-//   // emailHtml = emailHtml.replace(
-//   //   /https:\/\/vercel.com\/teams\/invite\/foo/g,
-//   //   "https://www.google.com"
-//   // );
-
-//   // try {
-//   //   // Asynchronously read the content of email.html
-//   //   const inviteLink = "https://google.com";
-//   //   const { data, error } = await resend.emails.send({
-//   //     from: "Meet Shukla <orders@klipp.io>",
-//   //     to: ["kevaljagani0119@gmail.com"],
-//   //     subject: "Your download from meet",
-//   //     html: render(VercelInviteUserEmail({ inviteLink })),
-//   //   });
-
-//   //   if (error) {
-//   //     return res.status(400).json({ error });
-//   //   }
-
-//   //   res.status(200).json({ data });
-//   // } catch (error) {
-//   //   res.status(500).json({ error: "Error processing your request" });
-//   // }
-
-// });
-
 export default publicController;
