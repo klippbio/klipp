@@ -1,15 +1,11 @@
 import express from "express";
 import { Request, Response } from "express";
-
 import * as publicService from "../services/public/publicService";
 import CustomError from "../utils/CustomError";
 import cityTimezones from "../services/calendar/cityTimezones";
 import { isUsersStore } from "../middlewares/isUsersStore";
 import axios from "axios";
 export const publicController = express.Router();
-import { Resend } from "resend";
-import { promises as fs } from "fs";
-import * as path from "path"; // Import path module
 
 publicController.get("/publicUser", async (req: Request, res: Response) => {
   try {
@@ -169,37 +165,38 @@ publicController.delete(
   }
 );
 
-publicController.get("/email", async (req: Request, res: Response) => {
-  const resend = new Resend("re_YnWzmCJN_HHCY9gbaD4iX58Q16UtJ6g1V");
-  const emailHtmlPath = path.join(__dirname, "email.html");
-  const name = "keval";
-  let emailHtml = await fs.readFile(emailHtmlPath, "utf8");
+// publicController.get("/email", async (req: Request, res: Response) => {
+//   // const resend = new Resend(process.env.RESEND_API_KEY);
+//   // const emailHtmlPath = path.join(__dirname, "email.html");
+//   // const name = "keval";
+//   // let emailHtml = await fs.readFile(emailHtmlPath, "utf8");
 
-  // Replace the placeholder in your email template with the actual name
-  emailHtml = emailHtml.replace(/alanturing/g, name);
-  emailHtml = emailHtml.replace(
-    /https:\/\/vercel.com\/teams\/invite\/foo/g,
-    "https://www.google.com"
-  );
+//   // // Replace the placeholder in your email template with the actual name
+//   // emailHtml = emailHtml.replace(/alanturing/g, name);
+//   // emailHtml = emailHtml.replace(
+//   //   /https:\/\/vercel.com\/teams\/invite\/foo/g,
+//   //   "https://www.google.com"
+//   // );
 
-  try {
-    // Asynchronously read the content of email.html
+//   // try {
+//   //   // Asynchronously read the content of email.html
+//   //   const inviteLink = "https://google.com";
+//   //   const { data, error } = await resend.emails.send({
+//   //     from: "Meet Shukla <orders@klipp.io>",
+//   //     to: ["kevaljagani0119@gmail.com"],
+//   //     subject: "Your download from meet",
+//   //     html: render(VercelInviteUserEmail({ inviteLink })),
+//   //   });
 
-    const { data, error } = await resend.emails.send({
-      from: "Meet Shukla <orders@klipp.io>",
-      to: ["kevaljagani0119@gmail.com"],
-      subject: "Your download from meet",
-      html: emailHtml, // Use the read content as HTML
-    });
+//   //   if (error) {
+//   //     return res.status(400).json({ error });
+//   //   }
 
-    if (error) {
-      return res.status(400).json({ error });
-    }
+//   //   res.status(200).json({ data });
+//   // } catch (error) {
+//   //   res.status(500).json({ error: "Error processing your request" });
+//   // }
 
-    res.status(200).json({ data });
-  } catch (error) {
-    res.status(500).json({ error: "Error processing your request" });
-  }
-});
+// });
 
 export default publicController;
