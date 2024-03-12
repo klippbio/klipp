@@ -13,13 +13,25 @@ import {
 } from "lucide-react/";
 import { HomeIcon } from "lucide-react/";
 import { Separator } from "@/components/ui/separator";
+import TopBar from "../components/topBar";
+
+export interface NavItem {
+  title: string;
+  href: string;
+  baseHref: string;
+  icon: React.ReactNode;
+  pageNavItems?: {
+    title: string;
+    href: string;
+  }[];
+}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const navItems = [
+  const navItems: NavItem[] = [
     {
       title: "Dashboard",
       href: "/dashboard",
@@ -43,12 +55,36 @@ export default function RootLayout({
       href: "/dashboard/calendar/products",
       baseHref: "/dashboard/calendar",
       icon: <CalendarClock size={20} />,
+      pageNavItems: [
+        {
+          title: "Products",
+          href: "/dashboard/calendar/products",
+        },
+        {
+          title: "Schedule",
+          href: "/dashboard/calendar/schedule",
+        },
+        {
+          title: "Settings",
+          href: "/dashboard/calendar/settings",
+        },
+      ],
     },
     {
       title: "My Bookings",
-      href: "/dashboard/bookings",
+      href: "/dashboard/bookings/upcoming",
       baseHref: "/dashboard/bookings",
       icon: <CalendarCheck size={20} />,
+      pageNavItems: [
+        {
+          title: "Upcoming",
+          href: "/dashboard/bookings/upcoming",
+        },
+        {
+          title: "Completed",
+          href: "/dashboard/bookings/completed",
+        },
+      ],
     },
     {
       title: "Sales",
@@ -70,8 +106,12 @@ export default function RootLayout({
         <SideNav items={navItems} />
         <Separator orientation="vertical" />
       </div>
-      <div className="flex flex-col md:pl-64 h-screen pb-20 md:pb-0 w-full">
-        {children}
+      <div className="flex flex-col md:pl-64 md:h-screen pb-20 md:pb-0 w-full ">
+        <div className="fixed top-0 w-full z-10 bg-background overflow-hidden">
+          <TopBar items={navItems} className="mx-4 md:mx-8" />
+          <Separator className="mt-4" orientation="horizontal" />
+        </div>
+        <div>{children}</div>
       </div>
       <div className="md:hidden w-full">
         <BottomBar items={navItems} />

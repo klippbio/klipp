@@ -9,7 +9,6 @@ import { Menu } from "lucide-react";
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import logoText from "./../../utils/logoText.png";
-import { NavProps } from "admin";
 import {
   Drawer,
   DrawerClose,
@@ -21,15 +20,23 @@ import {
 } from "@/components/ui/drawer";
 import Image from "next/image";
 import { useAuthDetails } from "./AuthContext";
+import { NavItem } from "../dashboard/layout";
 
-export function BottomBar({ className, items, ...props }: NavProps) {
+export function BottomBar({
+  className,
+  items,
+  ...props
+}: {
+  items: NavItem[];
+  className?: string;
+}) {
   const pathname = usePathname();
   const authDetails = useAuthDetails();
 
   return (
     // Bottom Navigation Panel Code
     <div
-      className={`block fixed bottom-0 left-0 right-0 z-1 bg-background  ${className}`}
+      className={`block fixed bottom-0 left-0 right-0 z-50 bg-background  ${className}`}
     >
       <Separator orientation="horizontal" />
       <div className="flex justify-between p-4">

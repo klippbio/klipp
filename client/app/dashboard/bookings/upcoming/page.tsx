@@ -1,7 +1,7 @@
 "use client";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import AxiosApi from "@/app/services/axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React from "react";
 import dayjs from "../../../../utils/dayjs.index";
@@ -27,6 +27,7 @@ import { formatDateSuccessPage } from "@/utils/formatDate";
 
 function Page() {
   const authDetails = useAuthDetails();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const timezone = dayjs.tz.guess();
   const {
@@ -59,7 +60,11 @@ function Page() {
         title: "Cancel successful",
         duration: 2000,
       });
-      router.refresh();
+      await queryClient.invalidateQueries([
+        "bookings",
+        "upcoming",
+        authDetails.storeId,
+      ]);
     },
     onError: async (data: AxiosError<ErrorResponse>) => {
       toast({
