@@ -32,6 +32,11 @@ export const ZCreateNewSaleSchema = z.object({
   thumbnailUrl: z.string(),
   saleId: z.number().optional(),
   cancelUrl: z.string().optional(),
+  from_name: z.string().optional(),
+  to_email: z.string().optional(),
+  to_name: z.string().optional(),
+  subject: z.string().optional(),
+  itemType: z.string().optional(),
 });
 
 export default async function createCheckoutSession(
@@ -64,6 +69,12 @@ export default async function createCheckoutSession(
     cancel_url: data.cancelUrl,
     metadata: {
       saleId: data.saleId,
+      from_name: data.from_name,
+      to_email: data.to_email,
+      to_name: data.to_name,
+      subject: data.subject,
+      link: successUrl,
+      itemType: data.itemType,
     },
   });
 

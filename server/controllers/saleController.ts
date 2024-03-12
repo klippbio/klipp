@@ -13,6 +13,47 @@ import { StoreItemType } from "@prisma/client";
 import createCheckoutSession from "./paymentController";
 import { isUsersStore } from "../middlewares/isUsersStore";
 
+import { Resend } from "resend";
+import { DdEmail } from "../emails/ddEmail";
+import { render } from "@react-email/render";
+import { CalendarEmail } from "../emails/calendarEmail";
+
+type emailDataType = {
+  from_name: string;
+  to_email: string;
+  to_name: string;
+  subject: string;
+  link: string;
+  itemType: string;
+};
+
+export async function emailTrigger(data: emailDataType) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const downloadLink = data.link;
+  const toName = data.to_name;
+  const fromName = data.from_name;
+  let htmlContent;
+
+  if (data.itemType === "CALENDAR") {
+    htmlContent = render(CalendarEmail({ downloadLink, toName, fromName }));
+  } else {
+    htmlContent = render(DdEmail({ downloadLink, toName }));
+  }
+
+  try {
+    const result = await resend.emails.send({
+      from: `${data.from_name} <orders@klipp.io>`,
+      to: [`${data.to_email}`],
+      subject: data.subject,
+      html: htmlContent,
+    });
+    return result;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return error;
+  }
+}
+
 export const saleController = express.Router();
 
 saleController.post("/create", async (req: Request, res: Response) => {
@@ -24,10 +65,27 @@ saleController.post("/create", async (req: Request, res: Response) => {
       if (req.body.price === "0") {
         await updateSaleStatus(sale.id, "COMPLETED");
         const link = process.env.FRONTEND_URL + "/sale/" + sale.id;
+        const saleEmail = {
+          from_name: req.body.storeUrl,
+          to_email: req.body.saleFormData.email,
+          to_name: req.body.saleFormData.name,
+          subject: "Meeting with" + req.body.storeUrl,
+          link: link,
+          itemType: "CALENDAR",
+        };
+        await emailTrigger(saleEmail);
         res.status(200).json(link);
       } else {
         const data = req.body;
-        const combinedData = { ...data, saleId: sale.id };
+        const combinedData = {
+          ...data,
+          saleId: sale.id,
+          from_name: req.body.storeUrl,
+          to_email: req.body.saleFormData.email,
+          to_name: req.body.saleFormData.name,
+          subject: "Your purchase from " + req.body.storeUrl,
+          itemType: "CALENDAR",
+        };
         const link = await createCheckoutSession(combinedData);
         res.status(200).json(link);
       }
@@ -36,10 +94,27 @@ saleController.post("/create", async (req: Request, res: Response) => {
       if (req.body.price === "0") {
         await updateSaleStatus(sale.id, "COMPLETED");
         const link = process.env.FRONTEND_URL + "/sale/" + sale.id;
+        const saleEmail = {
+          from_name: req.body.storeUrl,
+          to_email: req.body.saleFormData.email,
+          to_name: req.body.saleFormData.name,
+          subject: "Your purchase from " + req.body.storeUrl,
+          link: link,
+          itemType: "DIGITAL_DOWNLOAD",
+        };
+        await emailTrigger(saleEmail);
         res.status(200).json(link);
       } else {
         const data = req.body;
-        const combinedData = { ...data, saleId: sale.id };
+        const combinedData = {
+          ...data,
+          saleId: sale.id,
+          from_name: req.body.storeUrl,
+          to_email: req.body.saleFormData.email,
+          to_name: req.body.saleFormData.name,
+          subject: "Your purchase from " + req.body.storeUrl,
+          itemType: "DIGITAL_DOWNLOAD",
+        };
         const link = await createCheckoutSession(combinedData);
         res.status(200).json(link);
       }
