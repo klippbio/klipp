@@ -18,6 +18,7 @@ import dayjs from "../../../../../utils/dayjs.index";
 import { SaleFormData } from "../../[productId]/page";
 import { TimezoneSelect } from "@/components/ui/timezoneSelect";
 import SelectSlot from "./SelectSlot";
+import { Separator } from "@/components/ui/separator";
 
 const calendarSaleFormData = z.object({
   name: z.string(),
@@ -74,19 +75,22 @@ export default function CalendarContent({
 
   return (
     <div>
-      <div className="text-secondary-foreground">
+      <div className="text-secondary-foreground pb-4">
         <Editor
           initialBlocks={initialBlocksData}
           updateEditorData={initialBlocksData}
           isReadonly={true}
         ></Editor>
       </div>
+      <Separator orientation="horizontal" />
       <Form {...form}>
-        <form>
+        <form className="pt-4">
           <div className="flex flex-col gap-4 md:flex-nowrap flex-wrap">
             <div className="flex flex-col w-full">
               <div className="flex items-center w-full pb-2 pl-1">
-                <Label className="mr-2">Timezone</Label>
+                <Label className="mr-2 font-medium text-secondary-foreground">
+                  Timezone
+                </Label>
               </div>
               <div className="w-full ">
                 <TimezoneSelect
@@ -110,7 +114,12 @@ export default function CalendarContent({
                     <FormItem className="flex flex-col w-full">
                       <div className="flex flex-col w-full">
                         <div className="flex items-center w-full pb-2 pl-1">
-                          <FormLabel htmlFor="name">Name</FormLabel>
+                          <FormLabel
+                            htmlFor="name"
+                            className="text-secondary-foreground"
+                          >
+                            Name
+                          </FormLabel>
                         </div>
                         <div className="w-full ">
                           <FormControl>
@@ -131,7 +140,10 @@ export default function CalendarContent({
                     <FormItem className="flex flex-col w-full">
                       <div className="flex flex-col w-full">
                         <div className="flex items-center w-full pb-2 pl-1">
-                          <FormLabel className="w-1/6" htmlFor="email">
+                          <FormLabel
+                            className="w-1/6 text-secondary-foreground"
+                            htmlFor="email"
+                          >
                             Email
                           </FormLabel>
                         </div>

@@ -6,7 +6,7 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen w-screen ">
+    <div className="h-svh md:h-screen w-screen ">
       <PHProvider>{children}</PHProvider>
     </div>
   );

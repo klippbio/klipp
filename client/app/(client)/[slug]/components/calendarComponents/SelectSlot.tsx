@@ -162,7 +162,9 @@ function SelectSlot({
   return (
     <div className="flex flex-col justify-between md:flex-row gap-4 w-full h-full ">
       <div className="flex flex-col rounded-md border p-2 md:w-2/3">
-        <h1 className="text-l font-medium">Pick a date</h1>
+        <h1 className="font-medium text-secondary-foreground text-sm">
+          Pick a date
+        </h1>
         <div className="flex items-center justify-center h-[360px] md:h-[400px]">
           {isLoading ? (
             <div className="w-full flex flex-col gap-4">
@@ -193,7 +195,9 @@ function SelectSlot({
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full md:w-1/3 rounded-md border p-2">
-        <h1 className="text-l font-medium">Available Slots</h1>
+        <h1 className="font-medium text-secondary-foreground text-sm">
+          Available Slots
+        </h1>
         <ScrollArea className="h-[400px]">
           <div className="flex flex-col gap-2 w-full h-full">
             {isLoading ? (

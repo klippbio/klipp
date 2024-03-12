@@ -245,7 +245,7 @@ function ProductPage() {
               )}
             </div>
           </div>
-          <CardContent className="pt-3 pb-36 md:pb-12 p-3">
+          <CardContent className="pt-3 md:pb-12 p-3 pb-24">
             {data && data.itemType === "DIGITALPRODUCT" ? (
               <DigitalDownloadContent
                 itemDetails={data.itemDetails as DigitalProductDetails}

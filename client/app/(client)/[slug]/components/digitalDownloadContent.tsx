@@ -13,6 +13,7 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { SaleFormData } from "../[productId]/page";
+import { Separator } from "@/components/ui/separator";
 
 const bookingFormSchema = z.object({
   name: z.string(),
@@ -62,15 +63,16 @@ export default function DigitalDownloadContent({
 
   return (
     <div>
-      <div className="text-secondary-foreground">
+      <div className="text-secondary-foreground pb-4">
         <Editor
           initialBlocks={initialBlocksData}
           updateEditorData={initialBlocksData}
           isReadonly={true}
         ></Editor>
       </div>
+      <Separator orientation="horizontal" />
       <Form {...form}>
-        <form>
+        <form className="pt-4">
           <div className="flex flex-col gap-4 md:flex-nowrap flex-wrap">
             <div className="w-full flex-none md:flex gap-4">
               <div className=" w-full">
@@ -79,7 +81,12 @@ export default function DigitalDownloadContent({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="name">Name</FormLabel>
+                      <FormLabel
+                        htmlFor="name"
+                        className="font-medium text-secondary-foreground"
+                      >
+                        Name
+                      </FormLabel>
                       <FormControl>
                         <Input {...field} name="name" id="name" />
                       </FormControl>
@@ -94,7 +101,12 @@ export default function DigitalDownloadContent({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="email">email</FormLabel>
+                      <FormLabel
+                        htmlFor="email"
+                        className="font-medium text-secondary-foreground"
+                      >
+                        Email
+                      </FormLabel>
                       <FormControl>
                         <Input {...field} name="email" type="email" id="emal" />
                       </FormControl>
