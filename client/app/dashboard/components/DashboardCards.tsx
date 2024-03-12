@@ -25,47 +25,47 @@ function DashboardCards() {
         <div className="flex md:flex-row flex-col gap-6">
           <Card
             onClick={() => router.push("/dashboard/settings")}
-            className={cn("md:w-2/6 w-full shadow-xl cursor-pointer")}
+            className="md:w-2/6 p-3 w-full shadow-xl cursor-pointer"
           >
-            <CardContent className={cn("")}>
-              <div className="h-16 flex items-center justify-center align-items-center w-16 bg-accent rounded-full mt-5">
+            <CardHeader className="p-3 flex flex-col ">
+              <div className="h-16 flex items-center justify-center w-16 bg-accent rounded-full">
                 <ImageIcon color="#7c5bcf" size={30} />
               </div>
-            </CardContent>
-            <CardHeader className={cn("p-0 ml-6 mb-4")} title="page visits">
-              <CardTitle className="text-foreground">Update profile</CardTitle>
+              <CardTitle className="text-foreground pt-3">
+                Update profile
+              </CardTitle>
               <CardDescription className="text-foreground">
                 Update your store profile information
               </CardDescription>
             </CardHeader>
           </Card>
+
           <Card
             onClick={() => router.push("/dashboard/payments")}
-            className={cn("md:w-2/6 w-full shadow-xl cursor-pointer")}
+            className="md:w-2/6 p-3 w-full shadow-xl cursor-pointer"
           >
-            <CardContent className={cn("")}>
-              <div className="h-16 flex items-center justify-center align-items-center w-16 bg-accent rounded-full mt-5">
+            <CardHeader className="p-3 flex flex-col ">
+              <div className="h-16 flex items-center justify-center w-16 bg-accent rounded-full">
                 <CreditCard color="#7c5bcf" size={30} />
               </div>
-            </CardContent>
-            <CardHeader className={cn("p-0 ml-6 mb-4")} title="page visits">
-              <CardTitle className="text-foreground">Set up payments</CardTitle>
+              <CardTitle className="text-foreground pt-3">
+                Set up payments
+              </CardTitle>
               <CardDescription className="text-foreground">
                 Connect your stripe account
               </CardDescription>
             </CardHeader>
           </Card>
+
           <Card
             onClick={() => router.push("/dashboard/sales")}
-            className={cn("md:w-2/6 w-full cursor-pointer shadow-xl ")}
+            className="md:w-2/6 p-3 w-full shadow-xl cursor-pointer"
           >
-            <CardContent className={cn("")}>
-              <div className="h-16 flex items-center justify-center align-items-center w-16 bg-accent rounded-full mt-5">
+            <CardHeader className="p-3 flex flex-col ">
+              <div className="h-16 flex items-center justify-center w-16 bg-accent rounded-full">
                 <PercentIcon color="#7c5bcf" size={30} />
               </div>
-            </CardContent>
-            <CardHeader className={cn("p-0 ml-6 mb-4")} title="page visits">
-              <CardTitle className="text-foreground">
+              <CardTitle className="text-foreground pt-3">
                 Track your sales
               </CardTitle>
               <CardDescription className="text-foreground">
@@ -77,15 +77,13 @@ function DashboardCards() {
         <div className="flex md:flex-row flex-col gap-6">
           <Card
             onClick={() => router.push("/dashboard/calendar/schedule")}
-            className={cn("md:w-2/6 w-full shadow-xl cursor-pointer")}
+            className="md:w-2/6 p-3 w-full shadow-xl cursor-pointer"
           >
-            <CardContent className={cn("")}>
-              <div className="h-16 flex items-center justify-center align-items-center w-16 bg-accent rounded-full mt-5">
+            <CardHeader className="p-3 flex flex-col ">
+              <div className="h-16 flex items-center justify-center w-16 bg-accent rounded-full">
                 <CalendarClock color="#7c5bcf" size={30} />
               </div>
-            </CardContent>
-            <CardHeader className={cn("p-0 ml-6 mb-4")} title="page visits">
-              <CardTitle className="text-foreground">
+              <CardTitle className="text-foreground pt-3">
                 Add availability
               </CardTitle>
               <CardDescription className="text-foreground">
@@ -95,15 +93,15 @@ function DashboardCards() {
           </Card>
           <Card
             onClick={() => router.push("/dashboard/calendar/settings")}
-            className={cn("md:w-2/6 w-full shadow-xl cursor-pointer")}
+            className="md:w-2/6 p-3 w-full shadow-xl cursor-pointer"
           >
-            <CardContent className={cn("")}>
-              <div className="h-16 flex items-center justify-center align-items-center w-16 bg-accent rounded-full mt-5">
+            <CardHeader className="p-3 flex flex-col ">
+              <div className="h-16 flex items-center justify-center w-16 bg-accent rounded-full">
                 <Video color="#7c5bcf" size={30} />
               </div>
-            </CardContent>
-            <CardHeader className={cn("p-0 ml-6 mb-4")} title="page visits">
-              <CardTitle className="text-foreground">Google Calendar</CardTitle>
+              <CardTitle className="text-foreground pt-3">
+                Google Calendar
+              </CardTitle>
               <CardDescription className="text-foreground">
                 Connect your google calendar
               </CardDescription>
@@ -111,15 +109,13 @@ function DashboardCards() {
           </Card>
           <Card
             onClick={() => router.push("/dashboard/digital-products")}
-            className={cn("md:w-2/6 w-full shadow-xl cursor-pointer ")}
+            className="md:w-2/6 p-3 w-full shadow-xl cursor-pointer"
           >
-            <CardContent className={cn("")}>
-              <div className="h-16 flex items-center justify-center align-items-center w-16 bg-accent rounded-full mt-5">
+            <CardHeader className="p-3 flex flex-col ">
+              <div className="h-16 flex items-center justify-center w-16 bg-accent rounded-full">
                 <ShoppingBag color="#7c5bcf" size={30} />
               </div>
-            </CardContent>
-            <CardHeader className={cn("p-0 ml-6 mb-4")} title="page visits">
-              <CardTitle className="text-foreground">
+              <CardTitle className="text-foreground pt-3">
                 Create a digital product
               </CardTitle>
               <CardDescription className="text-foreground">
