@@ -99,6 +99,7 @@ export default function GoogleCalendarSettings({
       `&scope=${scope}` +
       `&access_type=${params.access_type || "offline"}` +
       `&state=${params.state || ""}` +
+      `&prompt=consent` +
       `&response_type=code`;
 
     return url;
