@@ -1,6 +1,5 @@
 import express from "express";
 import { Request, Response } from "express";
-
 import * as publicService from "../services/public/publicService";
 import CustomError from "../utils/CustomError";
 import cityTimezones from "../services/calendar/cityTimezones";
@@ -165,3 +164,5 @@ publicController.delete(
     }
   }
 );
+
+export default publicController;

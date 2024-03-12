@@ -62,8 +62,11 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
           Link: true,
         },
       },
+      payments: true,
     },
   });
+
+  const onboardingComplete = publicUser?.payments[0]?.onboardingComplete;
 
   const transformedUser = publicUser && {
     ...publicUser,
@@ -71,10 +74,15 @@ export const getPublicUser = async (input: z.infer<typeof ZUserName>) => {
       .filter(
         (item) =>
           // Assuming visibility is a boolean field indicating if the item is public
-          (item.DigitalProduct && item.DigitalProduct.visibility) ||
+          (item.DigitalProduct &&
+            item.DigitalProduct.visibility &&
+            ((Number(item.DigitalProduct?.price) > 0 && onboardingComplete) ||
+              Number(item.DigitalProduct.price) == 0)) ||
           (item.calendarProduct &&
             item.calendarProduct.visibility &&
-            item.calendarProduct.calendarSetting.googleCalendar?.email) ||
+            item.calendarProduct.calendarSetting.googleCalendar?.email &&
+            ((Number(item.calendarProduct?.price) > 0 && onboardingComplete) ||
+              Number(item.calendarProduct.price) == 0)) ||
           item.Link
       )
       .map((item) => ({

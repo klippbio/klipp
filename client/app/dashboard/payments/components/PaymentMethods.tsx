@@ -339,7 +339,7 @@ export function PaymentMethods() {
                             <ButtonLoading />
                           ) : (
                             <Button type="submit">
-                              <span>Save</span>
+                              <span>Connect Stripe</span>
                             </Button>
                           ))}
                         {accountStatus === "new" && (
@@ -352,16 +352,14 @@ export function PaymentMethods() {
                   </Form>
                 )}
                 <div className="flex items-center">
-                  {accountStatus === "pending" && (
-                    <div className="flex gap-4 w-2/3">
+                  {accountStatus === "pending" &&
+                    (mutation.isLoading ? (
+                      <ButtonLoading />
+                    ) : (
                       <Button onClick={() => pendingSubmit()}>
-                        <span className="">Continue Onboarding</span>
-                        {mutation.isLoading && (
-                          <Loader2 className="ml-2 animate-spin" />
-                        )}
+                        <span>Continue Onboarding</span>
                       </Button>
-                    </div>
-                  )}
+                    ))}
                   <div className="flex items-center gap-4">
                     {accountStatus === "connected" && (
                       <div>
