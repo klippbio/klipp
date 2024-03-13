@@ -41,7 +41,6 @@ type UpdateOrderPayload = {
 }[];
 
 export default function ProfileCards() {
-  const router = useRouter();
   const authDetails = useAuthDetails();
 
   const username = usePathname().substring(1).toLowerCase();

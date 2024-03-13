@@ -34,7 +34,6 @@ import { GradientPicker } from "@/components/ui/GradientPicker";
 import { store } from "../..";
 import { AuthDetails } from "@/app/components/AuthContext";
 import Image from "next/image";
-import { set } from "date-fns";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
