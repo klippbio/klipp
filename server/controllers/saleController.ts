@@ -17,14 +17,18 @@ import { Resend } from "resend";
 import { DdEmail } from "../emails/ddEmail";
 import { render } from "@react-email/render";
 import { CalendarEmail } from "../emails/calendarEmail";
+import { getStoreFromStoreUrl } from "../services/storeService";
+import { NewSaleEmail } from "../emails/newSaleEmail";
 
 type emailDataType = {
   from_name: string;
+  from_email?: string;
   to_email: string;
   to_name: string;
   subject: string;
   link: string;
   itemType: string;
+  itemName: string;
 };
 
 export async function emailTrigger(data: emailDataType) {
@@ -32,6 +36,7 @@ export async function emailTrigger(data: emailDataType) {
   const downloadLink = data.link;
   const toName = data.to_name;
   const fromName = data.from_name;
+  const itemName = data.itemName;
   let htmlContent;
 
   if (data.itemType === "CALENDAR") {
@@ -41,13 +46,19 @@ export async function emailTrigger(data: emailDataType) {
   }
 
   try {
-    const result = await resend.emails.send({
+    await resend.emails.send({
       from: `${data.from_name} <orders@klipp.io>`,
       to: [`${data.to_email}`],
       subject: data.subject,
       html: htmlContent,
     });
-    return result;
+    await resend.emails.send({
+      from: `New Sale <orders@klipp.io>`,
+      to: [`${data.from_email}`],
+      subject: "Yay! you made a sale on klipp",
+      html: render(NewSaleEmail({ itemName, fromName })),
+    });
+    return "success";
   } catch (error) {
     console.error("Error sending email:", error);
     return error;
@@ -58,6 +69,7 @@ export const saleController = express.Router();
 
 saleController.post("/create", async (req: Request, res: Response) => {
   try {
+    const storeDetails = await getStoreFromStoreUrl(req.body.storeUrl);
     const { itemType }: { itemType: StoreItemType } = req.body;
     if (itemType === "CALENDAR") {
       await ZCreateNewSaleSchema.parseAsync(req.body);
@@ -67,10 +79,12 @@ saleController.post("/create", async (req: Request, res: Response) => {
         const link = process.env.FRONTEND_URL + "/sale/" + sale.id;
         const saleEmail = {
           from_name: req.body.storeUrl,
+          from_email: storeDetails?.user.email,
           to_email: req.body.saleFormData.email,
           to_name: req.body.saleFormData.name,
           subject: "Meeting with " + req.body.storeUrl,
           link: link,
+          itemName: req.body.productName,
           itemType: "CALENDAR",
         };
         await emailTrigger(saleEmail);
@@ -81,9 +95,11 @@ saleController.post("/create", async (req: Request, res: Response) => {
           ...data,
           saleId: sale.id,
           from_name: req.body.storeUrl,
+          from_email: storeDetails?.user.email,
           to_email: req.body.saleFormData.email,
           to_name: req.body.saleFormData.name,
           subject: "Your purchase from " + req.body.storeUrl,
+          itemName: req.body.productName,
           itemType: "CALENDAR",
         };
         const link = await createCheckoutSession(combinedData);
@@ -97,9 +113,11 @@ saleController.post("/create", async (req: Request, res: Response) => {
         const saleEmail = {
           from_name: req.body.storeUrl,
           to_email: req.body.saleFormData.email,
+          from_email: storeDetails?.user.email,
           to_name: req.body.saleFormData.name,
           subject: "Your purchase from " + req.body.storeUrl,
           link: link,
+          itemName: req.body.productName,
           itemType: "DIGITAL_DOWNLOAD",
         };
         await emailTrigger(saleEmail);
@@ -110,9 +128,11 @@ saleController.post("/create", async (req: Request, res: Response) => {
           ...data,
           saleId: sale.id,
           from_name: req.body.storeUrl,
+          from_email: storeDetails?.user.email,
           to_email: req.body.saleFormData.email,
           to_name: req.body.saleFormData.name,
           subject: "Your purchase from " + req.body.storeUrl,
+          itemName: req.body.productName,
           itemType: "DIGITAL_DOWNLOAD",
         };
         const link = await createCheckoutSession(combinedData);

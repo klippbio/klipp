@@ -71,7 +71,7 @@ export const CalendarEmail = ({
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             <Text className="text-[#666666] text-[12px] leading-[24px]">
               This meeting link was intended for {toName}. If you were not
-              expecting this email, please ignore this email.
+              expecting it, please ignore this email.
             </Text>
           </Container>
         </Body>

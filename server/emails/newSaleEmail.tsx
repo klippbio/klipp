@@ -7,7 +7,6 @@ import {
   Hr,
   Html,
   Img,
-  Link,
   Preview,
   Section,
   Text,
@@ -15,12 +14,12 @@ import {
 import { Tailwind } from "@react-email/tailwind";
 import * as React from "react";
 
-interface DdEmail {
-  downloadLink?: string;
-  toName?: string;
+interface NewSaleEmail {
+  fromName?: string;
+  itemName?: string;
 }
 
-export const DdEmail = ({ downloadLink, toName }: DdEmail) => {
+export const NewSaleEmail = ({ fromName, itemName }: NewSaleEmail) => {
   const previewText = `Order from klipp`;
 
   return (
@@ -40,33 +39,28 @@ export const DdEmail = ({ downloadLink, toName }: DdEmail) => {
               />
             </Section>
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              Order from <strong>klipp</strong>
+              New sale - <strong>klipp</strong>
             </Heading>
             <Text className="text-black text-[14px] leading-[24px]">
-              Hello {toName},
+              Hello {fromName},
             </Text>
             <Text className="text-black text-[14px] leading-[24px]">
-              Here are the details of your recent order from klipp. Please click
-              on below button to download your files.
+              Someone just bought <strong>{itemName}</strong> from your store.
+              We have successfully processed the order. Please login using the
+              button below to view more details.
             </Text>
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button
                 className="bg-[#000000] rounded text-white text-[12px] font-semibold no-underline text-center px-5 py-3"
-                href={downloadLink}
+                href={"https://klipp.io/sign-in"}
               >
-                Download Now
+                View More
               </Button>
             </Section>
-            <Text className="text-black text-[14px] leading-[24px]">
-              or copy and paste this URL into your browser:{" "}
-              <Link href={downloadLink} className="text-blue-600 no-underline">
-                {downloadLink}
-              </Link>
-            </Text>
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             <Text className="text-[#666666] text-[12px] leading-[24px]">
-              This download link was intended for {toName}. If you were not
-              expecting it, please ignore this email.
+              This email was intended for {fromName}. If you were not expecting
+              it, please ignore this email.
             </Text>
           </Container>
         </Body>
@@ -75,9 +69,9 @@ export const DdEmail = ({ downloadLink, toName }: DdEmail) => {
   );
 };
 
-DdEmail.PreviewProps = {
-  inviteLink: "https://klipp.io",
-  toName: " ",
-} as DdEmail;
+NewSaleEmail.PreviewProps = {
+  fromName: " ",
+  itemName: " ",
+} as NewSaleEmail;
 
-export default DdEmail;
+export default NewSaleEmail;
