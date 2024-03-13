@@ -170,9 +170,9 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
   });
 
   return (
-    <div className="flex w-96">
+    <div className="flex">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-96">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
             name="thumbnailUrl"
