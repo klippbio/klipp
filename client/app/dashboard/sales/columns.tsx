@@ -14,12 +14,12 @@ export type Sale = {
 };
 
 export const columns: ColumnDef<Sale>[] = [
-  {
-    accessorKey: "id",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Id" />
-    ),
-  },
+  // {
+  //   accessorKey: "id",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Id" />
+  //   ),
+  // },
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
