@@ -19,12 +19,16 @@ webhookController.post("/", async (req: Request, res: Response) => {
 
       const saleEmail = {
         from_name: session.data.object.metadata.from_name,
+        from_email: session.data.object.metadata.from_email,
         to_email: session.data.object.metadata.to_email,
         to_name: session.data.object.metadata.to_name,
         subject: session.data.object.metadata.subject,
         link: session.data.object.metadata.link,
+        itemName: session.data.object.metadata.itemName,
         itemType: session.data.object.metadata.itemType,
       };
+
+      console.log(saleEmail);
       await emailTrigger(saleEmail);
 
       await updateSaleStatus(saleId, "COMPLETED");
