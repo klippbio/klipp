@@ -18,7 +18,7 @@ import {
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import UsernameNotfound from "./UsernameNotfound";
 import { store, storeItem } from "../..";
