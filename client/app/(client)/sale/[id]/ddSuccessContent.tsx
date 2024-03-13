@@ -22,28 +22,30 @@ function DDSuccessContent({ data }: { data: any }) {
                 {data.storeItem.DigitalProduct.shortDescription}
               </div>
             </div>
-            {data.storeItem.DigitalProduct.ddFiles && (
-              <div className="mt-10">
-                <div className="text-lg font-semibold text-secondary-foreground">
-                  Files
+            {data.storeItem.DigitalProduct.ddFiles.length > 0 && (
+              <div>
+                <div className="mt-10">
+                  <div className="text-lg font-semibold text-secondary-foreground">
+                    Files
+                  </div>
+                  <Separator />
+                  {data.storeItem.DigitalProduct.ddFiles.map(
+                    //eslint-disable-next-line
+                    (file: any, index: number) => (
+                      <div
+                        key={index}
+                        className="flex mt-4 justify-between items-center mb-4 bg-secondary p-2 rounded-md"
+                      >
+                        <span>{file.name}</span>
+                        <Button>
+                          <a href={file.url} download>
+                            <ArrowDownFromLineIcon size={20} />
+                          </a>
+                        </Button>
+                      </div>
+                    )
+                  )}
                 </div>
-                <Separator />
-                {data.storeItem.DigitalProduct.ddFiles.map(
-                  //eslint-disable-next-line
-                  (file: any, index: number) => (
-                    <div
-                      key={index}
-                      className="flex mt-4 justify-between items-center mb-4 bg-secondary p-2 rounded-md"
-                    >
-                      <span>{file.name}</span>
-                      <Button>
-                        <a href={file.url} download>
-                          <ArrowDownFromLineIcon size={20} />
-                        </a>
-                      </Button>
-                    </div>
-                  )
-                )}
               </div>
             )}
 
