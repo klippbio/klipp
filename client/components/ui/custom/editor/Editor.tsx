@@ -4,7 +4,11 @@
 import { useEffect, useRef, useState } from "react";
 import EditorJS from "@editorjs/editorjs";
 import "./editor.css";
-import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
+import {
+  deleteFile,
+  generateUploadURL,
+  uploadFile,
+} from "@/app/services/getS3url";
 import { read } from "fs";
 
 export default function Editor({
@@ -204,7 +208,17 @@ export default function Editor({
   // };
 
   useEffect(() => {
-    console.log("Delete urls: ", deleteUrls);
+    const deleteFiles = async () => {
+      for (const url of deleteUrls) {
+        await deleteFile(url);
+      }
+    };
+
+    if (deleteUrls.length > 0) {
+      deleteFiles().then(() => {
+        setDeleteUrls([]);
+      });
+    }
   }, [deleteUrls]);
 
   return (

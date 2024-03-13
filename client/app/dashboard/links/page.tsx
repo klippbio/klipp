@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import { Link, Trash2, Upload } from "lucide-react";
-import React, { useState } from "react";
+import { Link, Loader2, Trash2, Upload } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import * as z from "zod";
@@ -74,6 +74,7 @@ function Page() {
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [open, setOpen] = useState(false);
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery<
     Array<itemType>,
@@ -115,9 +116,13 @@ function Page() {
   }
 
   async function onThumbnailRemove() {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     setSelectedFile("");
     setImageUrl("");
-    return await deleteFile(imageUrl);
+    setUploadingThumbnail(false);
   }
 
   async function getUploadURL() {
@@ -125,13 +130,26 @@ function Page() {
   }
 
   async function onThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     const file = event.target.files?.[0];
     if (!file) return;
     const uploadUrl = await getUploadURL();
-    const imageUrl = await uploadFile(uploadUrl, file);
-    setSelectedFile(imageUrl);
-    setImageUrl(imageUrl);
+    const imageUrlFromS3 = await uploadFile(uploadUrl, file);
+    if (imageUrlFromS3 === "") {
+      setUploadingThumbnail(false);
+      return;
+    }
+    setSelectedFile(imageUrlFromS3);
+    setImageUrl(imageUrlFromS3);
+    setUploadingThumbnail(false);
   }
+
+  useEffect(() => {
+    console.log("Image URL", imageUrl);
+  }, [imageUrl]);
 
   const createProductMutation = useMutation({
     mutationFn: async (data: linkType) => {
@@ -236,7 +254,9 @@ function Page() {
                                           : buttonVariants({ variant: "ghost" })
                                       }`}
                                     >
-                                      {selectedFile ? (
+                                      {uploadingThumbnail ? (
+                                        <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+                                      ) : selectedFile ? (
                                         <div className="relative rounded-lg w-full h-full">
                                           <Image
                                             width={1000}

@@ -148,6 +148,7 @@ export function ProfileForm({
   const [uploadedFiles, setUploadedFiles] = useState<fileType[]>([]);
   const [initialBlocksData, setInitialBlocksData] = useState([]);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   //eslint-disable-next-line
@@ -227,29 +228,46 @@ export function ProfileForm({
   }
 
   async function onThumbnailRemove() {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     setSelectedFile("");
     setImageUrl("");
-    return await deleteFile(imageUrl);
+    setUploadingThumbnail(false);
   }
-
   async function getUploadURL() {
     return await generateUploadURL();
   }
 
   async function onThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     const file = event.target.files?.[0];
     if (!file) return;
     const uploadUrl = await getUploadURL();
-    const imageUrl = await uploadFile(uploadUrl, file);
-    setSelectedFile(imageUrl);
-    setImageUrl(imageUrl);
+    const imageUrlFromS3 = await uploadFile(uploadUrl, file);
+    if (imageUrlFromS3 === "") {
+      setUploadingThumbnail(false);
+      return;
+    }
+    setSelectedFile(imageUrlFromS3);
+    setImageUrl(imageUrlFromS3);
+    setUploadingThumbnail(false);
   }
 
   async function onFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUploadingFile(true);
     const file = event.target.files?.[0];
     if (!file) return;
     const uploadUrl = await getUploadURL();
     const fileUrl = await uploadFile(uploadUrl, file);
+    if (fileUrl === "") {
+      setUploadingFile(false);
+      return;
+    }
     const modData = {
       url: fileUrl,
       name: file.name,
@@ -273,7 +291,7 @@ export function ProfileForm({
       toast({
         title: "Success!",
         duration: 1000,
-        description: "Product Created.",
+        description: "Product Updated.",
       });
       router.push("/dashboard/digital-products");
     },
@@ -282,7 +300,7 @@ export function ProfileForm({
         title: "Error",
         variant: "destructive",
         duration: 2000,
-        description: error.response?.data?.error || "Failed to create product!",
+        description: error.response?.data?.error || "Failed to update product!",
       });
     },
   });
@@ -290,7 +308,6 @@ export function ProfileForm({
   const mutateUploadFile = useMutation({
     mutationFn: async (data: { url: string; name: string }) => {
       const combinedData = { ...data, storeId: authDetails?.storeId };
-      setUploadingFile(true);
       const response = await AxiosApi(
         "post",
         `/api/digital-products/file/?id=${productId}`,
@@ -383,7 +400,9 @@ export function ProfileForm({
                                   : buttonVariants({ variant: "ghost" })
                               }`}
                             >
-                              {selectedFile ? (
+                              {uploadingThumbnail ? (
+                                <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+                              ) : selectedFile ? (
                                 <div className="relative w-full h-full">
                                   <Image
                                     width={1000}
@@ -558,7 +577,7 @@ export function ProfileForm({
                                 style={{ pointerEvents: "none" }}
                               >
                                 {uploadingFile ? (
-                                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                                  <Loader2 className="ml-2 h-6 w-6 animate-spin" />
                                 ) : (
                                   <div className="flex flex-row">
                                     <svg

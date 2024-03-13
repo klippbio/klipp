@@ -195,9 +195,10 @@ export default function ProfileCards() {
                               : "cursor-move"
                           )}
                           key={item.name}
-                          onClick={() => {
+                          onClick={(e) => {
                             if (!isDragging) {
-                              router.push(item.linkUrl);
+                              e.preventDefault();
+                              window.open(item.linkUrl, "_blank");
                             }
                           }}
                         >

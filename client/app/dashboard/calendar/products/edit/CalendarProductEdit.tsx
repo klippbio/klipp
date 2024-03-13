@@ -13,9 +13,13 @@ import * as z from "zod";
 import { Button, ButtonLoading, buttonVariants } from "@/components/ui/button";
 import { useState, useEffect, useCallback } from "react";
 import { Separator } from "@/components/ui/separator";
-import { generateUploadURL, uploadFile } from "@/app/services/getS3url";
+import {
+  deleteFile,
+  generateUploadURL,
+  uploadFile,
+} from "@/app/services/getS3url";
 import Editor from "@/components/ui/custom/editor/Editor";
-import { Upload } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import {
   Form,
@@ -109,6 +113,7 @@ export function CalendarProductEdit({
   // const [flexPrice, setFlexPrice] = useState(true);
   // const [minPrice, setMinPrice] = useState("0");
   const [initialBlocksData, setInitialBlocksData] = useState([]);
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   //eslint-disable-next-line
@@ -174,13 +179,32 @@ export function CalendarProductEdit({
     return await generateUploadURL();
   }
 
+  async function onThumbnailRemove() {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
+    setSelectedFile("");
+    setImageUrl("");
+    setUploadingThumbnail(false);
+  }
+
   async function onThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     const file = event.target.files?.[0];
     if (!file) return;
     const uploadUrl = await getUploadURL();
-    const imageUrl = await uploadFile(uploadUrl, file);
-    setSelectedFile(imageUrl);
-    setImageUrl(imageUrl);
+    const imageUrlFromS3 = await uploadFile(uploadUrl, file);
+    if (imageUrlFromS3 === "") {
+      setUploadingThumbnail(false);
+      return;
+    }
+    setSelectedFile(imageUrlFromS3);
+    setImageUrl(imageUrlFromS3);
+    setUploadingThumbnail(false);
   }
 
   //mutations
@@ -204,7 +228,7 @@ export function CalendarProductEdit({
       toast({
         title: "Success!",
         duration: 1000,
-        description: "Product Created.",
+        description: "Product Updated.",
       });
       router.push("/dashboard/calendar/products");
     },
@@ -252,14 +276,26 @@ export function CalendarProductEdit({
                                 : buttonVariants({ variant: "ghost" })
                             }`}
                           >
-                            {selectedFile ? (
-                              <Image
-                                src={selectedFile}
-                                alt="Thumbnail"
-                                width={1000}
-                                height={1000}
-                                className="w-full h-full md:h-32 object-cover rounded-md"
-                              />
+                            {uploadingThumbnail ? (
+                              <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+                            ) : selectedFile ? (
+                              <div className="relative w-full h-full">
+                                <Image
+                                  src={selectedFile}
+                                  alt="Thumbnail"
+                                  width={1000}
+                                  height={1000}
+                                  className="w-full h-full md:h-56 object-cover rounded-md"
+                                />
+                                <div>
+                                  <span
+                                    onClick={onThumbnailRemove}
+                                    className="text-sm cursor-pointer"
+                                  >
+                                    Remove
+                                  </span>
+                                </div>
+                              </div>
                             ) : (
                               <div
                                 className="text-3xl font-bold mb-8 mt-8 text-foreground"
@@ -331,7 +367,7 @@ export function CalendarProductEdit({
                     />
                   </div>
                 </div>
-                <div className="flex flex-col space-y-5 mt-5">
+                <div className="flex flex-col space-y-5 pt-5">
                   <div>
                     <FormField
                       control={form.control}

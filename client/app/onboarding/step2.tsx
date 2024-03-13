@@ -75,7 +75,7 @@ function Step2() {
       toast({
         title: "Success!",
         duration: 1000,
-        description: "Your profile was created.",
+        description: "Socials added successfully",
       });
       router.push("/dashboard");
     },

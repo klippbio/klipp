@@ -18,7 +18,7 @@ import {
   generateUploadURL,
   uploadFile,
 } from "@/app/services/getS3url";
-import { Upload } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { Input, PrefixInputLeft } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,6 +54,8 @@ function UserSettings(data: any) {
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [background, setBackground] = useState("");
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+
   const authDetails = useAuthDetails();
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
     defaultValues: {
@@ -90,11 +92,14 @@ function UserSettings(data: any) {
   }
 
   async function onThumbnailRemove() {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     setSelectedFile("");
     setImageUrl("");
-    return await deleteFile(imageUrl);
+    setUploadingThumbnail(false);
   }
-
   async function getUploadURL() {
     return await generateUploadURL();
   }
@@ -131,12 +136,21 @@ function UserSettings(data: any) {
   });
 
   async function onThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     const file = event.target.files?.[0];
     if (!file) return;
     const uploadUrl = await getUploadURL();
-    const imageUrl = await uploadFile(uploadUrl, file);
-    setSelectedFile(imageUrl);
-    setImageUrl(imageUrl);
+    const imageUrlFromS3 = await uploadFile(uploadUrl, file);
+    if (imageUrlFromS3 === "") {
+      setUploadingThumbnail(false);
+      return;
+    }
+    setSelectedFile(imageUrlFromS3);
+    setImageUrl(imageUrlFromS3);
+    setUploadingThumbnail(false);
   }
   return (
     <div className="w-full">
@@ -170,7 +184,9 @@ function UserSettings(data: any) {
                                     : buttonVariants({ variant: "ghost" })
                                 }`}
                               >
-                                {selectedFile ? (
+                                {uploadingThumbnail ? (
+                                  <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+                                ) : selectedFile ? (
                                   <div className="relative w-full h-full">
                                     <Image
                                       src={selectedFile}

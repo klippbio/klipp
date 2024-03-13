@@ -391,7 +391,7 @@ export function PaymentMethods() {
                               >
                                 Continue
                                 {mutation.isLoading && (
-                                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                                  <Loader2 className="ml-2 h-6 w-6 animate-spin" />
                                 )}
                               </AlertDialogAction>
                             </AlertDialogFooter>

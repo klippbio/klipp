@@ -26,7 +26,7 @@ import {
   generateUploadURL,
   uploadFile,
 } from "@/app/services/getS3url";
-import { Pencil, Upload } from "lucide-react";
+import { Loader2, Pencil, Upload } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import AxiosApi from "@/app/services/axios";
 import { useToast } from "@/components/ui/use-toast";
@@ -34,6 +34,7 @@ import { GradientPicker } from "@/components/ui/GradientPicker";
 import { store } from "../..";
 import { AuthDetails } from "@/app/components/AuthContext";
 import Image from "next/image";
+import { set } from "date-fns";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
@@ -70,6 +71,7 @@ export function SidePanelEdit({
   const [selectedFile, setSelectedFile] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [background, setBackground] = useState("");
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
     defaultValues: {
       displayName: data.storeTitle || "",
@@ -105,9 +107,13 @@ export function SidePanelEdit({
   }
 
   async function onThumbnailRemove() {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     setSelectedFile("");
     setImageUrl("");
-    return await deleteFile(imageUrl);
+    setUploadingThumbnail(false);
   }
 
   async function getUploadURL() {
@@ -149,13 +155,23 @@ export function SidePanelEdit({
   });
 
   async function onThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     const file = event.target.files?.[0];
     if (!file) return;
     const uploadUrl = await getUploadURL();
-    const imageUrl = await uploadFile(uploadUrl, file);
-    setSelectedFile(imageUrl);
-    setImageUrl(imageUrl);
+    const imageUrlFromS3 = await uploadFile(uploadUrl, file);
+    if (imageUrlFromS3 === "") {
+      setUploadingThumbnail(false);
+      return;
+    }
+    setSelectedFile(imageUrlFromS3);
+    setImageUrl(imageUrlFromS3);
+    setUploadingThumbnail(false);
   }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -198,7 +214,9 @@ export function SidePanelEdit({
                                   : buttonVariants({ variant: "ghost" })
                               }`}
                             >
-                              {selectedFile ? (
+                              {uploadingThumbnail ? (
+                                <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+                              ) : selectedFile ? (
                                 <div className="relative w-full h-full">
                                   <Image
                                     src={selectedFile}

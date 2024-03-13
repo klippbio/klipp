@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import aws from "aws-sdk";
 import crypto from "crypto";
 import { promisify } from "util";
+import { toast } from "@/components/ui/use-toast";
 const randomBytes = promisify(crypto.randomBytes);
 
 dotenv.config();
@@ -35,6 +36,15 @@ export async function generateUploadURL() {
 }
 
 export async function uploadFile(uploadUrl: string, file: File) {
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+  if (file.size > MAX_FILE_SIZE) {
+    toast({
+      title: "File too large",
+      description: "Please upload a file smaller than 10MB",
+      duration: 2000,
+    });
+    return "";
+  }
   await fetch(uploadUrl, {
     method: "PUT",
     headers: {
@@ -48,6 +58,7 @@ export async function uploadFile(uploadUrl: string, file: File) {
 }
 
 export async function deleteFile(fileUrl: string) {
+  console.log("fileUrl", fileUrl);
   const parsedUrl = new URL(fileUrl);
   const key = parsedUrl.pathname.substring(1);
 
@@ -56,8 +67,9 @@ export async function deleteFile(fileUrl: string) {
     Key: key,
   };
   try {
-    await s3.deleteObject(params).promise();
-    return `File ${key} deleted successfully.`;
+    const response = await s3.deleteObject(params).promise();
+    console.log(`File ${key} deleted successfully.`, response);
+    return true;
   } catch (error) {
     throw new Error(`Error deleting file ${fileUrl}: ${error}`);
   }

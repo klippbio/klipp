@@ -28,7 +28,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
-import { Upload } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { ErrorResponse } from "@/types/apiResponse";
 import AxiosApi from "../services/axios";
 import Image from "next/image";
@@ -73,6 +73,7 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
   const [imageUrl, setImageUrl] = useState("");
   const authDetails = useAuthDetails();
   const [isLoading, setIsLoading] = useState(true);
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
 
   //validateing if user is onboarded
 
@@ -93,12 +94,14 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
   }
 
   async function onThumbnailRemove() {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     setSelectedFile("");
     setImageUrl("");
-    return await deleteFile(imageUrl);
+    setUploadingThumbnail(false);
   }
-
-  //validateing if user is onboarded
 
   useEffect(() => {
     if (authDetails.storeUrl) {
@@ -117,12 +120,21 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
   }
 
   async function onThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUploadingThumbnail(true);
+    if (imageUrl !== "") {
+      await deleteFile(imageUrl);
+    }
     const file = event.target.files?.[0];
     if (!file) return;
     const uploadUrl = await getUploadURL();
-    const imageUrl = await uploadFile(uploadUrl, file);
-    setSelectedFile(imageUrl);
-    setImageUrl(imageUrl);
+    const imageUrlFromS3 = await uploadFile(uploadUrl, file);
+    if (imageUrlFromS3 === "") {
+      setUploadingThumbnail(false);
+      return;
+    }
+    setSelectedFile(imageUrlFromS3);
+    setImageUrl(imageUrlFromS3);
+    setUploadingThumbnail(false);
   }
 
   //save user data
@@ -176,7 +188,9 @@ export function Step1({ onFormSubmitSuccess }: Step1Props) {
                           : buttonVariants({ variant: "ghost" })
                       }`}
                     >
-                      {selectedFile ? (
+                      {uploadingThumbnail ? (
+                        <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+                      ) : selectedFile ? (
                         <div className="relative w-full h-full">
                           <Image
                             width={1000}
