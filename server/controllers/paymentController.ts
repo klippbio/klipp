@@ -123,6 +123,7 @@ paymentController.post(
 
       res.status(200).json(accountLink);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -146,6 +147,7 @@ paymentController.post(
       });
       res.status(200).json(accountLink);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -185,6 +187,7 @@ paymentController.post(
         res.status(500).json({ error: "Failed to disconnect the account" });
       }
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -204,6 +207,7 @@ paymentController.get(
       );
       res.status(201).json(accountDetails);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -222,6 +226,7 @@ paymentController.get(
       });
       res.status(200).json(balance);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -249,6 +254,7 @@ paymentController.post(
       );
       res.status(200).json("success");
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -266,6 +272,7 @@ paymentController.post(
       );
       res.status(200).json(loginLink);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -297,6 +304,7 @@ paymentController.get(
         client_secret: accountSession.client_secret,
       });
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });

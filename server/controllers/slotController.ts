@@ -22,7 +22,7 @@ slotController.get("/get", async (req: Request, res: Response) => {
 
     res.status(201).json(slots);
   } catch (error) {
-    console.log(error);
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });

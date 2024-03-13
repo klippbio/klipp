@@ -27,6 +27,7 @@ ddController.post("/create", async (req: Request, res: Response) => {
     const productId = await createProduct(req.body);
     res.status(201).json(productId);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -42,6 +43,7 @@ ddController.post("/update", async (req: Request, res: Response) => {
     const product = await updateProduct(id as string, req.body);
     res.status(201).json(product);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -59,6 +61,7 @@ ddController.post("/file", async (req: Request, res: Response) => {
     );
     res.status(201).json(product);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -72,6 +75,7 @@ ddController.delete("/file", async (req: Request, res: Response) => {
     await deleteFile(await ZGetOrDeleteFile.parseAsync({ id: id }));
     res.status(201).json("deleted");
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -86,6 +90,7 @@ ddController.get("/getProduct", async (req: Request, res: Response) => {
     );
     res.status(201).json(product);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -101,7 +106,7 @@ ddController.get(
       const product = await getAllDigitalProducts(storeId as string);
       res.status(201).json(product);
     } catch (error) {
-      console.log(error);
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -117,6 +122,7 @@ ddController.delete(
       await deleteDigitalProduct(await ZGetOrDeleteFile.parseAsync({ id: id }));
       res.status(201).json("Digital Product Deleted");
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });

@@ -4,6 +4,7 @@ import clerkClient, { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
 import * as userService from "../services/userService";
 import * as storeService from "../services/storeService";
+import CustomError from "../utils/CustomError";
 
 export const userController = express.Router();
 
@@ -14,7 +15,10 @@ userController.get("/all", async (req: Request, res: Response) => {
       return res.status(200).json(users);
     }
   } catch (error) {
-    return res.status(500).json(error);
+    console.log("Error Occured at", req.url, "Error Details: ", error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -41,8 +45,10 @@ userController.post("/onboarding", async (req: Request, res: Response) => {
 
     return res.status(201).json(newUser);
   } catch (error) {
-    console.error("An error occurred:", error);
-    return res.status(500).json({ error: "Something went wrong" });
+    console.log("Error Occured at", req.url, "Error Details: ", error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -58,8 +64,10 @@ userController.post(
 
       return res.status(201).json("newUser");
     } catch (error) {
-      console.error("An error occurred:", error);
-      return res.status(500).json({ error: "Something went wrong" });
+      console.log("Error Occured at", req.url, "Error Details: ", error);
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
     }
   }
 );
@@ -78,7 +86,10 @@ userController.get(
       }
       return res.status(404).json("User Id not found");
     } catch (error) {
-      return res.status(500).json(error);
+      console.log("Error Occured at", req.url, "Error Details: ", error);
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
     }
   }
 );
@@ -98,9 +109,10 @@ userController.get(
       }
       return res.redirect(process.env.FRONTEND_URL + "/dashboard");
     } catch (error) {
-      return res.status(500).json(error);
+      console.log("Error Occured at", req.url, "Error Details: ", error);
+      if (error instanceof CustomError)
+        res.status(error.statusCode).json({ error: error.message });
+      else res.status(500).json({ error: error });
     }
   }
 );
-
-//

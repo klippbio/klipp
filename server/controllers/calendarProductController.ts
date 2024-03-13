@@ -20,6 +20,7 @@ calendarProductController.post(
       const result = await createCalendarProduct(req.body);
       res.status(201).json(result);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -37,6 +38,7 @@ calendarProductController.get(
       const product = await getAllCalendarProducts(storeId as string);
       res.status(200).json(product);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -54,6 +56,7 @@ calendarProductController.get(
       const product = await getCalendarProduct(Number(id));
       res.status(201).json(product);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -82,6 +85,7 @@ calendarProductController.post(
       const product = await updateCalendarProduct(req.body);
       res.status(201).json(product);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -99,6 +103,7 @@ calendarProductController.delete(
       const product = await deleteCalendarProduct(Number(id));
       res.status(201).json(product);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -124,6 +129,7 @@ calendarProductController.post(
       );
       res.status(201).json(product);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });

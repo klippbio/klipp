@@ -36,7 +36,7 @@ calendarController.post(
       const schedule = await createSchedule(req.body);
       res.status(201).json(schedule);
     } catch (error) {
-      console.log(error);
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -80,6 +80,7 @@ calendarController.post(
       const result = await updateSchedule(parsedBody);
       res.status(200).json(result);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -98,6 +99,7 @@ calendarController.get(
       const result = await getSchedule(params);
       res.status(200).json(result);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -116,6 +118,7 @@ calendarController.get(
       );
       res.status(200).json(result);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -132,6 +135,7 @@ calendarController.delete(
       const result = await deleteSchedule(req.body);
       res.status(200).json(result);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -154,11 +158,10 @@ calendarController.get("/linkCalendar", async (req: Request, res: Response) => {
         "/dashboard/calendar/settings?message=auth_success"
     );
   } catch (error) {
-    console.log(error);
-    res.redirect(
-      process.env.FRONTEND_URL +
-        "/dashboard/calendar/settings?message=auth_failed"
-    );
+    console.log("Error Occured at", req.url, "Error Details: ", error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -168,6 +171,7 @@ calendarController.get("/linkStatus", async (req: Request, res: Response) => {
     const store = await checkIfCalendarIsConnected(storeId as string);
     res.status(200).json(store);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -182,9 +186,10 @@ calendarController.post(
       const calendar = await unlinkGoogleCalendar(storeId);
       res.status(200).json({ calendar: calendar });
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
-      else res.status(500);
+      else res.status(500).json({ error: error });
     }
   }
 );
@@ -200,6 +205,7 @@ calendarController.get(
       const calendarSettings = await getCalendarSettings(params);
       res.status(200).json(calendarSettings);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -217,6 +223,7 @@ calendarController.post(
       );
       res.status(200).json(calendarSettings);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });

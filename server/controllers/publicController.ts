@@ -16,6 +16,7 @@ publicController.get("/publicUser", async (req: Request, res: Response) => {
     if (!publicUser) throw new CustomError("User not found", 404);
     res.status(200).json(publicUser);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -34,6 +35,7 @@ publicController.post(
       if (!publicUser) throw new CustomError("User not found", 404);
       res.status(200).json(publicUser);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -49,6 +51,7 @@ publicController.post("/changeOrder", async (req: Request, res: Response) => {
       throw new CustomError("Failed to update item order", 500);
     res.status(200).json(updatedOrder);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -65,6 +68,7 @@ publicController.get("/product", async (req: Request, res: Response) => {
     if (!product) throw new CustomError("Product not found", 404);
     res.status(200).json(product);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -76,6 +80,7 @@ publicController.get("/cityTimezones", async (req: Request, res: Response) => {
     const cities = await cityTimezones();
     res.status(200).json(cities);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -127,12 +132,10 @@ publicController.get("/analytics", async (req: Request, res: Response) => {
 
     res.status(200).json(result);
   } catch (error) {
-    console.error("Error fetching event count by date:", error);
-    if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Internal server error" });
-    }
+    console.log("Error Occured at", req.url, "Error Details: ", error);
+    if (error instanceof CustomError)
+      res.status(error.statusCode).json({ error: error.message });
+    else res.status(500).json({ error: error });
   }
 });
 
@@ -145,6 +148,7 @@ publicController.get("/storeanalytics", async (req: Request, res: Response) => {
     );
     res.status(200).json(storeAnalytics);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -158,6 +162,7 @@ publicController.delete(
       const results = await publicService.deleteStoreAnalytics();
       res.status(200).json(results);
     } catch (error) {
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });

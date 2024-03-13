@@ -20,6 +20,7 @@ linkController.post("/create", async (req: Request, res: Response) => {
     const productId = await createLinkProduct(req.body);
     res.status(201).json(productId);
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -48,7 +49,7 @@ linkController.get("/getAllLinks", async (req: Request, res: Response) => {
     );
     res.status(201).json(product);
   } catch (error) {
-    console.log(error);
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -61,6 +62,7 @@ linkController.delete("/deleteLink", async (req: Request, res: Response) => {
     await deleteLink(await ZGetOrDeleteFile.parseAsync({ id: id }));
     res.status(201).json("Link Deleted");
   } catch (error) {
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });

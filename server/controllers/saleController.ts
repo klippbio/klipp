@@ -120,7 +120,7 @@ saleController.post("/create", async (req: Request, res: Response) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -137,7 +137,7 @@ saleController.get(
       const sales = await getAllSales(storeId as string);
       res.status(200).json(sales);
     } catch (error) {
-      console.log(error);
+      console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
         res.status(error.statusCode).json({ error: error.message });
       else res.status(500).json({ error: error });
@@ -153,7 +153,7 @@ saleController.get("/", async (req: Request, res: Response) => {
     const sale = await getSale(String(id));
     res.status(200).json(sale);
   } catch (error) {
-    console.log(error);
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -166,7 +166,7 @@ saleController.post("/cancel", async (req: Request, res: Response) => {
     const sale = await cancelGoogleCalendarSale(String(id));
     res.status(200).json(sale);
   } catch (error) {
-    console.log(error);
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
@@ -178,7 +178,7 @@ saleController.post("/reschedule", async (req: Request, res: Response) => {
     const sale = await rescheduleSale(req.body);
     res.status(200).json(sale);
   } catch (error) {
-    console.log(error);
+    console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
       res.status(error.statusCode).json({ error: error.message });
     else res.status(500).json({ error: error });
