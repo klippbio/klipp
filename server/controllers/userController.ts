@@ -87,8 +87,10 @@ userController.get(
   "/check",
   ClerkExpressRequireAuth(),
   async (req: Request, res: Response) => {
+    console.log("Entered clerk:", req);
     try {
       const clerkUser = await clerkClient.users.getUser(req.auth.userId);
+      console.log("cluerk user:", clerkUser);
       if (
         clerkUser.unsafeMetadata === null ||
         clerkUser.unsafeMetadata === undefined ||
@@ -98,6 +100,7 @@ userController.get(
       }
       return res.redirect(process.env.FRONTEND_URL + "/dashboard");
     } catch (error) {
+      console.log("An error occurred:", error);
       return res.status(500).json(error);
     }
   }
