@@ -150,7 +150,11 @@ const Navbar = () => {
               </div>
               <div className="hidden md:flex items-center ">
                 <div className="flex nav__item m-2">
-                  <Button className="bg-purple-600 hover:bg-purple-500" asChild>
+                  <Button
+                    className=" hover:bg-purple-100 hover:text-purple-600"
+                    variant={"outline"}
+                    asChild
+                  >
                     <Link href="/sign-in" className="w-24">
                       Login
                     </Link>
@@ -158,12 +162,11 @@ const Navbar = () => {
                 </div>
                 <div className="flex nav__item m-2">
                   <Button
-                    className="hover:text-purple-600 hover:bg-purple-100"
-                    variant={"outline"}
+                    className="bg-purple-600  hover:bg-purple-500"
                     asChild
                   >
-                    <Link href="/sign-up" className="w-24">
-                      Sign Up
+                    <Link href="/sign-up" className="w-44">
+                      Get started for free
                     </Link>
                   </Button>
                 </div>
