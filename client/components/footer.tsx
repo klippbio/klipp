@@ -6,7 +6,7 @@ import Container from "./container";
 import LogoText from "../utils/logoText.png";
 export default function Footer() {
   return (
-    <div className="relative bg-secondary justify-end self-end">
+    <div className="relative bg-secondary p-5  justify-end self-end">
       <Container>
         <div className="grid max-w-screen-xl grid-cols-2 gap-10 mx-auto border-t border-gray-100 dark:border-trueGray-700 md:grid-cols-5">
           <div className="md:col-span-4">

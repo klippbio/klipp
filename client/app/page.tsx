@@ -11,23 +11,24 @@ import Steps from "@/components/steps";
 const Home = () => {
   return (
     <div>
-      <div className="">
-        <div className="">
-          <Navbar />
-          <Hero />
-        </div>
+      <div className="bg-[url('/img/background2.png')] bg-cover bg-center">
+        <Navbar />
+        <Hero />
+      </div>
 
-        <div className="bg-white md:px-14">
-          {/* <Creators /> */}
-          <SectionTitle
-            pretitle="No Coding Required."
-            title="Start Selling in Just 5 Minutes. "
-          ></SectionTitle>
-          <Benefits data={benefitOne} />
-          <Steps imgPos="right" data={stepOne} />
-          <Steps imgPos="left" data={stepTwo} />
-          <Steps imgPos="right" data={stepThree} />
-          {/* <SectionTitle
+      <div className="bg-secondary-foreground">
+        <SectionTitle title="No Credit Card Required"></SectionTitle>
+      </div>
+      <div className="px-14 py-14 bg-gradient-to-b from-violet-50 to-white">
+        <Benefits data={benefitOne} />
+      </div>
+      <div className="bg-white px-14">
+        {/* <Creators /> */}
+
+        <Steps imgPos="right" data={stepOne} />
+        <Steps imgPos="left" data={stepTwo} />
+        <Steps imgPos="right" data={stepThree} />
+        {/* <SectionTitle
         pretitle="Watch a video"
         title="Learn how to fullfil your needs"
       >
@@ -35,8 +36,8 @@ const Home = () => {
         Analysts says a landing page with video has 3% more conversion rate. So,
         don&apos;t forget to add one. Just like this.
       </SectionTitle> */}
-          {/* <Video /> */}
-          {/* <SectionTitle
+        {/* <Video /> */}
+        {/* <SectionTitle
         pretitle="Testimonials"
         title="Here's what our customers said"
       >
@@ -45,16 +46,15 @@ const Home = () => {
       </SectionTitle>
       <Testimonials /> */}
 
-          <SectionTitle
-            pretitle="FAQ"
-            title="Frequently Asked Questions"
-          ></SectionTitle>
-          <Faq />
+        <SectionTitle
+          pretitle="FAQ"
+          title="Frequently Asked Questions"
+        ></SectionTitle>
+        <Faq />
 
-          <Cta />
-        </div>
-        <Footer />
+        <Cta />
       </div>
+      <Footer />
     </div>
   );
 };
