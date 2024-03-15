@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { db } from "../../utils/db.server";
+import { retriveChargeId } from "../../controllers/paymentController";
 
 export const ZAccountSchema = z.object({
   accountId: z.string(),
@@ -94,4 +95,19 @@ export const getAccountById = async (id: any) => {
   });
 
   return account;
+};
+
+//eslint-disable-next-line
+export const saveTransactionDetails = async (session: any) => {
+  const paymentIntent_id = session.data.object.payment_intent;
+  const chargeId = await retriveChargeId(paymentIntent_id);
+  const transactionData = db.transaction.create({
+    data: {
+      saleId: session.data.object.metadata.saleId,
+      paymentIntent_id: paymentIntent_id,
+      eventId: session.id,
+      charge_id: chargeId,
+    },
+  });
+  return transactionData;
 };
