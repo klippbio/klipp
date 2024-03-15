@@ -87,6 +87,11 @@ export default async function createCheckoutSession(
   return session.url;
 }
 
+export async function retriveChargeId(paymentIntent_id: string) {
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntent_id);
+  return paymentIntent.latest_charge;
+}
+
 paymentController.post(
   "/connect",
   isUsersStore,
