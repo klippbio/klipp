@@ -43,7 +43,7 @@ const Hero = () => {
               className="flex items-center justify-center w-auto"
             >
               <span className="border  border-purple-200 py-2 px-6 rounded-full bg-purple-50">
-                Best fit for digital content creators
+                Best fit for modern creators and entrepreneurs
               </span>
             </motion.div>
             <h1 className="text-3xl md:text-6xl 2xl:text-7xl mt-5 word-spacing-widest tracking-normal font-semibold mb-2 text-center leading-snug text-gray-800 lg:leading-tight xl:leading-tight dark:text-white">
