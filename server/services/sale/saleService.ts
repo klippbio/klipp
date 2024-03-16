@@ -103,17 +103,6 @@ export const createNewSale = async (
     const meetingName =
       "Meeting " + calendarProduct?.title + " with " + customerName;
 
-    const googleCalendarResponse = await createGoogleCalendarBooking(
-      storeItem?.store.id as string,
-      meetingName,
-      slot,
-      endTime
-    );
-
-    if (!googleCalendarResponse) {
-      throw new Error("Failed to create google calendar event");
-    }
-
     const booking = await db.booking.create({
       data: {
         title: meetingName,
@@ -149,20 +138,34 @@ export const createNewSale = async (
         },
       },
     });
-    await db.booking.update({
-      where: {
-        id: booking.id,
-      },
-      data: {
-        meetingUrl: googleCalendarResponse.meetingUrl,
-        meetingId: googleCalendarResponse.meetingId,
-        googleCalendar: {
-          connect: {
-            id: googleCalendarResponse.googleCalendarID,
+
+    if (saleInfo.salePrice === "0") {
+      const googleCalendarResponse = await createGoogleCalendarBooking(
+        storeItem?.store.id as string,
+        meetingName,
+        slot,
+        endTime,
+        saleInfo.id,
+        saleInfo.salePrice
+      );
+      if (!googleCalendarResponse) {
+        throw new Error("Failed to create google calendar event");
+      }
+      await db.booking.update({
+        where: {
+          id: booking.id,
+        },
+        data: {
+          meetingUrl: googleCalendarResponse.meetingUrl,
+          meetingId: googleCalendarResponse.meetingId,
+          googleCalendar: {
+            connect: {
+              id: googleCalendarResponse.googleCalendarID,
+            },
           },
         },
-      },
-    });
+      });
+    }
   }
 
   // if (itemType === "DIGITALPRODUCT") {
@@ -185,6 +188,37 @@ export const createNewSale = async (
 };
 
 export const updateSaleStatus = async (saleId: string, status: StatusType) => {
+  const sale = await db.sale.findUnique({
+    where: {
+      id: String(saleId),
+    },
+    include: {
+      booking: true,
+      store: true,
+      storeItem: {
+        include: {
+          DigitalProduct: true,
+          calendarProduct: true,
+        },
+      },
+    },
+  });
+
+  if (sale && sale.storeItem.itemType === "CALENDAR" && sale.booking) {
+    const googleCalendarResponse = await createGoogleCalendarBooking(
+      sale.storeId,
+      sale.booking.title,
+      sale.booking.startTime.toISOString(),
+      sale.booking.endTime.toISOString(),
+      sale.id,
+      sale.salePrice
+    );
+
+    if (!googleCalendarResponse) {
+      throw new Error("Failed to create google calendar event");
+    }
+  }
+
   const updatedSale = await db.sale.update({
     where: {
       id: String(saleId),
@@ -192,7 +226,18 @@ export const updateSaleStatus = async (saleId: string, status: StatusType) => {
     data: {
       status: status,
     },
+    include: {
+      booking: true,
+      store: true,
+      storeItem: {
+        include: {
+          DigitalProduct: true,
+          calendarProduct: true,
+        },
+      },
+    },
   });
+
   return updatedSale;
 };
 
