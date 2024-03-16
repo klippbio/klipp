@@ -270,7 +270,7 @@ export const getAllSales = async (storeId: string) => {
 
   // Then, filter the sorted sales for those that have a status of "COMPLETED"
   const completedSales = sortedSales.filter(
-    (sale) => sale.status === "COMPLETED"
+    (sale) => sale.status === "COMPLETED" || sale.status === "REFUNDED"
   );
 
   return completedSales;
