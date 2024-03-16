@@ -2,8 +2,8 @@ import React from "react";
 import { sale } from "../..";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { useMutation } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
 import AxiosApi from "@/app/services/axios";
 import { toast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
@@ -23,7 +23,7 @@ import { formatDateSuccessPage } from "@/utils/formatDate";
 
 export default function CalendarSaleContent({ data }: { data: sale }) {
   const id = usePathname().split("/")[2];
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const cancelMutation = useMutation({
     mutationFn: async () => {
@@ -36,7 +36,7 @@ export default function CalendarSaleContent({ data }: { data: sale }) {
         title: "Cancel successful",
         duration: 2000,
       });
-      router.refresh();
+      queryClient.invalidateQueries(["sale", id]);
     },
     onError: async (data: AxiosError<ErrorResponse>) => {
       console.log(data, "error");
