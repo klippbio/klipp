@@ -4,6 +4,7 @@ import Image from "next/image";
 import React from "react";
 import Container from "./container";
 import LogoText from "../utils/logoText.png";
+import { InstagramIcon, LinkedinIcon, TwitterIcon } from "lucide-react";
 export default function Footer() {
   return (
     <div className="relative bg-secondary p-5  justify-end self-end">
@@ -20,13 +21,13 @@ export default function Footer() {
               </Link>
             </div>
 
-            <div className="max-w-md mt-4 text-gray-500 dark:text-gray-400">
+            <div className="max-w-md mt-4 md:text-md text-sm text-gray-500 dark:text-gray-400">
               Build, Manage, and Grow Your Digital Store Seamlessly
             </div>
           </div>
 
           <div>
-            <div className="flex flex-wrap w-full -mt-2 -ml-3 lg:ml-0">
+            <div className="flex flex-wrap w-full -mt-2 -ml-3 lg:ml-0 md:text-md text-sm">
               <Link
                 key={0}
                 href="/privacy-policy"
@@ -41,17 +42,36 @@ export default function Footer() {
               >
                 Terms of Service
               </Link>
-              <Link
+              {/* <Link
                 key={0}
-                href="mailto:meet22599@gmail.com"
+                href="mailto:klipp.bio@gmail.com"
                 className="w-full ml-0 px-4 py-2 text-gray-500 rounded-md dark:text-gray-300 hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 focus:outline-none dark:focus:bg-trueGray-700"
               >
                 Contact us
-              </Link>
+              </Link> */}
+
+              <a
+                href="https://twitter.com/klippio"
+                target="_blank"
+                rel="noopener"
+                className="py-2 px-4 text-gray-400 "
+              >
+                <span className="sr-only">Twitter</span>
+                <Twitter />
+              </a>
+              <a
+                href="https://www.instagram.com/klipp.io/"
+                target="_blank"
+                rel="noopener"
+                className="py-2 px-4 text-gray-400 "
+              >
+                <span className="sr-only">Instagram</span>
+                <InstagramIcon />
+              </a>
             </div>
           </div>
-          {/* <div className="">
-            <div className="flex mt-5 space-x-5 text-gray-400 dark:text-gray-500">
+          <div className="">
+            {/* <div className="flex space-x-5  dark:text-gray-500">
               <a
                 href="https://twitter.com/klippio"
                 target="_blank"
@@ -67,14 +87,14 @@ export default function Footer() {
                 rel="noopener"
               >
                 <span className="sr-only">Instagram</span>
-                <Instagram />
+                <InstagramIcon />
               </a>
               <a href="https://linkedin.com/" target="_blank" rel="noopener">
                 <span className="sr-only">Linkedin</span>
-                <Linkedin />
+                <LinkedinIcon />
               </a>
-            </div>
-          </div> */}
+            </div> */}
+          </div>
         </div>
       </Container>
     </div>
