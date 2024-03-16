@@ -6,9 +6,7 @@ export const createGoogleCalendarBooking = async (
   storeId: string,
   name: string,
   startTime: string,
-  endTime: string,
-  saleId: string,
-  salePrice: string
+  endTime: string
 ) => {
   try {
     const oauth2Client = new google.auth.OAuth2({

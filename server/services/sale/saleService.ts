@@ -144,11 +144,10 @@ export const createNewSale = async (
         storeItem?.store.id as string,
         meetingName,
         slot,
-        endTime,
-        saleInfo.id,
-        saleInfo.salePrice
+        endTime
       );
       if (!googleCalendarResponse) {
+        //TODO: "Handle this error and mail to klippbio@gmail.com"
         throw new Error("Failed to create google calendar event");
       }
       await db.booking.update({
@@ -167,23 +166,6 @@ export const createNewSale = async (
       });
     }
   }
-
-  // if (itemType === "DIGITALPRODUCT") {
-  //   //do if something special is needed for digital product
-  // }
-
-  //call stripe to create a payment intent
-
-  // Update the sale status to "COMPLETED" after the booking is created
-
-  // const updatedSale = await db.sale.update({
-  //   where: {
-  //     id: saleInfo.id,
-  //   },
-  //   data: {
-  //     status: "COMPLETED",
-  //   },
-  // });
   return saleInfo;
 };
 
@@ -209,14 +191,27 @@ export const updateSaleStatus = async (saleId: string, status: StatusType) => {
       sale.storeId,
       sale.booking.title,
       sale.booking.startTime.toISOString(),
-      sale.booking.endTime.toISOString(),
-      sale.id,
-      sale.salePrice
+      sale.booking.endTime.toISOString()
     );
 
     if (!googleCalendarResponse) {
-      throw new Error("Failed to create google calendar event");
+      throw new Error("Sorry we were not");
     }
+
+    await db.booking.update({
+      where: {
+        id: sale.booking.id,
+      },
+      data: {
+        meetingUrl: googleCalendarResponse.meetingUrl,
+        meetingId: googleCalendarResponse.meetingId,
+        googleCalendar: {
+          connect: {
+            id: googleCalendarResponse.googleCalendarID,
+          },
+        },
+      },
+    });
   }
 
   const updatedSale = await db.sale.update({
