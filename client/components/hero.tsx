@@ -11,6 +11,7 @@ import image4 from "/public/img/RImg1.png";
 import image5 from "/public/img/RImg2.png";
 import image6 from "/public/img/RImg3.png";
 
+//border border-l-0 border-r-0 border-purple-200 py-2 px-6 rounded-full bg-gradient-to-b from-purple-100 bg-white
 const Hero = () => {
   return (
     <>
@@ -41,7 +42,7 @@ const Hero = () => {
               transition={{ delay: 0.75, type: "spring" }}
               className="flex items-center justify-center w-auto"
             >
-              <span className="border border-l-0 border-r-0 border-purple-200 py-2 px-6 rounded-full bg-gradient-to-b from-purple-100 bg-white">
+              <span className="border  border-purple-200 py-2 px-6 rounded-full bg-purple-50">
                 Best fit for digital content creators
               </span>
             </motion.div>

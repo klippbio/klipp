@@ -16,10 +16,10 @@ const Home = () => {
         <Hero />
       </div>
 
-      <div className="bg-secondary-foreground">
+      {/* <div className="bg-secondary-foreground">
         <SectionTitle title="No Credit Card Required"></SectionTitle>
-      </div>
-      <div className="px-14 py-14 bg-gradient-to-b from-violet-50 to-white">
+      </div> */}
+      <div className="px-14 py-14 ">
         <Benefits data={benefitOne} />
       </div>
       <div className="bg-white px-14">
