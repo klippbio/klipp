@@ -4,7 +4,11 @@ import dayjs from "../../utils/dayjs.index";
 import { db } from "../../utils/db.server";
 import { createGoogleCalendarBooking } from "../googleCalendar/googleCalendarService";
 import { refundCharge } from "../../controllers/paymentController";
-
+import {
+  meetingCancelledEmail,
+  meetingCreatedEmail,
+  meetingRescheduledEmail,
+} from "../../controllers/saleController";
 type StatusType = "PENDING" | "COMPLETED" | "REFUNDED";
 
 function getEndTimes(startTime: string, meetingLength: number): string {
@@ -104,7 +108,7 @@ export const createNewSale = async (
     const meetingName =
       "Meeting " + calendarProduct?.title + " with " + customerName;
 
-    const booking = await db.booking.create({
+    await db.booking.create({
       data: {
         title: meetingName,
         startTime: slot,
@@ -140,32 +144,32 @@ export const createNewSale = async (
       },
     });
 
-    if (saleInfo.salePrice === "0") {
-      const googleCalendarResponse = await createGoogleCalendarBooking(
-        storeItem?.store.id as string,
-        meetingName,
-        slot,
-        endTime
-      );
-      if (!googleCalendarResponse) {
-        //TODO: "Handle this error and mail to klippbio@gmail.com"
-        throw new Error("Failed to create google calendar event");
-      }
-      await db.booking.update({
-        where: {
-          id: booking.id,
-        },
-        data: {
-          meetingUrl: googleCalendarResponse.meetingUrl,
-          meetingId: googleCalendarResponse.meetingId,
-          googleCalendar: {
-            connect: {
-              id: googleCalendarResponse.googleCalendarID,
-            },
-          },
-        },
-      });
-    }
+    // if (saleInfo.salePrice === "0") {
+    //   const googleCalendarResponse = await createGoogleCalendarBooking(
+    //     storeItem?.store.id as string,
+    //     meetingName,
+    //     slot,
+    //     endTime
+    //   );
+    //   if (!googleCalendarResponse) {
+    //     //TODO: "Handle this error and mail to klippbio@gmail.com"
+    //     throw new Error("Failed to create google calendar event");
+    //   }
+    //   await db.booking.update({
+    //     where: {
+    //       id: booking.id,
+    //     },
+    //     data: {
+    //       meetingUrl: googleCalendarResponse.meetingUrl,
+    //       meetingId: googleCalendarResponse.meetingId,
+    //       googleCalendar: {
+    //         connect: {
+    //           id: googleCalendarResponse.googleCalendarID,
+    //         },
+    //       },
+    //     },
+    //   });
+    // }
   }
   return saleInfo;
 };
@@ -196,7 +200,9 @@ export const updateSaleStatus = async (saleId: string, status: StatusType) => {
     );
 
     if (!googleCalendarResponse) {
-      throw new Error("Sorry we were not");
+      throw new Error(
+        "Sorry we were not able to create the google calendar event."
+      );
     }
 
     await db.booking.update({
@@ -234,6 +240,27 @@ export const updateSaleStatus = async (saleId: string, status: StatusType) => {
     },
   });
 
+  const storeId = updatedSale.storeId;
+  const storeDetails = await db.store.findUnique({
+    where: { id: storeId },
+    include: { user: true },
+  });
+
+  const toEmail = storeDetails?.user.email;
+
+  if (
+    toEmail &&
+    updatedSale?.store?.storeTitle &&
+    updatedSale?.booking?.startTime
+  ) {
+    const data = {
+      toEmail: toEmail,
+      toName: updatedSale?.store?.storeTitle,
+      meetingDetails: updatedSale?.booking?.startTime,
+      itemName: updatedSale?.booking?.title,
+    };
+    await meetingCreatedEmail(data);
+  }
   return updatedSale;
 };
 
@@ -349,7 +376,7 @@ export const rescheduleSale = async (
 
     await cancelGoogleCalendarSale(String(saleId));
 
-    await db.booking.update({
+    const cancelledBooking = await db.booking.update({
       where: {
         id: deleteBookingId?.booking?.id as number,
       },
@@ -360,7 +387,7 @@ export const rescheduleSale = async (
       },
     });
 
-    const booking = await db.booking.create({
+    const newBooking = await db.booking.create({
       data: {
         title: meetingName,
         startTime: slot,
@@ -401,12 +428,13 @@ export const rescheduleSale = async (
         buyerName: customerName,
         booking: {
           connect: {
-            id: booking.id,
+            id: newBooking.id,
           },
         },
       },
       include: {
         booking: true,
+        store: true,
       },
     });
 
@@ -419,7 +447,7 @@ export const rescheduleSale = async (
 
     await db.booking.update({
       where: {
-        id: booking.id,
+        id: newBooking.id,
       },
       data: {
         meetingUrl: googleCalendarResponse.meetingUrl,
@@ -431,6 +459,31 @@ export const rescheduleSale = async (
         },
       },
     });
+
+    const storeId = updatedSale.storeId;
+    const storeDetails = await db.store.findUnique({
+      where: { id: storeId },
+      include: { user: true },
+    });
+
+    const toEmail = storeDetails?.user.email;
+
+    if (
+      toEmail &&
+      updatedSale?.store?.storeTitle &&
+      updatedSale?.booking?.startTime
+    ) {
+      const data = {
+        toEmail: toEmail,
+        fromEmail: updatedSale?.buyerEmail,
+        toName: updatedSale?.store?.storeTitle,
+        meetingDetails: cancelledBooking.startTime,
+        newMeetingDetails: updatedSale?.booking?.startTime,
+        itemName: updatedSale?.booking?.title,
+      };
+      await meetingRescheduledEmail(data);
+    }
+
     return updatedSale;
   }
 };
@@ -444,6 +497,7 @@ export const cancelGoogleCalendarSale = async (saleId: string | undefined) => {
     include: {
       booking: true,
       transaction: true,
+      store: true,
     },
   });
 
@@ -473,6 +527,26 @@ export const cancelGoogleCalendarSale = async (saleId: string | undefined) => {
           status: "REFUNDED",
         },
       });
+    }
+    const storeId = sale.storeId;
+    const storeDetails = await db.store.findUnique({
+      where: { id: storeId },
+      include: { user: true },
+    });
+
+    const toEmail = storeDetails?.user.email;
+
+    if (toEmail && sale?.store?.storeTitle && sale?.booking?.startTime) {
+      const data = {
+        toEmail: toEmail,
+        fromEmail: sale?.buyerEmail,
+        toName: sale?.store?.storeTitle,
+        meetingDetails: sale?.booking?.startTime,
+        itemName: sale?.booking?.title,
+      };
+
+      console.log("data", data);
+      await meetingCancelledEmail(data);
     }
 
     return googleCalendarResponse;

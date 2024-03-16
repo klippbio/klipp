@@ -4,7 +4,6 @@ import {
   Container,
   Head,
   Heading,
-  Hr,
   Html,
   Img,
   Preview,
@@ -14,18 +13,18 @@ import {
 import { Tailwind } from "@react-email/tailwind";
 import * as React from "react";
 
-interface MeetingCreatedEmail {
-  toName?: string;
+interface MeetingRescheduledEmail {
   itemName?: string;
   meetingDetails?: string;
+  newMeetingDetails?: string;
 }
 
-export const MeetingCreatedEmail = ({
-  toName,
+export const MeetingRescheduledEmail = ({
   itemName,
   meetingDetails,
-}: MeetingCreatedEmail) => {
-  const previewText = `New Meeting Created - klipp`;
+  newMeetingDetails,
+}: MeetingRescheduledEmail) => {
+  const previewText = `Meeting Recheduled - klipp`;
 
   return (
     <Html>
@@ -44,15 +43,14 @@ export const MeetingCreatedEmail = ({
               />
             </Section>
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              New Meeting Scheduled - <strong>klipp</strong>
+              Meeting Recheduled - <strong>klipp</strong>
             </Heading>
+            <Text className="text-black text-[14px] leading-[24px]">Hi,</Text>
             <Text className="text-black text-[14px] leading-[24px]">
-              Hello {toName},
-            </Text>
-            <Text className="text-black text-[14px] leading-[24px]">
-              A new <strong>{itemName}</strong> has been scheduled on{" "}
-              <strong>{meetingDetails}</strong>. Please login to klipp using the
-              button below and view the details.
+              Your <strong>{itemName}</strong> on{" "}
+              <strong>{meetingDetails}</strong> has been recheduled to{" "}
+              <strong>{newMeetingDetails}</strong>. Please login to klipp using
+              the button below and view the details.
             </Text>
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button
@@ -62,11 +60,10 @@ export const MeetingCreatedEmail = ({
                 View Meeting Details
               </Button>
             </Section>
-            <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
+            {/* <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             <Text className="text-[#666666] text-[12px] leading-[24px]">
-              This email was intended for {toName}. If you were not expecting
-              it, please ignore this email.
-            </Text>
+              If you were not expecting this email, please ignore it.
+            </Text> */}
           </Container>
         </Body>
       </Tailwind>
@@ -74,10 +71,10 @@ export const MeetingCreatedEmail = ({
   );
 };
 
-MeetingCreatedEmail.PreviewProps = {
+MeetingRescheduledEmail.PreviewProps = {
   toName: " ",
   itemName: " ",
   meetingDetails: " ",
-} as MeetingCreatedEmail;
+} as MeetingRescheduledEmail;
 
-export default MeetingCreatedEmail;
+export default MeetingRescheduledEmail;

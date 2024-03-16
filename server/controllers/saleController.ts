@@ -19,6 +19,10 @@ import { render } from "@react-email/render";
 import { CalendarEmail } from "../emails/calendarEmail";
 import { getStoreFromStoreUrl } from "../services/storeService";
 import { NewSaleEmail } from "../emails/newSaleEmail";
+import { MeetingCreatedEmail } from "../emails/meetingCreatedEmail";
+import dayjs = require("dayjs");
+import { MeetingCancelledEmail } from "../emails/meetingCancelledEmail";
+import { MeetingRescheduledEmail } from "../emails/meetingRescheduledEmail";
 
 type emailDataType = {
   from_name: string;
@@ -31,6 +35,14 @@ type emailDataType = {
   itemName: string;
 };
 
+type meetingEmail = {
+  toName: string;
+  toEmail: string;
+  fromEmail?: string;
+  itemName: string;
+  meetingDetails: Date;
+  newMeetingDetails?: Date;
+};
 export async function emailTrigger(data: emailDataType) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const downloadLink = data.link;
@@ -57,6 +69,82 @@ export async function emailTrigger(data: emailDataType) {
       to: [`${data.from_email}`],
       subject: "Yay! you made a sale on klipp",
       html: render(NewSaleEmail({ itemName, fromName })),
+    });
+
+    return "success";
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return error;
+  }
+}
+
+export async function meetingCreatedEmail(data: meetingEmail) {
+  const formattedDate = dayjs(data.meetingDetails).format("MMMM D, YYYY HH:mm");
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const toName = data.toName;
+  const toEmail: string = data.toEmail;
+  const meetingDetails = formattedDate;
+  const itemName = data.itemName;
+
+  try {
+    await resend.emails.send({
+      from: `New Meeting Created <orders@klipp.io>`,
+      to: toEmail,
+      subject: "New Meeting Details - klipp",
+      html: render(MeetingCreatedEmail({ itemName, meetingDetails, toName })),
+    });
+
+    return "success";
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return error;
+  }
+}
+
+export async function meetingCancelledEmail(data: meetingEmail) {
+  const formattedDate = dayjs(data.meetingDetails).format("MMMM D, YYYY HH:mm");
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const fromEmail = data.fromEmail;
+  const toEmail: string = data.toEmail;
+  const meetingDetails = formattedDate;
+  const itemName = data.itemName;
+
+  try {
+    await resend.emails.send({
+      from: `Meeting <orders@klipp.io>`,
+      to: [`${toEmail}`],
+      bcc: `${fromEmail}`,
+      subject: "Meeting Cancelled - klipp",
+      html: render(MeetingCancelledEmail({ itemName, meetingDetails })),
+    });
+
+    return "success";
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return error;
+  }
+}
+
+export async function meetingRescheduledEmail(data: meetingEmail) {
+  const formattedDate = dayjs(data.meetingDetails).format("MMMM D, YYYY HH:mm");
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const fromEmail = data.fromEmail;
+  const toEmail: string = data.toEmail;
+  const meetingDetails = formattedDate;
+  const newMeetingDetails = dayjs(data.newMeetingDetails).format(
+    "MMMM D, YYYY HH:mm"
+  );
+  const itemName = data.itemName;
+
+  try {
+    await resend.emails.send({
+      from: `Meeting <orders@klipp.io>`,
+      to: [`${toEmail}`],
+      bcc: `${fromEmail}`,
+      subject: "Meeting Rescheduled - klipp",
+      html: render(
+        MeetingRescheduledEmail({ itemName, meetingDetails, newMeetingDetails })
+      ),
     });
 
     return "success";
@@ -197,7 +285,8 @@ saleController.post("/cancel", async (req: Request, res: Response) => {
 saleController.post("/reschedule", async (req: Request, res: Response) => {
   try {
     const sale = await rescheduleSale(req.body);
-    res.status(200).json(sale);
+    const link = sale && process.env.FRONTEND_URL + "/sale/" + sale.id;
+    res.status(200).json(link);
   } catch (error) {
     console.log("Error Occured at", req.url, "Error Details: ", error);
     if (error instanceof CustomError)
