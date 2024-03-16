@@ -13,12 +13,12 @@ export const metadata = {
   },
   description: {
     default:
-      "Turn Passion into Profit with your Digital Store Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
+      "Launch your digital store in 5 minutes. Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
   },
   openGraph: {
     title: "klipp",
     description:
-      "Turn Passion into Profit with your Digital Store Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
+      "Launch your digital store in 5 minutes. Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
     type: "article",
     images: [
       {
@@ -30,12 +30,27 @@ export const metadata = {
     ],
   },
   twitter: {
-    card: "summary_large_image",
     title: "klipp",
     description:
-      "Turn Passion into Profit with your Digital Store Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
-    images: ["https://www.klipp.io/logoBanner.png"],
+      "Launch your digital store in 5 minutes. Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
+    type: "article",
+    images: [
+      {
+        url: "https://www.klipp.io/logoBanner.png",
+        width: 1200,
+        height: 630,
+        alt: "klipp",
+      },
+    ],
   },
+
+  // twitter: {
+  //   card: "summary_large_image",
+  //   title: "klipp",
+  //   description:
+  //     "Launch your digital store in 5 minutes. Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
+  //   images: ["https://www.klipp.io/logoBanner.png"],
+  // },
 };
 export default function RootLayout({
   children,
