@@ -1,6 +1,9 @@
 import express from "express";
 import { Request, Response } from "express";
-import { handleUpdateAccount } from "../services/payment/paymentService";
+import {
+  handleUpdateAccount,
+  saveTransactionDetails,
+} from "../services/payment/paymentService";
 import CustomError from "../utils/CustomError";
 import { updateSaleStatus } from "../services/sale/saleService";
 import { emailTrigger } from "./saleController";
@@ -8,7 +11,10 @@ export const webhookController = express.Router();
 
 webhookController.post("/", async (req: Request, res: Response) => {
   try {
-    if (req.body.type === "account.updated") {
+    if (
+      req.body.type === "account.updated" &&
+      req.body.data.object.details_submitted
+    ) {
       handleUpdateAccount(req.body.data.object);
     }
 
@@ -27,10 +33,8 @@ webhookController.post("/", async (req: Request, res: Response) => {
         itemName: session.data.object.metadata.itemName,
         itemType: session.data.object.metadata.itemType,
       };
-
-      console.log(saleEmail);
+      await saveTransactionDetails(session);
       await emailTrigger(saleEmail);
-
       await updateSaleStatus(saleId, "COMPLETED");
     }
     res.status(200).json("ok");

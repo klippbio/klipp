@@ -58,6 +58,7 @@ export async function emailTrigger(data: emailDataType) {
       subject: "Yay! you made a sale on klipp",
       html: render(NewSaleEmail({ itemName, fromName })),
     });
+
     return "success";
   } catch (error) {
     console.error("Error sending email:", error);

@@ -47,6 +47,7 @@ export default async function createCheckoutSession(
   const accountId = await getStripeAccountId(data.storeId);
   const successUrl = process.env.FRONTEND_URL + "/sale/" + data.saleId;
   const price = data.price * 100;
+  const platformFee = Math.round(price * 0.05);
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     line_items: [
@@ -65,6 +66,7 @@ export default async function createCheckoutSession(
       transfer_data: {
         destination: accountId,
       },
+      application_fee_amount: platformFee,
       on_behalf_of: accountId,
     },
     success_url: successUrl,
@@ -83,6 +85,11 @@ export default async function createCheckoutSession(
   });
 
   return session.url;
+}
+
+export async function retriveChargeId(paymentIntent_id: string) {
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntent_id);
+  return paymentIntent.latest_charge;
 }
 
 paymentController.post(

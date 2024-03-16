@@ -287,10 +287,23 @@ model Sale {
   buyerName      String?
   status         SaleStatus
   booking        Booking?
+  transaction    Transaction?
   //add something for payment details like transaction id something of stripe
   additionalInfo Json?       // Any additional information relevant to the sale
 
   @@index([storeId])
+}
+
+model Transaction {
+  id             String      @id @default(uuid())
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  saleId         String     @unique
+  charge_id      String
+  paymentIntent_id String
+  eventId        String
+  sale           Sale        @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  @@index([saleId])
 }
 
 enum SaleStatus {
