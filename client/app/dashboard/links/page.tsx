@@ -214,110 +214,113 @@ function Page() {
 
   return (
     <div>
-      {isLoading || isError ? (
+      {(isLoading || isError) && !data ? (
         <DigitalDownloadSkeleton />
       ) : (
         <div className="mr-6 w-full grid ">
-          <div>
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild>
-                <Button>Add Link</Button>
-              </DialogTrigger>
-              <DialogContent className="w-full max-w-xl">
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <DialogHeader>
-                      <DialogTitle>Add a Link</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex flex-col gap-2 w-full py-4">
-                      <div className="flex">
-                        {" "}
-                        {/* Flex container for thumbnail and fields */}
-                        {/* Thumbnail Upload Section */}
-                        <div className="flex flex-col w-1/3">
+          {data && (
+            <div>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button>Add Link</Button>
+                </DialogTrigger>
+                <DialogContent className="w-full max-w-xl">
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                      <DialogHeader>
+                        <DialogTitle>Add a Link</DialogTitle>
+                      </DialogHeader>
+                      <div className="flex flex-col gap-2 w-full py-4">
+                        <div className="flex">
                           {" "}
-                          {/* Adjusted for thumbnail */}
-                          <FormField
-                            control={form.control}
-                            name="thumbnailUrl"
-                            render={() => (
-                              <FormItem>
-                                <div className="flex w-full flex-col gap-3">
-                                  <FormLabel htmlFor="thumbnail">
-                                    Thumbnail
-                                  </FormLabel>
-                                  <FormControl>
-                                    <div
-                                      className={`h-24 w-24 md:h-32 md:w-32 border-2  flex flex-col items-center justify-center relative  ${
-                                        selectedFile
-                                          ? "border-transparent"
-                                          : buttonVariants({ variant: "ghost" })
-                                      }`}
-                                    >
-                                      {uploadingThumbnail ? (
-                                        <Loader2 className="ml-2 h-6 w-6 animate-spin" />
-                                      ) : selectedFile ? (
-                                        <div className="relative rounded-lg w-full h-full">
-                                          <Image
-                                            width={1000}
-                                            height={1000}
-                                            src={selectedFile}
-                                            alt="Selected Thumbnail"
-                                            className="w-full h-full object-cover transition-opacity"
-                                          />
-                                          <div className="flex items-center justify-center mt-2 text-red-500">
-                                            <span
-                                              onClick={onThumbnailRemove}
-                                              className="text-sm flex items-center cursor-pointer"
-                                            >
-                                              Remove
-                                            </span>
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div
-                                          className="text-3xl font-bold mb-8 mt-8 text-foreground"
-                                          style={{ pointerEvents: "none" }}
-                                        >
-                                          <Upload></Upload>
-                                        </div>
-                                      )}
-                                      <Input
-                                        type="file"
-                                        accept="image/*"
-                                        className="absolute opacity-0 w-full h-full cursor-pointer"
-                                        onChange={onThumbnailChange}
-                                      />
-                                    </div>
-                                  </FormControl>
-                                  <FormMessage />
-                                </div>
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                        {/* Form Fields Section */}
-                        <div className="w-2/3">
-                          {" "}
-                          {/* Adjusted for form fields */}
-                          <div className="grid grid-cols-1 gap-3">
-                            <Label htmlFor="title" className="col-span-1">
-                              Title
-                            </Label>
+                          {/* Flex container for thumbnail and fields */}
+                          {/* Thumbnail Upload Section */}
+                          <div className="flex flex-col w-1/3">
+                            {" "}
+                            {/* Adjusted for thumbnail */}
                             <FormField
                               control={form.control}
-                              name="title"
-                              render={({ field }) => (
+                              name="thumbnailUrl"
+                              render={() => (
                                 <FormItem>
-                                  <FormControl>
-                                    <Input {...field} id="title" />
-                                  </FormControl>
-                                  <FormMessage />
+                                  <div className="flex w-full flex-col gap-3">
+                                    <FormLabel htmlFor="thumbnail">
+                                      Thumbnail
+                                    </FormLabel>
+                                    <FormControl>
+                                      <div
+                                        className={`h-24 w-24 md:h-32 md:w-32 border-2  flex flex-col items-center justify-center relative  ${
+                                          selectedFile
+                                            ? "border-transparent"
+                                            : buttonVariants({
+                                                variant: "ghost",
+                                              })
+                                        }`}
+                                      >
+                                        {uploadingThumbnail ? (
+                                          <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+                                        ) : selectedFile ? (
+                                          <div className="relative rounded-lg w-full h-full">
+                                            <Image
+                                              width={1000}
+                                              height={1000}
+                                              src={selectedFile}
+                                              alt="Selected Thumbnail"
+                                              className="w-full h-full object-cover transition-opacity"
+                                            />
+                                            <div className="flex items-center justify-center mt-2 text-red-500">
+                                              <span
+                                                onClick={onThumbnailRemove}
+                                                className="text-sm flex items-center cursor-pointer"
+                                              >
+                                                Remove
+                                              </span>
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <div
+                                            className="text-3xl font-bold mb-8 mt-8 text-foreground"
+                                            style={{ pointerEvents: "none" }}
+                                          >
+                                            <Upload></Upload>
+                                          </div>
+                                        )}
+                                        <Input
+                                          type="file"
+                                          accept="image/*"
+                                          className="absolute opacity-0 w-full h-full cursor-pointer"
+                                          onChange={onThumbnailChange}
+                                        />
+                                      </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </div>
                                 </FormItem>
                               )}
                             />
+                          </div>
+                          {/* Form Fields Section */}
+                          <div className="w-2/3">
+                            {" "}
+                            {/* Adjusted for form fields */}
+                            <div className="grid grid-cols-1 gap-3">
+                              <Label htmlFor="title" className="col-span-1">
+                                Title
+                              </Label>
+                              <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <Input {...field} id="title" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
 
-                            {/* <Label htmlFor="description">Description</Label>
+                              {/* <Label htmlFor="description">Description</Label>
                             <FormField
                               control={form.control}
                               name="description"
@@ -330,38 +333,39 @@ function Page() {
                                 </FormItem>
                               )}
                             /> */}
-                            <Label htmlFor="url">Url</Label>
-                            <FormField
-                              control={form.control}
-                              name="url"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <Input {...field} id="url" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                              <Label htmlFor="url">Url</Label>
+                              <FormField
+                                control={form.control}
+                                name="url"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <Input {...field} id="url" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
                           </div>
                         </div>
+                        {/* <div className="w-full flex flex-col mt-2 gap-3"></div> */}
                       </div>
-                      {/* <div className="w-full flex flex-col mt-2 gap-3"></div> */}
-                    </div>
-                    <DialogFooter>
-                      {createProductMutation.isLoading ? (
-                        <ButtonLoading />
-                      ) : (
-                        <Button type="submit">
-                          <span>Save</span>
-                        </Button>
-                      )}
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </div>
+                      <DialogFooter>
+                        {createProductMutation.isLoading ? (
+                          <ButtonLoading />
+                        ) : (
+                          <Button type="submit">
+                            <span>Save</span>
+                          </Button>
+                        )}
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
         </div>
       )}
       {data && data.length == 0 ? (

@@ -43,14 +43,6 @@ export const metadata = {
       },
     ],
   },
-
-  // twitter: {
-  //   card: "summary_large_image",
-  //   title: "klipp",
-  //   description:
-  //     "Launch your digital store in 5 minutes. Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
-  //   images: ["https://www.klipp.io/logoBanner.png"],
-  // },
 };
 export default function RootLayout({
   children,
