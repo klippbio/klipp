@@ -3,6 +3,7 @@ import { z } from "zod";
 import dayjs from "../../utils/dayjs.index";
 import { db } from "../../utils/db.server";
 import { createGoogleCalendarBooking } from "../googleCalendar/googleCalendarService";
+import { refundCharge } from "../../controllers/paymentController";
 
 type StatusType = "PENDING" | "COMPLETED" | "REFUNDED";
 
@@ -442,6 +443,7 @@ export const cancelGoogleCalendarSale = async (saleId: string | undefined) => {
     },
     include: {
       booking: true,
+      transaction: true,
     },
   });
 
@@ -462,7 +464,7 @@ export const cancelGoogleCalendarSale = async (saleId: string | undefined) => {
     });
     //TODO: call stripe to refund the payment if price is more than 0
     if (sale.salePrice !== "0") {
-      //call stripe to refund the payment
+      await refundCharge(sale.transaction?.charge_id as string);
       await db.sale.update({
         where: {
           id: sale.id,

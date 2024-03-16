@@ -92,6 +92,13 @@ export async function retriveChargeId(paymentIntent_id: string) {
   return paymentIntent.latest_charge;
 }
 
+export async function refundCharge(chargeId: string) {
+  const refund = await stripe.refunds.create({
+    charge: chargeId,
+  });
+  return refund;
+}
+
 paymentController.post(
   "/connect",
   isUsersStore,
