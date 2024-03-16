@@ -237,7 +237,11 @@ export const getAllCalendarProducts = async (storeId: string) => {
       bookings: true,
       availability: true,
       schedule: true,
-      calendarSetting: true,
+      calendarSetting: {
+        include: {
+          googleCalendar: true,
+        },
+      },
       storeItem: true,
     },
   });

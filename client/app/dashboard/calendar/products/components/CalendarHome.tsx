@@ -11,6 +11,9 @@ import CalendarProductDropdown from "./CalendarProductDropdown";
 import { CalendarProductApiResponse } from "@/types/apiResponse";
 import CalendarSkeleton from "./CalendarSkeleton";
 import { AxiosError } from "axios";
+import { AlertCircle } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 function CalendarHome() {
   const authDetails = useAuthDetails();
@@ -36,6 +39,13 @@ function CalendarHome() {
     }
   );
 
+  const doesGoogleCalendarExist = calendarProducts?.at(0)?.calendarSetting
+    .googleCalendar?.refreshToken
+    ? true
+    : false;
+
+  const doesScheduleExist = calendarProducts?.at(0)?.scheduleId ? true : false;
+
   if (error?.response?.status === 500) {
     throw Error("Internal Server Error");
   }
@@ -46,6 +56,22 @@ function CalendarHome() {
         <CalendarSkeleton />
       ) : (
         <div className="w-full">
+          {!doesGoogleCalendarExist || !doesScheduleExist ? (
+            <div className="my-2 mb-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle></AlertTitle>
+                <AlertDescription>
+                  {!doesGoogleCalendarExist &&
+                    "Please connect to Google Calendar in Settings to enable creating products."}
+                  <br />
+                  <br />
+                  {!doesScheduleExist &&
+                    "Please connect to Schedule to enable creating products."}
+                </AlertDescription>
+              </Alert>
+            </div>
+          ) : null}
           <AddCalendarProduct authDetails={authDetails} />
           {calendarProducts && calendarProducts.length > 0 ? (
             <div className="md:flex md:flex-row gap-x-4 mt-4 flex-wrap">
