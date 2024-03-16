@@ -47,7 +47,7 @@ const Home = () => {
       <Testimonials /> */}
 
         <SectionTitle
-          pretitle="FAQ"
+          pretitle="Frequently asked questions"
           title="Frequently Asked Questions"
         ></SectionTitle>
         <Faq />

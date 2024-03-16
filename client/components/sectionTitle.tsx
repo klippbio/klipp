@@ -10,16 +10,16 @@ const SectionTitle = (props: any) => {
       }`}
     >
       {props.pretitle && (
-        <div className="text-sm font-bold tracking-wider  uppercase">
+        <div className="text-xl mb-4 font-bold tracking-wider">
           {props.pretitle}
         </div>
       )}
 
-      {props.title && (
+      {/* {props.title && (
         <h2 className="mt-3 mb-3 text-3xl font-bold leading-snug tracking-tight lg:leading-tight lg:text-4xl text-white">
           {props.title}
         </h2>
-      )}
+      )} */}
 
       {props.children && (
         <p className=" py-4 text-lg leading-normal text-gray-500 lg:text-xl xl:text-xl dark:text-gray-300">
