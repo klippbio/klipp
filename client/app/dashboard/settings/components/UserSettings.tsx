@@ -27,7 +27,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { GradientPicker } from "@/components/ui/GradientPicker";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import Image from "next/image";
-import { Types } from "aws-sdk/clients/budgets";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
