@@ -27,6 +27,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { GradientPicker } from "@/components/ui/GradientPicker";
 import { useAuthDetails } from "@/app/components/AuthContext";
 import Image from "next/image";
+import { Types } from "aws-sdk/clients/budgets";
 
 const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
@@ -100,8 +101,8 @@ function UserSettings(data: any) {
     setImageUrl("");
     setUploadingThumbnail(false);
   }
-  async function getUploadURL() {
-    return await generateUploadURL();
+  async function getUploadURL(type: string) {
+    return await generateUploadURL(type);
   }
 
   const mutation = useMutation({
@@ -142,7 +143,7 @@ function UserSettings(data: any) {
     }
     const file = event.target.files?.[0];
     if (!file) return;
-    const uploadUrl = await getUploadURL();
+    const uploadUrl = await getUploadURL(file.type as string);
     const imageUrlFromS3 = await uploadFile(uploadUrl, file);
     if (imageUrlFromS3 === "") {
       setUploadingThumbnail(false);
