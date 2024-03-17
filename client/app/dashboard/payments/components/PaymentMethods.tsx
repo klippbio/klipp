@@ -351,25 +351,25 @@ export function PaymentMethods() {
                     </form>
                   </Form>
                 )}
-                <div className="flex items-center">
+                <div className="flex items-center justify-between gap-2">
                   {accountStatus === "pending" &&
                     (mutation.isLoading ? (
                       <ButtonLoading />
                     ) : (
                       <Button onClick={() => pendingSubmit()}>
-                        <span>Continue Onboarding</span>
+                        <span className="text-xs">Continue Onboarding</span>
                       </Button>
                     ))}
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     {accountStatus === "connected" && (
                       <div>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
                               variant={"destructive"}
-                              className="w-16 md:w-fit"
+                              className=" md:w-fit"
                             >
-                              <span className="sm:text-xs">Disconnect</span>
+                              <span className="text-xs ">Disconnect</span>
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
@@ -414,7 +414,10 @@ export function PaymentMethods() {
                       </Button>
                     )}
                     {accountStatus === "pending" && (
-                      <Badge className="h-8 ml-auto" variant="secondary">
+                      <Badge
+                        className="h-8 ml-auto text-[10px] md:text-xs"
+                        variant="secondary"
+                      >
                         <span>Connection Incomplete</span>
                       </Badge>
                     )}

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import CalendarProductDropdown from "./CalendarProductDropdown";
 import { CalendarProductApiResponse } from "@/types/apiResponse";
 import CalendarSkeleton from "./CalendarSkeleton";
-import { AxiosError } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { AlertCircle } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -39,12 +39,32 @@ function CalendarHome() {
     }
   );
 
-  const doesGoogleCalendarExist = calendarProducts?.at(0)?.calendarSetting
-    .googleCalendar?.refreshToken
+  const { data: calendarSettingResposne } = useQuery<AxiosResponse, AxiosError>(
+    ["calendarSettings", storeId],
+    async () =>
+      await AxiosApi("GET", `/api/calendar/settings/?storeId=${storeId}`).then(
+        (res) => res
+      ),
+    {
+      enabled: !!storeId,
+    }
+  );
+
+  const doesGoogleCalendarExist = calendarSettingResposne?.data.calendarSetting
+    ?.googleCalendar
     ? true
     : false;
 
-  const doesScheduleExist = calendarProducts?.at(0)?.scheduleId ? true : false;
+  const doesScheduleExist = calendarSettingResposne?.data.calendarSetting
+    .defaultScheduleId
+    ? true
+    : false;
+
+  const timezoneExists = calendarSettingResposne?.data.calendarSetting.timeZone
+    ? true
+    : false;
+
+  console.log(doesGoogleCalendarExist, doesScheduleExist, timezoneExists);
 
   if (error?.response?.status === 500) {
     throw Error("Internal Server Error");
@@ -56,18 +76,29 @@ function CalendarHome() {
         <CalendarSkeleton />
       ) : (
         <div className="w-full">
-          {!doesGoogleCalendarExist || !doesScheduleExist ? (
+          {calendarSettingResposne &&
+          (!doesGoogleCalendarExist ||
+            !doesScheduleExist ||
+            !timezoneExists) ? (
             <div className="my-2 mb-4">
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle></AlertTitle>
                 <AlertDescription>
-                  {!doesGoogleCalendarExist &&
-                    "Please connect to Google Calendar in Settings to enable creating products."}
-                  <br />
-                  <br />
-                  {!doesScheduleExist &&
-                    "Please connect to Schedule to enable creating products."}
+                  {calendarSettingResposne &&
+                  !doesGoogleCalendarExist &&
+                  !doesScheduleExist
+                    ? "Please connect to Google Calendar in Settings and Create a Schedule to enable creating products."
+                    : !doesGoogleCalendarExist
+                    ? "Please connect to Google Calendar in Settings."
+                    : !doesScheduleExist
+                    ? "Please create a Schedule in Settings."
+                    : null}
+                </AlertDescription>
+                <AlertDescription>
+                  {calendarSettingResposne && !timezoneExists
+                    ? "Please select your timezone in Settings "
+                    : null}
                 </AlertDescription>
               </Alert>
             </div>

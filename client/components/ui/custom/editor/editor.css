@@ -30,6 +30,10 @@ h6.ce-header {
   max-width: inherit; /* example value, adjust for your own use case */
 }
 
+.ce-popover__items{
+  padding-bottom: 80px ;
+}
+
 .codex-editor--narrow .codex-editor__redactor {
   margin-right: 0px;
 }

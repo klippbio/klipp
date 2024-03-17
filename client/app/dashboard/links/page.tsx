@@ -76,10 +76,12 @@ function Page() {
   const [open, setOpen] = useState(false);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
 
-  const { data, isLoading, isError, error } = useQuery<
-    Array<itemType>,
-    AxiosError
-  >(
+  const {
+    data: linkData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Array<itemType>, AxiosError>(
     ["allLinks", storeId],
     async () => {
       const response = await AxiosApi(
@@ -214,11 +216,11 @@ function Page() {
 
   return (
     <div>
-      {(isLoading || isError) && !data ? (
+      {(isLoading || isError) && !linkData ? (
         <DigitalDownloadSkeleton />
       ) : (
         <div className="mr-6 w-full grid ">
-          {data && (
+          {linkData && (
             <div>
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
@@ -368,7 +370,7 @@ function Page() {
           )}
         </div>
       )}
-      {data && data.length == 0 ? (
+      {linkData && linkData.length == 0 ? (
         <div className="flex justify-center">
           <Card className="flex m-4 md:w-1/3 w-full h-32 justify-center bg-secondary">
             <div className="flex flex-col justify-center items-center">
@@ -383,8 +385,8 @@ function Page() {
         </div>
       ) : (
         <div className="md:flex md:flex-row gap-x-4 mt-4 flex-wrap">
-          {data &&
-            data.map((item: itemType) => (
+          {linkData &&
+            linkData.map((item: itemType) => (
               <Card
                 className="md:w-1/3 rounded-l-full hover:bg-secondary rounded-r-full cursor-pointer w-full h-20 mb-4"
                 key={item.title}

@@ -318,9 +318,6 @@ export const getAllSchedules = async (storeId: string) => {
   const defaultSchedule = schedules.find(
     (schedule) => schedule.id === calendarSetting?.defaultScheduleId
   );
-  if (!defaultSchedule) {
-    throw new CustomError("Default schedule not found", 404);
-  }
   //just return a list of all schedules with their id and name and entire default schedule
   return {
     schedules,
