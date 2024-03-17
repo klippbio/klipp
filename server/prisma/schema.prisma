@@ -45,6 +45,7 @@ model Payment {
   storeId        String
   accountId       String @unique
   onboardingComplete Boolean @default(false)
+  deleted       Boolean @default(false)
   store          Store           @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }
 
