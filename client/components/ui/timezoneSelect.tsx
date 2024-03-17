@@ -90,15 +90,15 @@ export function TimezoneSelect({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-[300px]">
+      <PopoverContent className="p-0 w-[300px]" side="bottom">
         <Command
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             handleInputChange(e.target.value)
           }
         >
-          <CommandInput placeholder="Search timezone..." />
+          <CommandInput placeholder="Search your city...." />
           <CommandEmpty>No timezone found.</CommandEmpty>
-          <CommandGroup className="h-72 overflow-y-auto">
+          <CommandGroup className="max-h-40 md:max-h-72 overflow-y-auto">
             {options.map((option) => (
               <CommandItem
                 onSelect={() => {

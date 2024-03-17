@@ -98,10 +98,8 @@ userController.get(
   "/check",
   ClerkExpressRequireAuth(),
   async (req: Request, res: Response) => {
-    console.log("Entered clerk:", req);
     try {
       const clerkUser = await clerkClient.users.getUser(req.auth.userId);
-      console.log("cluerk user:", clerkUser);
       if (
         clerkUser.unsafeMetadata === null ||
         clerkUser.unsafeMetadata === undefined ||

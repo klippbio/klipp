@@ -42,7 +42,7 @@ const Hero = () => {
               transition={{ delay: 0.75, type: "spring" }}
               className="flex items-center justify-center w-auto"
             >
-              <span className="border  border-purple-200 py-2 px-6 rounded-full bg-purple-50">
+              <span className="border  border-purple-200 py-2 px-6 rounded-full bg-purple-50 md:text-base text-xs">
                 Best fit for modern creators and entrepreneurs
               </span>
             </motion.div>

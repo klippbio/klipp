@@ -60,7 +60,7 @@ function Page() {
   const storeId = authDetails?.storeId;
 
   const { data, isLoading } = useQuery<Array<PageViewData>, AxiosError>(
-    ["allLinks", storeId],
+    ["pageViews", storeId],
     async () => {
       const response = await AxiosApi(
         "GET",

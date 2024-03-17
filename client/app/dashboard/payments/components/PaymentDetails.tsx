@@ -95,7 +95,7 @@ function PaymentDetails() {
                     Payment Details
                   </CardTitle>
                   <CardContent className="flex flex-col gap-4">
-                    <Card className="flex w-full border-dashed border-2 h-60 justify-center ">
+                    <Card className="flex w-full border-dashed border-2 h-60 justify-center p-3">
                       <div className="flex flex-col justify-center items-center">
                         <div className="text-l font-semibold text-foreground  ">
                           Stripe Account not Connected

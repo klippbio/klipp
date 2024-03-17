@@ -11,6 +11,12 @@ export const metadata = {
   title: {
     default: "klipp",
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
   description: {
     default:
       "Launch your digital store in 5 minutes. Sell digital products, schedule meetings, offer coaching, and consolidate links in your link-in-bio store. Your one-stop monetization platform.",
@@ -44,6 +50,7 @@ export const metadata = {
     ],
   },
 };
+
 export default function RootLayout({
   children,
 }: {

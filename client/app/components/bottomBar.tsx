@@ -71,10 +71,10 @@ export function BottomBar({
           <DrawerTrigger
             className={cn(
               buttonVariants({ variant: "ghost" }),
-              "flex flex-col items-center hover:bg-background "
+              "flex flex-col items-center hover:bg-background border-0"
             )}
           >
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center border-0	">
               <Menu size={20} />
               <span className="pt-1">Menu</span>
             </div>
