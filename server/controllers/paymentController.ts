@@ -195,15 +195,15 @@ paymentController.post(
   async (req: Request, res: Response) => {
     try {
       // Deleting the Stripe account
-      const deleted = await stripe.accounts.del(req.body.accountId);
+      // const deleted = await stripe.accounts.del(req.body.accountId);
 
-      if (deleted.deleted) {
-        await handleDeleteAccountFromDB(req.body);
+      // if (deleted.deleted) {
+      await handleDeleteAccountFromDB(req.body);
 
-        res.status(200).json({ message: "Account successfully disconnected" });
-      } else {
-        res.status(500).json({ error: "Failed to disconnect the account" });
-      }
+      res.status(200).json({ message: "Account successfully disconnected" });
+      // } else {
+      //   res.status(500).json({ error: "Failed to disconnect the account" });
+      // }
     } catch (error) {
       console.log("Error Occured at", req.url, "Error Details: ", error);
       if (error instanceof CustomError)
@@ -213,7 +213,6 @@ paymentController.post(
   }
 );
 
-//TODO: Change this whole controller.
 paymentController.get(
   "/stripeAccountDetails",
   isUsersStore,

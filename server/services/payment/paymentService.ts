@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { db } from "../../utils/db.server";
 import { retriveChargeId } from "../../controllers/paymentController";
+import CustomError from "../../utils/CustomError";
 
 export const ZAccountSchema = z.object({
   accountId: z.string(),
@@ -18,8 +19,24 @@ export const ZAccountDetailsSchema = z.object({
 export const createAccount = async (
   input: z.infer<typeof ZAccountDetailsSchema>
 ) => {
-  //auth
   const storeId = input.storeId;
+
+  const existingAccount = await db.payment.findFirst({
+    where: {
+      storeId: storeId,
+      deleted: false,
+    },
+  });
+
+  if (existingAccount) {
+    throw new CustomError(
+      "Stripe account with deleted false already exists",
+      500
+    );
+  }
+
+  //auth
+
   const account = await db.payment.create({
     data: {
       accountId: input.accountId,
@@ -64,9 +81,12 @@ export const handleDeleteAccountFromDB = async (
 ) => {
   //get account from db based on id from event
   //update charges enabled, transfers enabled, payouts enabled and onboarding complete details
-  const account = await db.payment.delete({
+  const account = await db.payment.update({
     where: {
       accountId: input.accountId,
+    },
+    data: {
+      deleted: true,
     },
   });
   return account;
@@ -76,9 +96,11 @@ export const getAccountDetails = async (
   input: z.infer<typeof ZStoreIdSchema>
 ) => {
   const storeId = input.storeId;
+
   const accountDetails = await db.payment.findFirst({
     where: {
       storeId: storeId,
+      deleted: false,
     },
   });
 
