@@ -6,11 +6,16 @@ const inter = Inter({ subsets: ["latin"] });
 import QueryWrapper from "./components/QueryWrapper";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "./components/AuthContext";
-import { Viewport } from "next/dist/lib/metadata/types/extra-types";
 
 export const metadata = {
   title: {
     default: "klipp",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
   },
   description: {
     default:
@@ -44,14 +49,6 @@ export const metadata = {
       },
     ],
   },
-};
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({
