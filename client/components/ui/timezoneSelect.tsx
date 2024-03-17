@@ -90,7 +90,7 @@ export function TimezoneSelect({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-[300px]">
+      <PopoverContent className="p-0 w-[300px]" side="bottom">
         <Command
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             handleInputChange(e.target.value)

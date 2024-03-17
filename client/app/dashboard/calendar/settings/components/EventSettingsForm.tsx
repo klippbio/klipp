@@ -36,6 +36,22 @@ const minimumBookingNoticeOptions = [
     value: 180,
     label: "3 hours",
   },
+  {
+    value: 240,
+    label: "4 hours",
+  },
+  {
+    value: 360,
+    label: "6 hours",
+  },
+  {
+    value: 720,
+    label: "12 hours",
+  },
+  {
+    value: 1440,
+    label: "24 hours",
+  },
 ];
 export const ZUpdateCalendarSettingSchema = z.object({
   minimumBookingNotice: z.number().int(),
@@ -161,7 +177,8 @@ export function EventSettingsForm({
                     }))}
                   />
                   <FormDescription className="ml-2">
-                    Set the minimum amount of notice needed.
+                    Set the minimum amount of notice needed you need before your
+                    event.
                   </FormDescription>
                 </div>
               </div>
