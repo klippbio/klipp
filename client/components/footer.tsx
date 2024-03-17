@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 import Container from "./container";
 import LogoText from "../utils/logoText.png";
-import { InstagramIcon, LinkedinIcon, TwitterIcon } from "lucide-react";
+import { InstagramIcon, LinkedinIcon, Mail, TwitterIcon } from "lucide-react";
 export default function Footer() {
   return (
     <div className="relative bg-secondary p-5  justify-end self-end">
@@ -57,7 +57,7 @@ export default function Footer() {
                 className="py-2 px-4 text-gray-400 "
               >
                 <span className="sr-only">Twitter</span>
-                <Twitter />
+                <TwitterIcon />
               </a>
               <a
                 href="https://www.instagram.com/klipp.io/"
@@ -67,6 +67,15 @@ export default function Footer() {
               >
                 <span className="sr-only">Instagram</span>
                 <InstagramIcon />
+              </a>
+              <a
+                href="mailto:klipp.bio@gmail.com"
+                target="_blank"
+                rel="noopener"
+                className="py-2 px-4 text-gray-400 "
+              >
+                <span className="sr-only">Mail</span>
+                <Mail />
               </a>
             </div>
           </div>

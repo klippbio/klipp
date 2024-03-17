@@ -75,7 +75,7 @@ const digitalDownloadsSchema = z
       .array(
         z.object({
           name: z.string().optional(),
-          url: z.string().optional(),
+          url: z.string().url().optional(),
         })
       )
       .optional(),
@@ -236,8 +236,8 @@ export function ProfileForm({
     setImageUrl("");
     setUploadingThumbnail(false);
   }
-  async function getUploadURL() {
-    return await generateUploadURL();
+  async function getUploadURL(type: string) {
+    return await generateUploadURL(type);
   }
 
   async function onThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -247,7 +247,9 @@ export function ProfileForm({
     }
     const file = event.target.files?.[0];
     if (!file) return;
-    const uploadUrl = await getUploadURL();
+    const uploadUrl = await getUploadURL(file.type as string);
+    //add extension to url
+
     const imageUrlFromS3 = await uploadFile(uploadUrl, file);
     if (imageUrlFromS3 === "") {
       setUploadingThumbnail(false);
@@ -262,7 +264,7 @@ export function ProfileForm({
     setUploadingFile(true);
     const file = event.target.files?.[0];
     if (!file) return;
-    const uploadUrl = await getUploadURL();
+    const uploadUrl = await getUploadURL(file.type as string);
     const fileUrl = await uploadFile(uploadUrl, file);
     if (fileUrl === "") {
       setUploadingFile(false);
