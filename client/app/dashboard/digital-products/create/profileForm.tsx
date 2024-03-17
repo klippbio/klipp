@@ -75,7 +75,7 @@ const digitalDownloadsSchema = z
       .array(
         z.object({
           name: z.string().optional(),
-          url: z.string().url().optional(),
+          url: z.string().optional(),
         })
       )
       .optional(),
