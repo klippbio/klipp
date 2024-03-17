@@ -177,8 +177,8 @@ export function EventSettingsForm({
                     }))}
                   />
                   <FormDescription className="ml-2">
-                    Set the minimum amount of notice needed you need before your
-                    event.
+                    Set the minimum amount of notice you need before the start
+                    of your event to prevent last-minute bookings
                   </FormDescription>
                 </div>
               </div>
