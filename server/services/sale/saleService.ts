@@ -545,7 +545,6 @@ export const cancelGoogleCalendarSale = async (saleId: string | undefined) => {
         itemName: sale?.booking?.title,
       };
 
-      console.log("data", data);
       await meetingCancelledEmail(data);
     }
 

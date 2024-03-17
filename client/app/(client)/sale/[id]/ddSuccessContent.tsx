@@ -7,8 +7,6 @@ import React from "react";
 //eslint-disable-next-line
 function DDSuccessContent({ data }: { data: any }) {
   const urls = JSON.parse(data.storeItem.DigitalProduct.urls);
-
-  console.log(data);
   return (
     <div>
       <div className=" ">
@@ -49,29 +47,45 @@ function DDSuccessContent({ data }: { data: any }) {
               </div>
             )}
 
-            {urls.length > 0 && (
-              <div className="mt-10">
-                <div className="text-lg font-semibold text-secondary-foreground">
-                  External Links
+            {data.storeItem.DigitalProduct.externalFile &&
+              urls.length > 0 &&
+              urls.every(
+                (urlObj: { name: string; url: string }) =>
+                  urlObj.name && urlObj.url
+              ) && (
+                <div className="mt-10">
+                  <div className="text-lg font-semibold text-secondary-foreground">
+                    External Links
+                  </div>
+                  <Separator />
+                  {urls.map(
+                    (
+                      urlObj: {
+                        name: string;
+                        url: string;
+                      },
+                      index: number
+                    ) => (
+                      <div
+                        key={index}
+                        className="flex mt-4 justify-between items-center mb-4 bg-secondary p-2 rounded-md"
+                      >
+                        <div>{urlObj.name}</div>
+                        <Button>
+                          <a
+                            href={urlObj.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download
+                          >
+                            <ExternalLink size={20} />
+                          </a>
+                        </Button>
+                      </div>
+                    )
+                  )}
                 </div>
-                <Separator />
-                {urls.map(
-                  (urlObj: { name: string; url: string }, index: number) => (
-                    <div
-                      key={index}
-                      className="flex mt-4 justify-between items-center mb-4 bg-secondary p-2 rounded-md"
-                    >
-                      <div>{urlObj.name}</div>
-                      <Button>
-                        <a href={urlObj.url} download>
-                          <ExternalLink size={20} />
-                        </a>
-                      </Button>
-                    </div>
-                  )
-                )}
-              </div>
-            )}
+              )}
           </div>
         ) : (
           <div>

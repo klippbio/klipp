@@ -100,8 +100,8 @@ function UserSettings(data: any) {
     setImageUrl("");
     setUploadingThumbnail(false);
   }
-  async function getUploadURL() {
-    return await generateUploadURL();
+  async function getUploadURL(type: string) {
+    return await generateUploadURL(type);
   }
 
   const mutation = useMutation({
@@ -142,7 +142,7 @@ function UserSettings(data: any) {
     }
     const file = event.target.files?.[0];
     if (!file) return;
-    const uploadUrl = await getUploadURL();
+    const uploadUrl = await getUploadURL(file.type as string);
     const imageUrlFromS3 = await uploadFile(uploadUrl, file);
     if (imageUrlFromS3 === "") {
       setUploadingThumbnail(false);

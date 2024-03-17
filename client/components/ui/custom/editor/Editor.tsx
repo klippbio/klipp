@@ -10,6 +10,7 @@ import {
   uploadFile,
 } from "@/app/services/getS3url";
 import { read } from "fs";
+import { String } from "aws-sdk/clients/cognitosync";
 
 export default function Editor({
   initialBlocks,
@@ -21,8 +22,8 @@ export default function Editor({
 
   const ref = useRef<EditorJS>();
 
-  async function getUploadURL() {
-    return await generateUploadURL();
+  async function getUploadURL(type: string) {
+    return await generateUploadURL(type);
   }
 
   async function uploadFileFromEditor(file: File, url: string) {
@@ -141,7 +142,7 @@ export default function Editor({
               uploader: {
                 async uploadByFile(file: File) {
                   try {
-                    const url = await getUploadURL();
+                    const url = await getUploadURL(file.type as String);
                     const awsUrl = await uploadFileFromEditor(file, url);
                     return {
                       success: 1,
