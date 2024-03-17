@@ -96,9 +96,9 @@ export function TimezoneSelect({
             handleInputChange(e.target.value)
           }
         >
-          <CommandInput placeholder="Search timezone..." />
+          <CommandInput placeholder="Search your city...." />
           <CommandEmpty>No timezone found.</CommandEmpty>
-          <CommandGroup className="h-72 overflow-y-auto">
+          <CommandGroup className="max-h-40 md:max-h-72 overflow-y-auto">
             {options.map((option) => (
               <CommandItem
                 onSelect={() => {

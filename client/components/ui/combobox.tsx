@@ -52,7 +52,7 @@ export function Combobox({
           <Command>
             <CommandInput placeholder={name} />
             <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup className=" max-h-72 overflow-y-auto">
+            <CommandGroup className="max-h-40  md:max-h-72 overflow-y-auto">
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
