@@ -224,6 +224,7 @@ saleController.post("/create", async (req: Request, res: Response) => {
           subject: "Your purchase from " + req.body.storeUrl,
           itemName: req.body.productName,
           itemType: "DIGITAL_DOWNLOAD",
+          storeId: storeDetails?.id,
         };
         const link = await createCheckoutSession(combinedData);
         res.status(200).json(link);
