@@ -401,10 +401,7 @@ export function PaymentMethods() {
                     )}
 
                     {accountStatus === "connected" && (
-                      <Button
-                        variant={"secondary"}
-                        onClick={() => handleDashboardRedirect()}
-                      >
+                      <Button onClick={() => handleDashboardRedirect()}>
                         <span className="">
                           <div className="text-xs">Stripe Dashboard</div>
                         </span>
