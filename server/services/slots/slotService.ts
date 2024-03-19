@@ -141,7 +141,9 @@ export const getAvailableSlotsService = async (
 
   // Step 2: Exclude Booked Times
   const busyTimes: TimeRange[] = calendarProduct.bookings
-    .filter((booking) => booking.bookingStatus !== "CANCELLED")
+    .filter(
+      (booking) => booking.bookingStatus !== "CANCELLED" && booking.meetingId
+    )
     .map((booking) => {
       // Parse booking times in UTC
       const bookingStartTimeParsed = dayjs.utc(booking.startTime);
