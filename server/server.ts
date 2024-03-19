@@ -40,9 +40,7 @@ cron.schedule("0 0 * * *", function () {
   console.log("Running a task every day at midnight");
   axios
     .delete(process.env.BACKEND_URL + "/storeanalytics")
-    .then((response) =>
-      console.log("Successfully called /storeanalytics delete", response)
-    )
+    .then(() => console.log("Successfully called /storeanalytics delete"))
     .catch((error) =>
       console.error("Error calling /storeanalytics delete:", error)
     );

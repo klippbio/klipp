@@ -18,7 +18,7 @@ export const getUpcomingBookings = async (storeId: string) => {
 
   //filter bookings as upcoming if the date is greater than today and not cancelled
   const upcomingBookings = bookings.filter(
-    (booking) => new Date(booking.startTime) >= new Date()
+    (booking) => new Date(booking.startTime) >= new Date() && booking.meetingId
   );
 
   return upcomingBookings;
@@ -42,8 +42,9 @@ export const getPastBookings = async (storeId: string) => {
   //filter bookings as past if the date is less than today or cancelled
   const pastBookings = bookings.filter(
     (booking) =>
-      new Date(booking.startTime) < new Date() ||
-      booking.bookingStatus === "CANCELLED"
+      (new Date(booking.startTime) < new Date() ||
+        booking.bookingStatus === "CANCELLED") &&
+      booking.meetingId
   );
 
   //sort past bookings by date
@@ -70,5 +71,7 @@ export const getCancelledBookings = async (storeId: string) => {
     },
   });
 
-  return bookings;
+  const filteredBookings = bookings.filter((booking) => booking.meetingId);
+
+  return filteredBookings;
 };

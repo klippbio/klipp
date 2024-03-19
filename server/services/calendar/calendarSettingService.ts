@@ -9,7 +9,10 @@ const oauth2Client = new google.auth.OAuth2({
   redirectUri: process.env.BACKEND_URL + "/calendar/linkCalendar",
 });
 
-async function revokeAccessWithRefreshToken(refreshToken: string) {
+async function revokeAccessWithRefreshToken(
+  refreshToken: string,
+  storeId: string
+) {
   // Set the refresh token
   oauth2Client.setCredentials({ refresh_token: refreshToken });
 
@@ -20,6 +23,7 @@ async function revokeAccessWithRefreshToken(refreshToken: string) {
     // Revoke the new access token
     await oauth2Client.revokeToken(token as string);
   } catch (error) {
+    console.error("Error revoking access token for storeId", storeId, error);
     throw new CustomError("Error revoking access token", 500);
   }
 }
@@ -185,7 +189,8 @@ export const unlinkGoogleCalendar = async (storeId: string) => {
 
   // Revoke the access token
   await revokeAccessWithRefreshToken(
-    store.calendarSetting.googleCalendar.refreshToken
+    store.calendarSetting.googleCalendar.refreshToken,
+    storeId
   );
 
   // Unlink the calendar by deleting the associated calendarSetting

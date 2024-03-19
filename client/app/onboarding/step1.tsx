@@ -51,7 +51,7 @@ const onboardingFormSchema = z.object({
       message: "Username must not be longer than 30 characters.",
     })
     .regex(/^[a-zA-Z0-9]*$/, {
-      message: "Username must be alphanumeric and contain no spaces.",
+      message: "Username must be alphanumeric.",
     }),
   displayName: z
     .string()
