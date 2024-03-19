@@ -43,14 +43,19 @@ const onboardingFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
   username: z
     .string()
+    .trim()
     .min(4, {
       message: "Username must be at least 4 characters.",
     })
     .max(34, {
       message: "Username must not be longer than 30 characters.",
+    })
+    .regex(/^[a-zA-Z0-9]*$/, {
+      message: "Username must be alphanumeric and contain no spaces.",
     }),
   displayName: z
     .string()
+    .trim()
     .min(2, {
       message: "Display name must be at least 2 characters.",
     })
