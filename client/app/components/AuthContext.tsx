@@ -72,16 +72,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   useEffect(() => {
-    (async () => {
-      const token = await getToken({ template: "klipp" });
-      setAuthDetails({
-        token: token ?? undefined,
-        userId: user?.id ?? undefined,
-        storeUrl: (user?.publicMetadata?.storeUrl as string) ?? undefined,
-        storeId: (user?.publicMetadata?.storeId as string) ?? undefined,
-      });
-    })();
-  }, [getToken, user]);
+    if (user) {
+      setAuthDetails((prev) => ({
+        ...prev,
+        userId: user.id ?? undefined,
+        storeUrl: (user.publicMetadata?.storeUrl as string) ?? undefined,
+        storeId: (user.publicMetadata?.storeId as string) ?? undefined,
+      }));
+    } else {
+      setAuthDetails((prev) => ({
+        ...prev,
+        userId: undefined,
+        storeUrl: undefined,
+        storeId: undefined,
+      }));
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ authDetails, refreshAuthDetails }}>
