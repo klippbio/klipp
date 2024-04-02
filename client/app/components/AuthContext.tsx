@@ -3,12 +3,11 @@
 import React, {
   ReactNode,
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useState,
 } from "react";
-import { useAuth, useUser } from "@clerk/nextjs";
+import {  useUser } from "@clerk/nextjs";
 
 // Define a type for authDetails
 export interface AuthDetails {
@@ -36,7 +35,7 @@ const AuthContext = createContext<{
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { getToken } = useAuth();
+  // const { getToken } = useAuth();
   const { user } = useUser();
 
   const [authDetails, setAuthDetails] = useState<AuthDetails>({
@@ -46,22 +45,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     storeId: undefined,
   });
 
-  // Function to refresh the token at a regular interval
-  const refreshAuthToken = useCallback(async () => {
-    const token = await getToken({ template: "klipp" });
-    setAuthDetails((prevAuthDetails) => ({
-      ...prevAuthDetails,
-      token: token || prevAuthDetails.token,
-    }));
-  }, [setAuthDetails, getToken]); // add dependencies here
+  
 
-  // Refresh the token every minute (adjust this interval as needed)
-  useEffect(() => {
-    const tokenRefreshInterval = setInterval(refreshAuthToken, 300000);
-    return () => {
-      clearInterval(tokenRefreshInterval);
-    };
-  }, [getToken, refreshAuthToken]);
+  // // Function to refresh the token at a regular interval
+  // const refreshAuthToken = useCallback(async () => {
+  //   const token = await getToken({ template: "klipp" });
+  //   console.log(token,"called2")
+  //   setAuthDetails((prevAuthDetails) => ({
+  //     ...prevAuthDetails,
+  //     token: token || prevAuthDetails.token,
+  //   }));
+  // }, [setAuthDetails, getToken]); // add dependencies here
+
+  // // Refresh the token every minute (adjust this interval as needed)
+  // useEffect(() => {
+  //   const tokenRefreshInterval = setInterval(refreshAuthToken, 300000);
+  //   console.log("called")
+  //   return () => {
+  //     clearInterval(tokenRefreshInterval);
+  //   };
+  // }, [getToken, refreshAuthToken]);
 
   const refreshAuthDetails: RefreshAuthDetails = (storeUrl, storeId) => {
     setAuthDetails({

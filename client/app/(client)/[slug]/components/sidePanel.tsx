@@ -56,7 +56,7 @@ export default function SidePanel() {
     ? { backgroundColor }
     : { backgroundColor: "#E9976A" };
 
-  return (
+      return (
     data &&
     dynamicStyle && (
       <div
@@ -145,7 +145,7 @@ export default function SidePanel() {
               <span>{data.storeDescription}</span>
             </div>
           </div>
-          {authDetails.token !== undefined &&
+          {authDetails.storeId &&
             authDetails.storeUrl === username.toLowerCase() && (
               <div className="mt-auto mb-8 w-3/4 text-sm lg:w-2/3 border rounded-2xl flex justify-between items-center space-x-2 px-2 h-16 bg-input text-foreground">
                 <Button

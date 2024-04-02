@@ -43,7 +43,7 @@ publicController.post(
   }
 );
 
-publicController.post("/changeOrder", async (req: Request, res: Response) => {
+publicController.post("/changeOrder",isUsersStore, async (req: Request, res: Response) => {
   try {
     const parsedData = await publicService.ZChangeOrder.parseAsync(req.body);
     const updatedOrder = await publicService.changeOrder(parsedData);

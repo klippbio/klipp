@@ -114,7 +114,7 @@ export default function ProfileCards() {
     mutationFn: async (updatedOrders: UpdateOrderPayload) => {
       const response = await AxiosApi(
         "POST",
-        `/api/changeOrder/`,
+        `/api/changeOrder/?storeId=${authDetails.storeId}`,
         updatedOrders,
         authDetails
       );
